@@ -1,0 +1,16 @@
+File: AudioDevice.png
+Author: Emoji One Project - https://github.com/emojione/emojione/graphs/contributors
+Source: https://github.com/emojione/emojione/blob/2.2.7/assets/svg_bw/1f39a.svg
+Licensed under Creative Commons Attribution-Share Alike 4.0 International
+
+File: volume_down.png
+Attribution: Font Awesome by Dave Gandy - https://fortawesome.github.com/Font-Awesome
+Licensed under the Creative Commons Attribution-Share Alike 3.0 Unported license
+
+File: Speaker.png
+Attribution: Font Awesome by Dave Gandy - https://fortawesome.github.com/Font-Awesome
+Licensed under the Creative Commons Attribution-Share Alike 3.0 Unported license
+
+File: volume_up.png
+Attribution: Font Awesome by Dave Gandy - https://fortawesome.github.com/Font-Awesome
+Licensed under the Creative Commons Attribution-Share Alike 3.0 Unported license
