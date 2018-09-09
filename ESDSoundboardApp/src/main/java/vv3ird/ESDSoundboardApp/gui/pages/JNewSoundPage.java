@@ -206,7 +206,7 @@ public class JNewSoundPage extends Page {
 					player.close();
 				File file = new File(tfAudio.getText());
 				if(file.exists()) {
-					player = new AudioPlayer(file.toString(), AudioApp.getConfiguration().getMixerInfo());
+					player = new AudioPlayer(new Sound(tfName.getText(), file.toString(), null, rdbtnAmbience.isSelected() ? Type.AMBIENCE : Type.EFFECT), AudioApp.getConfiguration().getMixerInfo());
 					try {
 						player.open();
 						float gain = AppConfiguration.linearToDecibel(AudioApp.getConfiguration().masterGain) + 2;

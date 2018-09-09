@@ -29,7 +29,7 @@ public class CrossFadeItem extends AbstractStreamItem {
 					this.img = IconHelper.applyImage(this.img, IconHelper.getImageFromResource("/resources/icons/selected.png"));
 				else
 					this.img = this.text != null ? IconHelper.addText(this.rawImg, this.text, this.textPos) : this.rawImg;
-				this.fireIconUpdate();
+				this.fireIconUpdate(false);
 			}
 			break;
 		// Switch Crossfade on/off
@@ -40,7 +40,7 @@ public class CrossFadeItem extends AbstractStreamItem {
 				this.img = IconHelper.applyImage(this.img, IconHelper.getImageFromResource("/resources/icons/selected.png"));
 			else
 				this.img = this.text != null ? IconHelper.addText(this.rawImg, this.text, this.textPos) : this.rawImg;
-			this.fireIconUpdate();
+			this.fireIconUpdate(false);
 			break;
 		default:
 			break;

@@ -33,21 +33,21 @@ public class TestAudioPlayer {
 	
 	
 	public static void main(String[] args) throws InterruptedException, IOException, LineUnavailableException, UnsupportedAudioFileException {
-		System.out.println(1);
-		AudioPlayer player = new AudioPlayer("C:\\\\Users\\\\wkiv894\\\\eclipse-workspace\\\\BetterSoundboardApp\\\\soundlib\\\\Bloodstarved Beast\\\\Bloodstarved Beast.mp3", new AppConfiguration().getMixerInfo());
-		System.out.println(2);
-		player.loop(AudioPlayer.LOOP_FOREVER);
-		System.out.println(3);
-		player.setGain(0);
-		System.out.println(4);
-		player.start();
-		float gain = 0;
-//		for (int i = 0; i < 40 ; i++) {
-//			player.setGain(--gain);
-//			Thread.sleep(500);
-//		}
-		Thread.sleep(5_000);
-		player.stop(true);
+//		System.out.println(1);
+//		AudioPlayer player = new AudioPlayer("C:\\\\Users\\\\vv3ird\\\\eclipse-workspace\\\\BetterSoundboardApp\\\\soundlib\\\\Bloodstarved Beast\\\\Bloodstarved Beast.mp3", new AppConfiguration().getMixerInfo());
+//		System.out.println(2);
+//		player.loop(AudioPlayer.LOOP_FOREVER);
+//		System.out.println(3);
+//		player.setGain(0);
+//		System.out.println(4);
+//		player.start();
+//		float gain = 0;
+////		for (int i = 0; i < 40 ; i++) {
+////			player.setGain(--gain);
+////			Thread.sleep(500);
+////		}
+//		Thread.sleep(5_000);
+//		player.stop(true);
 		
 	}
 }

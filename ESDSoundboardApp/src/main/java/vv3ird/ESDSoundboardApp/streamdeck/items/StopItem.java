@@ -3,6 +3,7 @@ package vv3ird.ESDSoundboardApp.streamdeck.items;
 import vv3ird.ESDSoundboardApp.AudioApp;
 import de.rcblum.stream.deck.event.KeyEvent;
 import de.rcblum.stream.deck.items.AbstractStreamItem;
+import de.rcblum.stream.deck.items.animation.AnimationStack;
 import de.rcblum.stream.deck.util.IconHelper;
 
 public class StopItem extends AbstractStreamItem {
@@ -11,6 +12,18 @@ public class StopItem extends AbstractStreamItem {
 		super(IconHelper.getImage("temp://BLACK_ICON"));
 		this.setTextPosition(TEXT_POS_CENTER);
 		this.setText("Stop");
+	}
+	
+	public void setRollingText(String text) {
+		if (text != null) {
+			AnimationStack animation = IconHelper.createRollingTextAnimation(this.rawImg, text, TEXT_POS_BOTTOM);
+			this.setAnimation(null);
+			this.setAnimation(animation);
+		}
+		else {
+			this.setAnimation(null);
+		}
+		
 	}
 
 	@Override

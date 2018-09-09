@@ -98,12 +98,13 @@ public class AudioApp {
 	public static SDImage AUDIO_ICON = IconHelper.loadImageSafe("icons" + File.separator + "audio.png");
 	public static SDImage BACK_ICON = IconHelper.loadImageSafe("icons" + File.separator + "back.png");
 
-	public final static StreamItem STOP_ITEM = new StopItem();
+	public final static StopItem STOP_ITEM = new StopItem();
 	
 	public final static StatusAmbienceItem AMBIENCE_STATUS_ITEM =  new StatusAmbienceItem();
 		
-	public static void playAmbience(String file) {
-		AudioPlayer player = new AudioPlayer(file, configuration.getMixerInfo());
+	public static void playAmbience(Sound sound) {
+		AudioPlayer player = new AudioPlayer(sound, configuration.getMixerInfo());
+		STOP_ITEM.setRollingText(sound.name);
 		try {
 			player.open();
 			float gain = linearToDecibel(configuration.masterGain) + 2;
@@ -136,8 +137,8 @@ public class AudioApp {
 		AudioApp.player = player;
 	}
 	
-	public static void playEffect(String file) {
-		AudioPlayer player = new AudioPlayer(file, configuration.getMixerInfo());
+	public static void playEffect(Sound sound) {
+		AudioPlayer player = new AudioPlayer(sound, configuration.getMixerInfo());
 		try {
 			player.open();
 			float gain = linearToDecibel(configuration.masterGain) + 2;
@@ -568,7 +569,7 @@ public class AudioApp {
 		if(AudioDevices.getAudioDeviceByName(info.getName(), false) != null) {
 			configuration.setAudioInterface(info);
 			if(player != null)
-				playAmbience(player.getAudioFile());
+				playAmbience(player.getSound());
 			saveConfig();
 		}
 	}

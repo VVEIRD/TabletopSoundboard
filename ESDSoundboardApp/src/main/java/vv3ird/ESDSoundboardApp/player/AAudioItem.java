@@ -3,18 +3,19 @@ package vv3ird.ESDSoundboardApp.player;
 import java.io.File;
 
 import vv3ird.ESDSoundboardApp.AudioApp;
+import vv3ird.ESDSoundboardApp.config.Sound;
 import de.rcblum.stream.deck.event.KeyEvent;
 import de.rcblum.stream.deck.items.AbstractStreamItem;
 import de.rcblum.stream.deck.util.SDImage;
 
 public class AAudioItem extends AbstractStreamItem {
 	
-	private String audioFile = null;
+	private Sound audio = null;
 
-	public AAudioItem(SDImage img, String audioFile) {
+	public AAudioItem(SDImage img, Sound audio) {
 		super(img);
-		this.audioFile = audioFile;
-		String[] sp = this.audioFile.split(File.separator + File.separator);
+		this.audio = audio;
+		String[] sp = this.audio.filePath.split(File.separator + File.separator);
 		String fileName = sp[sp.length-1];
 		fileName = fileName.substring(0, fileName.lastIndexOf("."));
 		this.setText(fileName);
@@ -23,8 +24,8 @@ public class AAudioItem extends AbstractStreamItem {
 	@Override
 	public void onKeyEvent(KeyEvent event) {
 		if (event.getType() == KeyEvent.Type.RELEASED_CLICKED) {
-			System.out.println("Trigger: " + audioFile);
-			AudioApp.playAmbience(this.audioFile);
+			System.out.println("Trigger: " + audio.name + "(" + audio.filePath + ")");
+			AudioApp.playAmbience(this.audio);
 		}
 	}
 

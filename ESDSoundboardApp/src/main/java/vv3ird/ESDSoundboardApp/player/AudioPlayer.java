@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import vv3ird.ESDSoundboardApp.AudioApp;
+import vv3ird.ESDSoundboardApp.config.Sound;
 
 	/**
 	 * AudioPlayer for a streamable Clip alternative
@@ -37,7 +38,7 @@ import vv3ird.ESDSoundboardApp.AudioApp;
 		
 		public static int LOOP_FOREVER = -1;
 		
-		private String sound = null;
+		private Sound sound = null;
 		
 		private String audioFile = null;
 		
@@ -65,10 +66,10 @@ import vv3ird.ESDSoundboardApp.AudioApp;
 		
 		private float gain = 0;
 		
-		public AudioPlayer(String sound, Mixer.Info mixer)
+		public AudioPlayer(Sound sound, Mixer.Info mixer)
 		{
 			this.sound = sound;
-			this.audioFile = sound;
+			this.audioFile = sound.filePath;
 			this.mixer = mixer;
 			try {
 		        FloatControl control = (FloatControl) this.getControl(FloatControl.Type.MASTER_GAIN);
@@ -137,7 +138,7 @@ import vv3ird.ESDSoundboardApp.AudioApp;
 			AudioInputStream stream = AudioSystem.getAudioInputStream(new BufferedInputStream(new FileInputStream(new File(file))));
 			// Getting the format and sanitizing it
 			AudioFormat format = stream.getFormat();
-			if (sound.endsWith(".mp3")) {
+			if (sound.filePath.endsWith(".mp3")) {
 				format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, // Encoding
 																			// to
 																			// use
@@ -284,6 +285,10 @@ import vv3ird.ESDSoundboardApp.AudioApp;
 		
 		public String getAudioFile() {
 			return audioFile;
+		}
+		
+		public Sound getSound() {
+			return sound;
 		}
 		
 		public Control getControl(javax.sound.sampled.Control.Type control)

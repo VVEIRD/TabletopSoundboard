@@ -29,9 +29,9 @@ public class SoundItem extends AbstractStreamItem {
 			System.out.println("Trigger: " + sound.name);
 			System.out.println("Trigger: " + sound.filePath);
 			if (this.sound.type == null || this.sound.type == Type.AMBIENCE)
-				AudioApp.playAmbience(this.sound.filePath);
+				AudioApp.playAmbience(this.sound);
 			else
-				AudioApp.playEffect(this.sound.filePath);
+				AudioApp.playEffect(this.sound);
 		}
 	}
 
