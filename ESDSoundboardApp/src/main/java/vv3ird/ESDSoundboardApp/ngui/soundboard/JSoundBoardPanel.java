@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
+import vv3ird.ESDSoundboardApp.ngui.internal.PDControlScrollPane;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -24,6 +25,7 @@ import de.rcblum.stream.deck.items.FolderItem;
 import de.rcblum.stream.deck.items.StreamItem;
 import de.rcblum.stream.deck.items.animation.AnimationStack;
 import de.rcblum.stream.deck.items.listeners.IconUpdateListener;
+import de.rcblum.stream.deck.util.IconHelper;
 import de.rcblum.stream.deck.util.IconPackage;
 import de.rcblum.stream.deck.util.SDImage;
 
@@ -54,7 +56,7 @@ public class JSoundBoardPanel extends JPanel {
 		setLayout(null);
 
 		JLabel lblSoundboardname = new JLabel(soundBoard.name);
-		lblSoundboardname.setForeground(lightBackGround ? Color.LIGHT_GRAY.brighter() : Color.LIGHT_GRAY);
+		lblSoundboardname.setForeground(Color.LIGHT_GRAY.brighter() );
 		lblSoundboardname.setVerticalAlignment(SwingConstants.TOP);
 		lblSoundboardname.setFont(new Font("Segoe UI", lblSoundboardname.getFont().getStyle() & ~Font.BOLD & ~Font.ITALIC, 14));
 		lblSoundboardname.setHorizontalAlignment(SwingConstants.LEFT);
@@ -65,7 +67,7 @@ public class JSoundBoardPanel extends JPanel {
 		JViewport viewport = new JViewport();
 		viewport.setOpaque(false);
 		viewport.setView(pnThemes);
-		JScrollPane scrollPane = new JScrollPane();
+		JScrollPane scrollPane = new PDControlScrollPane();
 		scrollPane.setViewportBorder(null);
 		scrollPane.setViewport(viewport);
 		scrollPane.getViewport().setOpaque(false);
@@ -76,9 +78,13 @@ public class JSoundBoardPanel extends JPanel {
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		List<String> catNames = new ArrayList<>(this.soundBoard.getCategories());
 		for(int i=0; i<catNames.size(); i++) {
+			boolean applyOldVal = IconHelper.APPLY_FRAME;
+			IconHelper.APPLY_FRAME = false;
 			String catName = catNames.get(i);
 			FolderItem fi = new FolderItem(catName, null, new StreamItem[0]);
+			fi.setIcon(IconHelper.createFolderImage(getBackground(), false));
 			JLabel jl = new JLabel(new ImageIcon(fi.getIcon().image));
+			IconHelper.APPLY_FRAME = applyOldVal;
 			jl.setSize(new Dimension(72, 72));
 			pnThemes.add(jl);
 		}

@@ -189,6 +189,7 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 					this.thread = null;
 				}
 				this.thread = new Thread(this);
+				thread.setDaemon(true);
 				thread.start();
 				this.fireLineEvent(new LineEvent(line, LineEvent.Type.START, 0));
 			}
@@ -226,6 +227,7 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 						line = null;					
 					}
 				});
+				t.setDaemon(true);
 				if(async)
 					t.start();
 				else
@@ -366,6 +368,7 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 					}
 				}
 			});
+			t.setDaemon(true);
 			t.start();
 		}
 

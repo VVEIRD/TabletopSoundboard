@@ -43,6 +43,7 @@ public class JSoundboardFrame extends JFrame {
 	private JLabel lblOptions;
 	private JScrollPane scrollPane;
 	private JPanel pnContent;
+	private JPanel pnStatus;
 
 	/**
 	 * Launch the application.
@@ -77,10 +78,11 @@ public class JSoundboardFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public JSoundboardFrame() {
+		super("Soundboard App");
 		setBackground(ColorScheme.MAIN_BACKGROUND_COLOR);
 		getContentPane().setBackground(ColorScheme.MAIN_BACKGROUND_COLOR);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 700, 450);
+		setBounds(100, 100, 900, 500);
 		((JPanel) getContentPane()).setBorder(new EmptyBorder(0, 0, 0, 0));
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		
@@ -181,7 +183,15 @@ public class JSoundboardFrame extends JFrame {
 		scrollPane.setOpaque(false);
 		scrollPane.setBounds(0, 40, 450, 150);
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		getContentPane().add(scrollPane, BorderLayout.CENTER);
+		
+		pnStatus = new JPanel();
+		getContentPane().add(pnStatus, BorderLayout.SOUTH);
+		pnStatus.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		pnStatus.setBackground(ColorScheme.SIDE_BAR_BACKGROUND_COLOR);
+		setSize(pnStatus, 900, 40);
+		setResizable(false);
 		switchContent();
 	}
 
@@ -206,7 +216,7 @@ public class JSoundboardFrame extends JFrame {
 		BoxLayout bx = new BoxLayout(jp, BoxLayout.Y_AXIS);
 		jp.setLayout(bx);
 		Component verticalGlue = Box.createVerticalGlue();
-		jp.add(verticalGlue);
+//		jp.add(verticalGlue);
 		pnContent.add(verticalGlue);
 	}
 
