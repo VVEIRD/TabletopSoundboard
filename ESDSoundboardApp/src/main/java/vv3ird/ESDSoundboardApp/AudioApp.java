@@ -590,6 +590,10 @@ public class AudioApp {
 		return soundboardLibrary.stream().filter(s -> s.name.equalsIgnoreCase(name)).findFirst().orElse(null);
 	}
 	
+	public static List<SoundBoard> getSoundboardLibrary() {
+		return soundboardLibrary;
+	}
+	
 	public static List<Sound> getSoundLibrary() {
 		return soundLibrary;
 	}
