@@ -267,4 +267,16 @@ public class JAmbienceSoundPage extends Page {
 		}
 	}
 
+
+	@Override
+	public void okAction() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cancelAction() {
+		// TODO Auto-generated method stub
+		
+	}
 }

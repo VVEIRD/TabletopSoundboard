@@ -291,4 +291,16 @@ public class JNewSoundPage extends Page {
 		lblNameOk.validate();
 		lblNameOk.repaint();
 	}
+
+	@Override
+	public void okAction() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cancelAction() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -24,6 +24,7 @@ import java.awt.CardLayout;
 import net.miginfocom.swing.MigLayout;
 import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
+import vv3ird.ESDSoundboardApp.ngui.layout.UIColumnLayout;
 import vv3ird.ESDSoundboardApp.ngui.soundboard.JSoundBoardPanel;
 
 import javax.swing.SwingConstants;
@@ -82,7 +83,9 @@ public class JSoundboardFrame extends JFrame {
 		setBackground(ColorScheme.MAIN_BACKGROUND_COLOR);
 		getContentPane().setBackground(ColorScheme.MAIN_BACKGROUND_COLOR);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		setBounds(100, 100, 900, 500);
+		
 		((JPanel) getContentPane()).setBorder(new EmptyBorder(0, 0, 0, 0));
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		
@@ -204,7 +207,7 @@ public class JSoundboardFrame extends JFrame {
 		List<SoundBoard> sbs = AudioApp.getSoundboardLibrary();
 		GridLayout gl = new GridLayout(sbs.size()+2, 1);
 		gl.setVgap(0);
-		pnContent.setLayout(gl);
+		pnContent.setLayout(new UIColumnLayout());
 		boolean light = true;
 		for (SoundBoard soundBoard : sbs) {
 			pnContent.add(new JSoundBoardPanel(soundBoard, light));
@@ -215,9 +218,9 @@ public class JSoundboardFrame extends JFrame {
 		jp.setMaximumSize(new Dimension(2000, 2000));
 		BoxLayout bx = new BoxLayout(jp, BoxLayout.Y_AXIS);
 		jp.setLayout(bx);
-		Component verticalGlue = Box.createVerticalGlue();
+//		Component verticalGlue = Box.createVerticalGlue();
 //		jp.add(verticalGlue);
-		pnContent.add(verticalGlue);
+//		pnContent.add(verticalGlue);
 	}
 
 	private void setSize(Component comp, int width, int height) {

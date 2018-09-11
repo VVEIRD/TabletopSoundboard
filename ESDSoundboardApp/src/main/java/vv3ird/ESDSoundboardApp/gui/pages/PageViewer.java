@@ -46,7 +46,10 @@ public class PageViewer extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
-		page = new Page();
+		page = new Page() {
+			@Override public void okAction() {} 
+			@Override public void cancelAction() {}
+		};
 		contentPane.add(page, BorderLayout.CENTER);
 	}
 	

@@ -4,7 +4,7 @@ import java.awt.Dimension;
 
 import javax.swing.JPanel;
 
-public class Page extends JPanel {
+public abstract class Page extends JPanel {
 	
 	private Dimension d = new Dimension(0, 0);
 
@@ -40,4 +40,8 @@ public class Page extends JPanel {
 	public Dimension getPageDimension() {
 		return d;
 	}
+	
+	public abstract void okAction();
+	
+	public abstract void cancelAction();
 }

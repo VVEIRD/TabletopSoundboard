@@ -10,6 +10,8 @@ public class ColorScheme {
 	
 	public static final Color MAIN_BACKGROUND_COLOR = new Color(74, 135, 167); 
 	
+	public static final Color FOREGROUND_COLOR = Color.LIGHT_GRAY.brighter();
+	
 	
 
 }
