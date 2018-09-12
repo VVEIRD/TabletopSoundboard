@@ -24,6 +24,7 @@ import javax.swing.event.DocumentListener;
 import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.config.Sound.Type;
+import vv3ird.ESDSoundboardApp.ngui.pages.Page;
 import vv3ird.ESDSoundboardApp.AudioApp;
 
 import javax.swing.JTextField;
@@ -267,16 +268,9 @@ public class JAmbienceSoundPage extends Page {
 		}
 	}
 
-
 	@Override
-	public void okAction() {
+	public JPanel getButtonBar() {
 		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void cancelAction() {
-		// TODO Auto-generated method stub
-		
+		return null;
 	}
 }

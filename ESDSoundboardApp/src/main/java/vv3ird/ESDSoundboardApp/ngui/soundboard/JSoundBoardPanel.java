@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
-import vv3ird.ESDSoundboardApp.ngui.internal.PDControlScrollPane;
+import vv3ird.ESDSoundboardApp.ngui.components.PDControlScrollPane;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
+import vv3ird.ESDSoundboardApp.ngui.pages.Page;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -130,7 +131,6 @@ public class JCategoriesPage extends Page {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					AudioApp.saveSoundBoard(sb);
-					getPageViewer().close();
 				} catch (IOException e1) {
 					logger.error(e1);
 					JOptionPane.showMessageDialog(null, "Could not save Soundboard: " + e1.getMessage(), "Error",
@@ -148,16 +148,9 @@ public class JCategoriesPage extends Page {
 
 	}
 
-
 	@Override
-	public void okAction() {
+	public JPanel getButtonBar() {
 		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void cancelAction() {
-		// TODO Auto-generated method stub
-		
+		return null;
 	}
 }

@@ -24,7 +24,11 @@ import java.awt.CardLayout;
 import net.miginfocom.swing.MigLayout;
 import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
+import vv3ird.ESDSoundboardApp.ngui.components.JSelectablePanel;
 import vv3ird.ESDSoundboardApp.ngui.layout.UIColumnLayout;
+import vv3ird.ESDSoundboardApp.ngui.pages.JSoundboardPage;
+import vv3ird.ESDSoundboardApp.ngui.pages.Page;
+import vv3ird.ESDSoundboardApp.ngui.pages.PageViewer;
 import vv3ird.ESDSoundboardApp.ngui.soundboard.JSoundBoardPanel;
 
 import javax.swing.SwingConstants;
@@ -43,7 +47,7 @@ public class JSoundboardFrame extends JFrame {
 	private JSelectablePanel pn;
 	private JLabel lblOptions;
 	private JScrollPane scrollPane;
-	private JPanel pnContent;
+	private PageViewer pnContent;
 	private JPanel pnStatus;
 
 	/**
@@ -84,7 +88,7 @@ public class JSoundboardFrame extends JFrame {
 		getContentPane().setBackground(ColorScheme.MAIN_BACKGROUND_COLOR);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		setBounds(100, 100, 900, 500);
+		setBounds(100, 100, 900, 520);
 		
 		((JPanel) getContentPane()).setBorder(new EmptyBorder(0, 0, 0, 0));
 		getContentPane().setLayout(new BorderLayout(0, 0));
@@ -174,20 +178,9 @@ public class JSoundboardFrame extends JFrame {
 		lblSounds.setForeground(ColorScheme.SIDE_BAR_FOREGROUND_COLOR);
 		lblOptions.setForeground(ColorScheme.SIDE_BAR_FOREGROUND_COLOR);
 
-		pnContent = new JPanel();
+		pnContent = new PageViewer();
 		pnContent.setOpaque(false);
-		JViewport viewport = new JViewport();
-		viewport.setOpaque(false);
-		viewport.setView(pnContent);
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setViewportBorder(null);
-		scrollPane.setViewport(viewport);
-		scrollPane.getViewport().setOpaque(false);
-		scrollPane.setOpaque(false);
-		scrollPane.setBounds(0, 40, 450, 150);
-		scrollPane.setBorder(BorderFactory.createEmptyBorder());
-		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-		getContentPane().add(scrollPane, BorderLayout.CENTER);
+		getContentPane().add(pnContent, BorderLayout.CENTER);
 		
 		pnStatus = new JPanel();
 		getContentPane().add(pnStatus, BorderLayout.SOUTH);
@@ -203,24 +196,13 @@ public class JSoundboardFrame extends JFrame {
 	}
 
 	private void displaySoundBoards() {
-		pnContent.removeAll();
-		List<SoundBoard> sbs = AudioApp.getSoundboardLibrary();
-		GridLayout gl = new GridLayout(sbs.size()+2, 1);
-		gl.setVgap(0);
-		pnContent.setLayout(new UIColumnLayout());
-		boolean light = true;
-		for (SoundBoard soundBoard : sbs) {
-			pnContent.add(new JSoundBoardPanel(soundBoard, light));
-			light = !light;
+		if(pnSoundBoards.isSelected()) {
+			Page p = new JSoundboardPage();
+			pnContent.viewPage(p);
+			JPanel jp = p.getButtonBar();
+			jp.setBackground(ColorScheme.SIDE_BAR_BACKGROUND_COLOR);
+			getContentPane().add(jp, BorderLayout.SOUTH);
 		}
-		JPanel jp = new JPanel();
-		jp.setOpaque(false);
-		jp.setMaximumSize(new Dimension(2000, 2000));
-		BoxLayout bx = new BoxLayout(jp, BoxLayout.Y_AXIS);
-		jp.setLayout(bx);
-//		Component verticalGlue = Box.createVerticalGlue();
-//		jp.add(verticalGlue);
-//		pnContent.add(verticalGlue);
 	}
 
 	private void setSize(Component comp, int width, int height) {

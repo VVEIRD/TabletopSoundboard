@@ -10,6 +10,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
+import vv3ird.ESDSoundboardApp.ngui.pages.Page;
 
 import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
@@ -80,16 +81,9 @@ public class JCategoryNamePage extends Page {
 		
 	}
 
-
 	@Override
-	public void okAction() {
+	public JPanel getButtonBar() {
 		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void cancelAction() {
-		// TODO Auto-generated method stub
-		
+		return null;
 	}
 }

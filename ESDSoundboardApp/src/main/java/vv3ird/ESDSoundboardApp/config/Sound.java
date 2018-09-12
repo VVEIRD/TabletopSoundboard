@@ -7,13 +7,15 @@ import java.nio.file.StandardOpenOption;
 
 import com.google.gson.GsonBuilder;
 
-public class Sound {
+public class Sound implements Comparable<Sound>{
 
 	public String name;
 	
 	public String filePath;
 	
 	public String coverPath;
+	
+	public String[] tags = null;
 	
 	public Type type = Type.AMBIENCE;
 
@@ -42,6 +44,15 @@ public class Sound {
 	
 	public static enum Type {
 		AMBIENCE, EFFECT;
+	}
+	
+	public String[] getTags() {
+		return tags;
+	}
+
+	@Override
+	public int compareTo(Sound o) {
+		return this.name.compareTo(o != null ? o.name : null);
 	}
 
 }

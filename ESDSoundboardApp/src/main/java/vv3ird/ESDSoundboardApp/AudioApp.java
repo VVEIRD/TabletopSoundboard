@@ -86,7 +86,7 @@ public class AudioApp {
 				    	streamDeck.setBrightness(5);
 			    	}
 			    	if(AudioApp.controller != null)
-			    		AudioApp.controller.stop(true, true); 
+			    		AudioApp.controller.stop(true, false); 
 				}
 			 });
 		} catch (IOException e) {

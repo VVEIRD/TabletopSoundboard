@@ -13,7 +13,7 @@ import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.gui.pages.JCreateSoundBoard;
 import vv3ird.ESDSoundboardApp.gui.pages.JNewSoundPage;
 import vv3ird.ESDSoundboardApp.gui.pages.JSoundboardsPage;
-import vv3ird.ESDSoundboardApp.gui.pages.PageViewer;
+import vv3ird.ESDSoundboardApp.ngui.pages.PageViewer;
 
 import java.awt.FlowLayout;
 import javax.swing.JButton;

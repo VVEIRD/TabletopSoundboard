@@ -17,6 +17,7 @@ public class DelayedReduceBrightness implements Runnable, StreamKeyListener{
 	public DelayedReduceBrightness(IStreamDeck streamDeck) {
 		this.streamDeck = Objects.requireNonNull(streamDeck);
 		Thread t = new Thread(this);
+		t.setDaemon(true);
 		t.start();
 	}
 	

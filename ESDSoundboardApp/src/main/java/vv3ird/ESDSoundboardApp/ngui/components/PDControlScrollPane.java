@@ -1,4 +1,4 @@
-package vv3ird.ESDSoundboardApp.ngui.internal;
+package vv3ird.ESDSoundboardApp.ngui.components;
 
 import java.awt.Component;
 import java.awt.event.MouseWheelEvent;

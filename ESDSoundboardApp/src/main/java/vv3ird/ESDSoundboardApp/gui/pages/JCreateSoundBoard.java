@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
+import vv3ird.ESDSoundboardApp.ngui.pages.Page;
 import vv3ird.ESDSoundboardApp.AudioApp;
 
 import java.awt.FlowLayout;
@@ -67,16 +68,9 @@ public class JCreateSoundBoard extends Page {
 
 	}
 
-
 	@Override
-	public void okAction() {
+	public JPanel getButtonBar() {
 		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void cancelAction() {
-		// TODO Auto-generated method stub
-		
+		return null;
 	}
 }

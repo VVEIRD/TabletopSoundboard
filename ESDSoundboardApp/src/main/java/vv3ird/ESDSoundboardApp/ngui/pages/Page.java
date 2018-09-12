@@ -1,4 +1,4 @@
-package vv3ird.ESDSoundboardApp.gui.pages;
+package vv3ird.ESDSoundboardApp.ngui.pages;
 
 import java.awt.Dimension;
 
@@ -6,9 +6,9 @@ import javax.swing.JPanel;
 
 public abstract class Page extends JPanel {
 	
-	private Dimension d = new Dimension(0, 0);
+	protected Dimension d = new Dimension(0, 0);
 
-	PageViewer pageViewer = null;
+	protected PageViewer pageViewer = null;
 	
 	/**
 	 * Create the panel.
@@ -41,7 +41,5 @@ public abstract class Page extends JPanel {
 		return d;
 	}
 	
-	public abstract void okAction();
-	
-	public abstract void cancelAction();
+	public abstract JPanel getButtonBar();
 }

@@ -1,6 +1,8 @@
-package vv3ird.ESDSoundboardApp.ngui;
+package vv3ird.ESDSoundboardApp.ngui.components;
 
 import javax.swing.JPanel;
+
+import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
 
 public class JSelectablePanel extends JPanel {
 

@@ -2,9 +2,9 @@ package vv3ird.ESDSoundboardApp.ngui.pages;
 
 import javax.swing.JPanel;
 
-import vv3ird.ESDSoundboardApp.gui.pages.Page;
+import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
-import vv3ird.ESDSoundboardApp.ngui.internal.PDControlScrollPane;
+import vv3ird.ESDSoundboardApp.ngui.components.PDControlScrollPane;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -15,41 +15,49 @@ import javax.swing.JTextField;
 import javax.swing.JViewport;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class JNewSoundboardPage extends Page {
 	
 	
-	private JTextField textField;
+	private JTextField tfSoundBoardName;
 	
 	private JPanel pnThemes = null;
 
+	private SoundBoard sb = null;
+	
 	/**
 	 * Create the panel.
 	 */
-	public JNewSoundboardPage() {
+	public JNewSoundboardPage(SoundBoard sb) {
+		this.sb = sb;
 		setSize(700, 460);
 		setLayout(null);
 		setBackground(ColorScheme.MAIN_BACKGROUND_COLOR);
-		JLabel lblNewLabel = new JLabel("New Soundboard");
+		JLabel lblNewLabel = new JLabel(this.sb == null ? "New Soundboard" : "Edit Soundboard");
 		lblNewLabel.setVerticalAlignment(SwingConstants.BOTTOM);
 		lblNewLabel.setForeground(ColorScheme.FOREGROUND_COLOR);
 		lblNewLabel.setFont(new Font("Segoe UI", lblNewLabel.getFont().getStyle() & ~Font.BOLD & ~Font.ITALIC, 12));
 		lblNewLabel.setBounds(10, 11, 680, 30);
 		add(lblNewLabel);
 		
-		textField = new JTextField();
-		textField.setForeground(ColorScheme.FOREGROUND_COLOR);
-		textField.setFont(new Font("Segoe UI", textField.getFont().getStyle() & ~Font.BOLD & ~Font.ITALIC, 14));
-		textField.setBounds(10, 40, 680, 30);
-		textField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		textField.setBackground(ColorScheme.MAIN_BACKGROUND_COLOR.darker());
-		add(textField);
-		textField.setColumns(10);
+		tfSoundBoardName = new JTextField(this.sb != null ? this.sb.name : "");
+		tfSoundBoardName.setForeground(ColorScheme.FOREGROUND_COLOR);
+		tfSoundBoardName.setFont(new Font("Segoe UI", tfSoundBoardName.getFont().getStyle() & ~Font.BOLD & ~Font.ITALIC, 14));
+		tfSoundBoardName.setBounds(10, 40, 680, 30);
+		tfSoundBoardName.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		tfSoundBoardName.setBackground(ColorScheme.MAIN_BACKGROUND_COLOR.darker());
+		add(tfSoundBoardName);
+		tfSoundBoardName.setColumns(10);
 		pnThemes = new JPanel();
-		pnThemes.setOpaque(false);
+		pnThemes.setBackground(getBackground().brighter());
 		JViewport viewport = new JViewport();
 		viewport.setOpaque(false);
 		viewport.setView(pnThemes);
@@ -73,32 +81,29 @@ public class JNewSoundboardPage extends Page {
 		add(lblThemes);
 		
 		JButton btnRemoveTheme = new JButton("-");
-		btnRemoveTheme.setForeground(ColorScheme.FOREGROUND_COLOR);
-		btnRemoveTheme.setBackground(ColorScheme.MAIN_BACKGROUND_COLOR.darker());
 //		btnRemove.setOpaque(true);
 		btnRemoveTheme.setBounds(667, 81, 23, 23);
-		btnRemoveTheme.setBorder(BorderFactory.createLineBorder(ColorScheme.MAIN_BACKGROUND_COLOR.darker(), 2));
+		btnRemoveTheme.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		btnRemoveTheme.setBorderPainted(false);
 		add(btnRemoveTheme);
 		
 		JButton btnAddTheme = new JButton("+");
-		btnAddTheme.setForeground(Color.WHITE);
+		btnAddTheme.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				pageViewer.viewPage(new JNewThemePage(sb == null ? new SoundBoard(tfSoundBoardName.getText()) : sb));
+			}
+		});
 		btnAddTheme.setBorderPainted(false);
-		btnAddTheme.setBorder(BorderFactory.createLineBorder(ColorScheme.MAIN_BACKGROUND_COLOR.darker(), 2));
-		btnAddTheme.setBackground(new Color(51, 94, 116));
+//		btnAddTheme.setOpaque(false);
+		btnAddTheme.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		btnAddTheme.setBounds(636, 81, 23, 23);
 		add(btnAddTheme);
 	}
+	
 
 	@Override
-	public void okAction() {
+	public JPanel getButtonBar() {
 		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void cancelAction() {
-		// TODO Auto-generated method stub
-		
+		return null;
 	}
 }

@@ -16,6 +16,7 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.Sound.Type;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.gui.elements.IconSelectorPanel;
+import vv3ird.ESDSoundboardApp.ngui.pages.Page;
 import vv3ird.ESDSoundboardApp.player.AudioPlayer;
 
 import java.awt.BorderLayout;
@@ -121,7 +122,6 @@ public class JNewSoundPage extends Page {
 					String audio = tfAudio.getText();
 					Sound.Type type = rdbtnAmbience.isSelected() ? Type.AMBIENCE : Type.EFFECT;
 					AudioApp.saveNewSound(name, icon, audio,  type);
-					pageViewer.close();
 				} catch (IOException e1) {
 					logger.error(e1);
 					JOptionPane.showMessageDialog(null, "Could not save Soundboard: " + e1.getMessage(), "Error",
@@ -293,14 +293,8 @@ public class JNewSoundPage extends Page {
 	}
 
 	@Override
-	public void okAction() {
+	public JPanel getButtonBar() {
 		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void cancelAction() {
-		// TODO Auto-generated method stub
-		
+		return null;
 	}
 }
