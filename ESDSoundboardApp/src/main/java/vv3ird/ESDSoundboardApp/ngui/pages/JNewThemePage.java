@@ -6,15 +6,13 @@ import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
+import vv3ird.ESDSoundboardApp.ngui.components.FilterComboBox;
 import vv3ird.ESDSoundboardApp.ngui.components.PDControlScrollPane;
-import vv3ird.ESDSoundboardApp.ngui.components.picker.AutocompleteJComboBox;
-import vv3ird.ESDSoundboardApp.ngui.components.picker.SoundSearchable;
 import vv3ird.ESDSoundboardApp.ngui.layout.WrapLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import java.awt.Font;
-import java.awt.Insets;
 
 import javax.swing.JTextField;
 import javax.swing.JViewport;
@@ -23,7 +21,6 @@ import java.awt.Color;
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -152,12 +149,12 @@ public class JNewThemePage extends Page {
 		btnRemoveAMbience.setBounds(317, 421, 23, 23);
 		add(btnRemoveAMbience);
 
-		cbAmbeince = new JComboBox<Sound>(AudioApp.getAmbienceSounds().toArray(new Sound[0]));
+		cbAmbeince = new FilterComboBox(AudioApp.getAmbienceSounds());
 		cbAmbeince.setBounds(10, 421, 265, 22);
 		add(cbAmbeince);
 		
 		
-		JComboBox<Sound> cbEffects = new JComboBox<Sound>(AudioApp.getEffectSounds().toArray(new Sound[0]));
+		JComboBox<Sound> cbEffects = new FilterComboBox(AudioApp.getEffectSounds());
 		cbEffects.setBounds(359, 421, 265, 22);
 		add(cbEffects);
 	}

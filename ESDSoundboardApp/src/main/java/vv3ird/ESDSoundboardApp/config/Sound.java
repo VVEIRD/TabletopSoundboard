@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 import com.google.gson.GsonBuilder;
 
@@ -15,7 +16,7 @@ public class Sound implements Comparable<Sound>{
 	
 	public String coverPath;
 	
-	public String[] tags = null;
+	public List<String> tags = null;
 	
 	public Type type = Type.AMBIENCE;
 
@@ -26,12 +27,6 @@ public class Sound implements Comparable<Sound>{
 		this.coverPath = coverPath;
 		this.type = type;
 	}
-	
-	@Override
-	public String toString() {
-		return this.name;
-	}
-	
 	public static void save(Sound s, Path file) {
 		String jsonString = new GsonBuilder().setPrettyPrinting().create().toJson(s);
 		try {
@@ -46,7 +41,7 @@ public class Sound implements Comparable<Sound>{
 		AMBIENCE, EFFECT;
 	}
 	
-	public String[] getTags() {
+	public List<String> getTags() {
 		return tags;
 	}
 
@@ -54,5 +49,11 @@ public class Sound implements Comparable<Sound>{
 	public int compareTo(Sound o) {
 		return this.name.compareTo(o != null ? o.name : null);
 	}
+	
+	@Override
+	public String toString() {
+		return this.name + (this.tags != null && this.tags.size() > 0 ? " (" + String.join(", ", this.tags) + ")" : "");
+	}
+	
 
 }

@@ -301,7 +301,7 @@ public class AudioApp {
 					Gson gson = new Gson();
 					Sound sound = gson.fromJson(soundString, Sound.class);
 					soundLibrary.add(sound);
-				} catch (IOException e) {
+				} catch (Exception e) {
 					logger.error("Failed to load sound: " + soundPath.toString());
 					e.printStackTrace();
 				}
