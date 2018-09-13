@@ -280,7 +280,7 @@ public class JNewSoundPage extends Page {
 	}
 	
 	private void assertName() {
-		if(AudioApp.getSoundLibrary().stream().anyMatch(s -> s.name.equalsIgnoreCase(tfName.getText().trim())) || tfName.getText().isEmpty()) {
+		if(AudioApp.getSoundLibrary().stream().anyMatch(s -> s.getName().equalsIgnoreCase(tfName.getText().trim())) || tfName.getText().isEmpty()) {
 			lblNameOk.setIcon(new ImageIcon(FALSE));
 			btnFinish.setEnabled(false);
 		}

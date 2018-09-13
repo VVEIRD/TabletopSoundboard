@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import vv3ird.ESDSoundboardApp.gui.pages.JNewSoundPage;
+import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
 
 public class PageViewer extends JPanel {
 
@@ -20,6 +21,8 @@ public class PageViewer extends JPanel {
 	private Stack<Page> history = new Stack<>();
 	
 	private Page page = null;
+	
+	private JPanel statusBar = null;
 
 	/**
 	 * Create the frame.
@@ -39,6 +42,14 @@ public class PageViewer extends JPanel {
 		this.page = page;
 		page.setPageView(this);
 		add(page, BorderLayout.CENTER);
+		JPanel bb = page.getButtonBar();
+		bb = bb != null ? bb : new JPanel();
+		bb.setBackground(ColorScheme.SIDE_BAR_BACKGROUND_COLOR);
+		if(statusBar != null) {
+			remove(statusBar);
+		}
+		statusBar = bb;
+		add(bb, BorderLayout.SOUTH);
 		revalidate();
 	}
 	
@@ -49,6 +60,14 @@ public class PageViewer extends JPanel {
 			this.page = p;
 			page.setPageView(this);
 			add(page, BorderLayout.CENTER);
+			JPanel bb = page.getButtonBar();
+			bb = bb != null ? bb : new JPanel();
+			bb.setBackground(ColorScheme.SIDE_BAR_BACKGROUND_COLOR);
+			if(statusBar != null) {
+				remove(statusBar);
+			}
+			statusBar = bb;
+			add(bb, BorderLayout.SOUTH);
 			revalidate();
 			repaint();
 		}

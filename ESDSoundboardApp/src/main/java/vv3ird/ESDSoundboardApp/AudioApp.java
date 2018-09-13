@@ -104,7 +104,7 @@ public class AudioApp {
 		
 	public static void playAmbience(Sound sound) {
 		AudioPlayer player = new AudioPlayer(sound, configuration.getMixerInfo());
-		STOP_ITEM.setRollingText(sound.name);
+		STOP_ITEM.setRollingText(sound.getName());
 		try {
 			player.open();
 			float gain = linearToDecibel(configuration.masterGain) + 2;
@@ -243,13 +243,13 @@ public class AudioApp {
 				for(String cat : effects.keySet()) {
 					List<Sound> sounds = effects.get(cat);
 					for (Sound sound : sounds) {
-						logger.debug("Effect sound ("+ cat + "): " + sound.name);
+						logger.debug("Effect sound ("+ cat + "): " + sound.getName());
 					}
 				}
 				for(String cat : ambience.keySet()) {
 					List<Sound> sounds = ambience.get(cat);
 					for (Sound sound : sounds) {
-						logger.debug("Ambience sound ("+ cat + "): " + sound.name);
+						logger.debug("Ambience sound ("+ cat + "): " + sound.getName());
 					}
 				}
 				SoundBoard soundBoard = new SoundBoard(name, ambience, effects);
@@ -445,7 +445,7 @@ public class AudioApp {
 					Files.createDirectories(root);
 			}
 			for (Sound sound : sounds) {
-				Path soundPath = Paths.get(root.toString(), sound.name + ".json");
+				Path soundPath = Paths.get(root.toString(), sound.getName() + ".json");
 				logger.debug("Saving sound: " + soundPath.toString());
 				String soundString;
 				try {
@@ -599,11 +599,11 @@ public class AudioApp {
 	}
 	
 	public static List<Sound> getEffectSounds() {
-		return soundLibrary.stream().filter(s -> s.type == Type.EFFECT).collect(Collectors.toList());
+		return soundLibrary.stream().filter(s -> s.getType() == Type.EFFECT).collect(Collectors.toList());
 	}
 	
 	public static List<Sound> getAmbienceSounds() {
-		return soundLibrary.stream().filter(s -> s.type == Type.AMBIENCE).collect(Collectors.toList());
+		return soundLibrary.stream().filter(s -> s.getType() == Type.AMBIENCE).collect(Collectors.toList());
 	}
 
 	public static void main(String[] args) {

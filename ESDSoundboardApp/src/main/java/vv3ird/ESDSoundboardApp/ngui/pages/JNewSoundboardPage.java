@@ -2,9 +2,12 @@ package vv3ird.ESDSoundboardApp.ngui.pages;
 
 import javax.swing.JPanel;
 
+import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
+import vv3ird.ESDSoundboardApp.ngui.components.JSoundPanel;
 import vv3ird.ESDSoundboardApp.ngui.components.PDControlScrollPane;
+import vv3ird.ESDSoundboardApp.ngui.layout.WrapLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -17,19 +20,33 @@ import javax.swing.JViewport;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.FlowLayout;
 
 import javax.swing.SwingConstants;
+
+import de.rcblum.stream.deck.util.IconHelper;
+import de.rcblum.stream.deck.util.SDImage;
+
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.awt.event.ActionEvent;
 
 public class JNewSoundboardPage extends Page {
-	
+
+	private boolean newSoundBoard = true;
 	
 	private JTextField tfSoundBoardName;
 	
 	private JPanel pnThemes = null;
+	
+	private Map<String, List<Sound>> themesEffect = new HashMap<>();
+	
+	private Map<String, List<Sound>> themesAmbience = new HashMap<>();
 
 	private SoundBoard sb = null;
 	
@@ -41,7 +58,10 @@ public class JNewSoundboardPage extends Page {
 		setSize(700, 460);
 		setLayout(null);
 		setBackground(ColorScheme.MAIN_BACKGROUND_COLOR);
-		JLabel lblNewLabel = new JLabel(this.sb == null ? "New Soundboard" : "Edit Soundboard");
+		newSoundBoard = this.sb == null;
+		if(newSoundBoard)
+			this.sb = new SoundBoard(null);
+		JLabel lblNewLabel = new JLabel(newSoundBoard ? "New Soundboard" : "Edit Soundboard");
 		lblNewLabel.setVerticalAlignment(SwingConstants.BOTTOM);
 		lblNewLabel.setForeground(ColorScheme.FOREGROUND_COLOR);
 		lblNewLabel.setFont(new Font("Segoe UI", lblNewLabel.getFont().getStyle() & ~Font.BOLD & ~Font.ITALIC, 12));
@@ -58,6 +78,7 @@ public class JNewSoundboardPage extends Page {
 		tfSoundBoardName.setColumns(10);
 		pnThemes = new JPanel();
 		pnThemes.setBackground(getBackground().brighter());
+		pnThemes.setLayout(new WrapLayout(FlowLayout.LEFT));
 		JViewport viewport = new JViewport();
 		viewport.setOpaque(false);
 		viewport.setView(pnThemes);
@@ -90,7 +111,8 @@ public class JNewSoundboardPage extends Page {
 		JButton btnAddTheme = new JButton("+");
 		btnAddTheme.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				pageViewer.viewPage(new JNewThemePage(sb == null ? new SoundBoard(tfSoundBoardName.getText()) : sb));
+				JNewSoundboardPage.this.sb.name = tfSoundBoardName.getText();
+				pageViewer.viewPage(new JNewThemePage(JNewSoundboardPage.this.sb, null));
 			}
 		});
 		btnAddTheme.setBorderPainted(false);
@@ -105,5 +127,20 @@ public class JNewSoundboardPage extends Page {
 	public JPanel getButtonBar() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public void setPageView(PageViewer pageViewer) {
+		super.setPageView(pageViewer);
+		pnThemes.removeAll();
+		Set<String> categories = this.sb.getCategories();
+		Color frameColor = IconHelper.FRAME_COLOR;
+		IconHelper.FRAME_COLOR = pnThemes.getBackground();
+		SDImage image = IconHelper.createFolderImage(ColorScheme.SIDE_BAR_BACKGROUND_COLOR, true);
+		for (String cat : categories) {
+			JSoundPanel jsp = new JSoundPanel(IconHelper.addText(image, cat, IconHelper.TEXT_BOTTOM).image, pnThemes.getBackground());
+			pnThemes.add(jsp);
+		}
+		IconHelper.FRAME_COLOR = frameColor;
 	}
 }

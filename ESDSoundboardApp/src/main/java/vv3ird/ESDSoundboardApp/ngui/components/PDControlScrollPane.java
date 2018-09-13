@@ -21,7 +21,11 @@ public class PDControlScrollPane extends JScrollPane {
 
 	public PDControlScrollPane() {
 		super();
+		addMouseWheelListener(new PDMouseWheelListener());
+	}
 
+	public PDControlScrollPane(Component view) {
+		super(view);
 		addMouseWheelListener(new PDMouseWheelListener());
 	}
 

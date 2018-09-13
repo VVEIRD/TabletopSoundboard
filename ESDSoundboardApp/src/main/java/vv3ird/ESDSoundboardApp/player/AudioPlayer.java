@@ -40,8 +40,6 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 		
 		private Sound sound = null;
 		
-		private String audioFile = null;
-		
 		private int loop = 0;
 		
 		private List<LineListener> listeners = new LinkedList<>();
@@ -56,7 +54,7 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 
 		private AudioInputStream stream = null;
 		
-		private Queue<AudioInputStream> backupStream = new LinkedList<>();
+		private Queue<AudioInputStream> nextStream = new LinkedList<>();
 
 		private LineEvent.Type intendetState = LineEvent.Type.CLOSE;
 
@@ -69,7 +67,6 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 		public AudioPlayer(Sound sound, Mixer.Info mixer)
 		{
 			this.sound = sound;
-			this.audioFile = sound.filePath;
 			this.mixer = mixer;
 			try {
 		        FloatControl control = (FloatControl) this.getControl(FloatControl.Type.MASTER_GAIN);
@@ -100,11 +97,18 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 
 		public void open() throws IOException, LineUnavailableException, UnsupportedAudioFileException
 		{
+			String audioFile = sound.next();
 			intendetState = LineEvent.Type.OPEN;
-			stream = getAudioStream(audioFile); 
+			try {
+				stream = getAudioStream(audioFile); 
+			}
+			catch (IOException | UnsupportedAudioFileException e) {
+				logger.error("Error opening audiofile: " + audioFile);
+				throw e;
+			}
 			AudioFormat format = stream.getFormat();
 			
-			initBackupStream();
+			initNextStream();
 
 			try {
 				line = (SourceDataLine) AudioSystem.getSourceDataLine(format, mixer);
@@ -138,7 +142,7 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 			AudioInputStream stream = AudioSystem.getAudioInputStream(new BufferedInputStream(new FileInputStream(new File(file))));
 			// Getting the format and sanitizing it
 			AudioFormat format = stream.getFormat();
-			if (sound.filePath.endsWith(".mp3")) {
+			if (file.endsWith(".mp3")) {
 				format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, // Encoding
 																			// to
 																			// use
@@ -176,7 +180,6 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 				try {
 					this.open();
 				} catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
-					logger.error("Error opening audiofile: " + this.audioFile);
 					logger.error(e);
 					e.printStackTrace();
 				}
@@ -247,8 +250,8 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 				try {
 					if (this.stream != null)
 						this.stream.close();
-					if (this.backupStream.peek() != null)
-						this.backupStream.poll().close();
+					if (this.nextStream.peek() != null)
+						this.nextStream.poll().close();
 				} catch (IOException e) {
 //					e.printStackTrace(SoundBoardApp.getErrWriter());
 					e.printStackTrace();
@@ -286,7 +289,7 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 		}
 		
 		public String getAudioFile() {
-			return audioFile;
+			return sound.getCurrentFile();
 		}
 		
 		public Sound getSound() {
@@ -308,12 +311,12 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 				byte[] buf = new byte[line.getBufferSize()];
 				while (((numRead = stream.read(buf, 0, buf.length)) >= 0 || this.loop != 0) && intendetState == LineEvent.Type.START) {
 					if (numRead < 0) {
-						if (backupStream.peek() != null)
-							stream = backupStream.poll();
+						if (nextStream.peek() != null)
+							stream = nextStream.poll();
 						else
-							stream = getAudioStream(audioFile);
+							stream = getAudioStream(this.sound.next());
 						numRead = stream.read(buf, 0, buf.length);
-						initBackupStream();
+						initNextStream();
 						if (this.loop > 0)
 							this.loop--;
 						if (numRead < 0)
@@ -342,10 +345,10 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 //					e.printStackTrace(SoundBoardApp.getErrWriter());
 					e.printStackTrace();
 				}
-			if (this.backupStream.peek() != null) 
-				this.stream = this.backupStream.poll();
+			if (this.nextStream.peek() != null) 
+				this.stream = this.nextStream.poll();
 			else
-				this.stream = getAudioStream(audioFile);
+				this.stream = getAudioStream(this.sound.next());
 		}
 
 		private void fireLineEvent(LineEvent evnt) {
@@ -356,12 +359,12 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 			}
 		}
 
-		public void initBackupStream() {
+		public void initNextStream() {
 			Thread t = new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
-						backupStream.add(getAudioStream(audioFile));
+						nextStream.add(getAudioStream(AudioPlayer.this.sound.next()));
 					} catch (IOException | UnsupportedAudioFileException e) {
 //						e.printStackTrace(SoundBoardApp.getErrWriter());
 						e.printStackTrace();

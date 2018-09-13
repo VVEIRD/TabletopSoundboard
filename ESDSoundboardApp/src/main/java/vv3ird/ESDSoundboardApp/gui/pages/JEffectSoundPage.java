@@ -220,7 +220,7 @@ public class JEffectSoundPage extends Page {
 	public void filterAvailableModel(String filter) {
 		DefaultListModel<Sound> model = dlmAvailable;
 	    for (Sound s : availableSounds) {
-	        if (!s.name.contains(filter)) {
+	        if (!s.getName().contains(filter)) {
 	            if (model.contains(s)) {
 	                model.removeElement(s);
 	            }
@@ -242,7 +242,7 @@ public class JEffectSoundPage extends Page {
 	public void filterSelectedModel(String filter) {
 		DefaultListModel<Sound> model = dlmSelected;
 	    for (Sound s : selectedSounds) {
-	        if (!s.name.contains(filter)) {
+	        if (!s.getName().contains(filter)) {
 	            if (model.contains(s)) {
 	                model.removeElement(s);
 	            }

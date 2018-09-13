@@ -76,5 +76,9 @@ public class SoundBoard {
 	public void save(Path root) {
 		
 	}
+
+	public boolean containsSound(String category, Sound s) {
+		return this.ambience.get(category).stream().anyMatch(sq -> sq.compareTo(s) == 0);
+	}
 	
 }

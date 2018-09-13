@@ -84,19 +84,22 @@ public class JSoundboardFrame extends JFrame {
 	 */
 	public JSoundboardFrame() {
 		super("Soundboard App");
+		pnContent = new PageViewer();
+		pnContent.setOpaque(false);
 		setBackground(ColorScheme.MAIN_BACKGROUND_COLOR);
 		getContentPane().setBackground(ColorScheme.MAIN_BACKGROUND_COLOR);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		setBounds(100, 100, 900, 520);
+		setBounds(100, 100, 910, 520);
 		
 		((JPanel) getContentPane()).setBorder(new EmptyBorder(0, 0, 0, 0));
 		getContentPane().setLayout(new BorderLayout(0, 0));
-		
+
+		getContentPane().add(pnContent, BorderLayout.CENTER);
 		pnSideBar = new JPanel();
 		pnSideBar.setBackground(ColorScheme.SIDE_BAR_BACKGROUND_COLOR);
 		setSize(pnSideBar, 200, 450);
-		getContentPane().add(pnSideBar, BorderLayout.WEST);
+		pnContent.add(pnSideBar, BorderLayout.WEST);
 		pnSideBar.setLayout(null);
 		
 		pnSoundBoards = new JSelectablePanel();
@@ -177,16 +180,7 @@ public class JSoundboardFrame extends JFrame {
 		lblSoundBoards.setForeground(ColorScheme.SIDE_BAR_FOREGROUND_COLOR);
 		lblSounds.setForeground(ColorScheme.SIDE_BAR_FOREGROUND_COLOR);
 		lblOptions.setForeground(ColorScheme.SIDE_BAR_FOREGROUND_COLOR);
-
-		pnContent = new PageViewer();
-		pnContent.setOpaque(false);
-		getContentPane().add(pnContent, BorderLayout.CENTER);
 		
-		pnStatus = new JPanel();
-		getContentPane().add(pnStatus, BorderLayout.SOUTH);
-		pnStatus.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		pnStatus.setBackground(ColorScheme.SIDE_BAR_BACKGROUND_COLOR);
-		setSize(pnStatus, 900, 40);
 		setResizable(false);
 		switchContent();
 	}
@@ -199,9 +193,6 @@ public class JSoundboardFrame extends JFrame {
 		if(pnSoundBoards.isSelected()) {
 			Page p = new JSoundboardPage();
 			pnContent.viewPage(p);
-			JPanel jp = p.getButtonBar();
-			jp.setBackground(ColorScheme.SIDE_BAR_BACKGROUND_COLOR);
-			getContentPane().add(jp, BorderLayout.SOUTH);
 		}
 	}
 

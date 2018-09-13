@@ -14,21 +14,18 @@ public class SoundItem extends AbstractStreamItem {
 	private Sound sound = null;
 
 	public SoundItem(Sound sound) {
-		super(IconHelper.loadImageSafe(sound.coverPath));
+		super(IconHelper.loadImageSafe(sound.getCoverPath()));
 		this.sound = sound;
-		String[] sp = this.sound.filePath.split(File.separator + File.separator);
-		String fileName = sp[sp.length-1];
-		fileName = fileName.substring(0, fileName.lastIndexOf("."));
 		this.setTextPosition(TEXT_POS_CENTER);
-		this.setText(sound.name);
+		this.setText(sound.getName());
 	}
 
 	@Override
 	public void onKeyEvent(KeyEvent event) {
 		if (event.getType() == KeyEvent.Type.RELEASED_CLICKED) {
-			System.out.println("Trigger: " + sound.name);
-			System.out.println("Trigger: " + sound.filePath);
-			if (this.sound.type == null || this.sound.type == Type.AMBIENCE)
+			System.out.println("Trigger: " + sound.getName());
+			System.out.println("Trigger: " + sound.getCurrentFile());
+			if (this.sound.getType() == null || this.sound.getType() == Type.AMBIENCE)
 				AudioApp.playAmbience(this.sound);
 			else
 				AudioApp.playEffect(this.sound);

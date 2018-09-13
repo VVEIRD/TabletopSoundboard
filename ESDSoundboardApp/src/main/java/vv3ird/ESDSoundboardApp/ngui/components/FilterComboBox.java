@@ -39,8 +39,8 @@ public class FilterComboBox extends JComboBox<Sound> {
 
 		List<Sound> filterArray= new ArrayList<Sound>();
 		for (int i = 0; i < array.size(); i++) {
-			if (array.get(i).name.toLowerCase().contains(enteredText.toLowerCase()) 
-					|| array.get(i).tags != null && array.get(i).tags.stream().anyMatch(s -> s.toLowerCase().contains(enteredText.toLowerCase())) ) {
+			if (array.get(i).getName().toLowerCase().contains(enteredText.toLowerCase()) 
+					|| array.get(i).getTags() != null && array.get(i).getTags().stream().anyMatch(s -> s.toLowerCase().contains(enteredText.toLowerCase())) ) {
 				filterArray.add(array.get(i));
 			}
 		}

@@ -156,7 +156,7 @@ public class WrapLayout extends FlowLayout
 		{
 			dim.width -= (hgap + 1);
 		}
-
+		System.out.println("Height: " + dim.getHeight());
 		return dim;
 	}
 	}
