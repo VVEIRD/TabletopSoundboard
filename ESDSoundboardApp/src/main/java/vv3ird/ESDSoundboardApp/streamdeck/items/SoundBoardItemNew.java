@@ -45,17 +45,17 @@ public class SoundBoardItemNew extends FolderItem {
 		int catCount = 0;
 		for (String category : categories) {
 			List<Sound> ambienceSounds = ambience.get(category);
-			StreamItem[] ambienceItems = null;
+			SoundItem[] ambienceItems = null;
 			List<Sound> effectsSounds = effects.get(category);
-			StreamItem[] effectsItems = null;
+			SoundItem[] effectsItems = null;
 			if(ambienceSounds != null && ambienceSounds.size() > 0) {
-				ambienceItems = new StreamItem[ambienceSounds.size()];
+				ambienceItems = new SoundItem[ambienceSounds.size()];
 				for(int i=0;i<ambienceItems.length;i++) {
 					ambienceItems[i] = new SoundItem(ambienceSounds.get(i));
 				}
 			}
 			if(effectsSounds != null && effectsSounds.size() > 0) {
-				effectsItems = new StreamItem[effectsSounds.size()];
+				effectsItems = new SoundItem[effectsSounds.size()];
 				for(int i=0;i<effectsItems.length;i++) {
 					effectsItems[i] = new SoundItem(effectsSounds.get(i));
 				}

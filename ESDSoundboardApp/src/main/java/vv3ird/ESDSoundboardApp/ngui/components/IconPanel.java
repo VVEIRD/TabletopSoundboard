@@ -1,4 +1,4 @@
-package vv3ird.ESDSoundboardApp.gui.elements;
+package vv3ird.ESDSoundboardApp.ngui.components;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;

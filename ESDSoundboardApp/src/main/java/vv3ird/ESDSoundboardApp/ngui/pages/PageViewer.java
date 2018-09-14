@@ -10,7 +10,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import vv3ird.ESDSoundboardApp.gui.pages.JNewSoundPage;
 import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
 
 public class PageViewer extends JPanel {
@@ -32,6 +31,10 @@ public class PageViewer extends JPanel {
 		page = new Page() {
 			@Override
 			public JPanel getButtonBar() {return null;}
+			@Override
+			protected void cancelAction() {}
+			@Override
+			protected void okAction() {}
 		};
 		add(page, BorderLayout.CENTER);
 	}

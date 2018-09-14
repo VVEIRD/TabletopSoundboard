@@ -3,6 +3,7 @@ package vv3ird.ESDSoundboardApp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -64,7 +66,7 @@ public class AudioApp {
 	
 	public static List<Sound> soundLibrary = new LinkedList<>();
 	
-	public static List<SoundBoard> soundboardLibrary = new LinkedList<>();
+	public static Map<String, SoundBoard> soundboardLibrary = new HashMap<>();
 	
 	private static IStreamDeck streamDeck = null;
 	
@@ -232,6 +234,10 @@ public class AudioApp {
 		});
 		if(soundBoardDirs != null) {
 			for (File soundBoardDir : soundBoardDirs) {
+				if(Files.isDirectory(soundBoardDir.toPath()) && soundBoardDir.list().length == 0) {
+					soundBoardDir.delete();
+					continue;
+				}
 				String name = soundBoardDir.getName();
 				Path ambienceRoot = Paths.get(soundBoardDir.toString(), "ambience");
 				Path effectsRoot = Paths.get(soundBoardDir.toString(), "effects");
@@ -253,7 +259,7 @@ public class AudioApp {
 					}
 				}
 				SoundBoard soundBoard = new SoundBoard(name, ambience, effects);
-				soundboardLibrary.add(soundBoard);
+				soundboardLibrary.put(soundBoard.name, soundBoard);
 			}
 		}
 	}
@@ -295,8 +301,9 @@ public class AudioApp {
 			for (File soundPath : soundPaths) {
 				logger.debug("Loading sound: " + soundPath.toString());
 				String soundString;
-				try {
-					byte[] soundBytes = Files.readAllBytes(Paths.get(soundPath.toString()));
+				try (FileInputStream fin = new FileInputStream(soundPath)){
+					byte[] soundBytes = fin.readAllBytes();
+					fin.close();
 					soundString = new String(soundBytes, "UTF-8");
 					Gson gson = new Gson();
 					Sound sound = gson.fromJson(soundString, Sound.class);
@@ -380,10 +387,8 @@ public class AudioApp {
 			saveSounds(ambienceCatPath, sb.getAmbienceSounds(cat));
 			saveSounds(effectsCatPath, sb.getEffectSounds(cat));
 		}
-		if (!soundboardLibrary.contains(sb)) {
-			logger.debug("Adding soundboard: " + sb.name);
-			soundboardLibrary.add(sb);
-		}
+		logger.debug("Adding soundboard: " + sb.name);
+		soundboardLibrary.put(sb.name, sb);
 		if(Files.exists(soundBoardPathBackup)) {
 			Files.walk(soundBoardPathBackup)
 		    .sorted(Comparator.reverseOrder())
@@ -407,7 +412,7 @@ public class AudioApp {
 		}
 		StreamItem[] sbItems = new StreamItem[soundboardLibrary.size()];
 		int sbC = 0;
-		for (SoundBoard sb : soundboardLibrary) {
+		for (SoundBoard sb : soundboardLibrary.values()) {
 			sbItems[sbC++] = new SoundBoardItemNew(sb, null);
 		}
 		PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems);
@@ -419,21 +424,30 @@ public class AudioApp {
 	public static void deleteSoundboard(SoundBoard sb) throws IOException {
 		Path root = configuration.getSoundBoardLibPath();
 		Path soundBoardPath = Paths.get(root.toString(), sb.name);
+		
 		if(Files.exists(soundBoardPath)) {
-			Files.walk(soundBoardPath)
-		    .sorted(Comparator.reverseOrder())
-		    .filter(Files::exists)
-		    .forEach(t -> {
-				try {
-					Files.delete(t);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			});
+			deleteFolder(soundBoardPath.toFile());
 		}
-		soundboardLibrary.remove(sb);
+		soundboardLibrary.remove(sb.name);
 		resetStreamDeckController();
+	}
+	
+	public static void deleteFolder(File folder) {
+	    File[] files = folder.listFiles();
+	    if(files!=null) { //some JVMs return null for empty dirs
+	        for(File f: files) {
+	            if(f.isDirectory()) {
+	                deleteFolder(f);
+	            } else {
+	                boolean suc = f.delete();
+	                if(!suc)
+	                	f.deleteOnExit();
+	            }
+	        }
+	    }
+        boolean suc = folder.delete();
+        if(!suc)
+        	folder.deleteOnExit();
 	}
 
 	private static void saveSounds(Path root, List<Sound> sounds) {
@@ -523,7 +537,7 @@ public class AudioApp {
 						Files.createDirectories(effPath);
 						Files.copy(source, destAudio, StandardCopyOption.REPLACE_EXISTING);
 						Files.copy(audioIcon, desticon, StandardCopyOption.REPLACE_EXISTING);
-						Sound sound = new Sound(name, destAudio.toString(), desticon.toString(), type);
+						Sound sound = new Sound(name, destAudio.toString(), desticon.toString(), type, null);
 						String jsonString = new GsonBuilder().setPrettyPrinting().create().toJson(sound);
 						try {
 							byte[] utf8JsonString = jsonString.getBytes("UTF-8");
@@ -539,7 +553,7 @@ public class AudioApp {
 		}
 	}
 	
-	public static Sound saveNewSound(String name, BufferedImage icon, String audioFile, Sound.Type type) throws IOException {
+	public static Sound saveNewSound(String name, BufferedImage icon, String audioFile, Sound.Type type, String[] tags) throws IOException {
 		Path soundSource = Paths.get(audioFile);
 		String extension = audioFile.substring(audioFile.lastIndexOf("."));
 		Path soundLibPath = AudioApp.getConfiguration().getSoundLibPath();
@@ -550,7 +564,27 @@ public class AudioApp {
 		Files.createDirectories(soundFolder);
 		Files.copy(soundSource, soundFile);
 		ImageIO.write(icon, "PNG", soundIcon.toFile());
-		Sound s = new Sound(name, soundFile.toString(), soundIcon.toString(), type);
+		Sound s = new Sound(name, soundFile.toString(), soundIcon.toString(), type, tags);
+		Sound.save(s, soundJson);
+		soundLibrary.add(s);
+		return s;
+	}
+	
+	public static Sound saveNewSoundplaylist(String name, BufferedImage icon, String[] audioFiles, Sound.Type type, String[] tags) throws IOException {
+		Path soundLibPath = AudioApp.getConfiguration().getSoundLibPath();
+		Path soundFolder = soundLibPath.resolve(name);
+		Path soundJson = soundLibPath.resolve(name + ".json");
+		Path soundIcon = soundFolder.resolve(name + ".png" );
+		Files.createDirectories(soundFolder);
+		for (int i = 0; i < audioFiles.length; i++) {
+			String audioFile = audioFiles[i];
+			Path soundSource = Paths.get(audioFile);
+			String extension = audioFile.substring(audioFile.lastIndexOf("."));
+			Path soundFile = soundFolder.resolve(name + extension );
+			Files.copy(soundSource, soundFile);
+		}
+		ImageIO.write(icon, "PNG", soundIcon.toFile());
+		Sound s = new Sound(name, audioFiles, soundIcon.toString(), type, tags);
 		Sound.save(s, soundJson);
 		soundLibrary.add(s);
 		return s;
@@ -587,11 +621,11 @@ public class AudioApp {
 	}
 	
 	public static SoundBoard getSoundboard(String name) {
-		return soundboardLibrary.stream().filter(s -> s.name.equalsIgnoreCase(name)).findFirst().orElse(null);
+		return soundboardLibrary.get(name);
 	}
 	
 	public static List<SoundBoard> getSoundboardLibrary() {
-		return soundboardLibrary;
+		return new ArrayList<>(soundboardLibrary.values());
 	}
 	
 	public static List<Sound> getSoundLibrary() {
@@ -609,7 +643,7 @@ public class AudioApp {
 	public static void main(String[] args) {
 		StreamItem[] sbItems = new StreamItem[soundboardLibrary.size()];
 		int sbC = 0;
-		for (SoundBoard sb : soundboardLibrary) {
+		for (SoundBoard sb : soundboardLibrary.values()) {
 			sbItems[sbC++] = new SoundBoardItemNew(sb, null);
 		}
 		PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems);

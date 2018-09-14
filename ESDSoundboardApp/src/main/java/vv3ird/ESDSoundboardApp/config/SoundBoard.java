@@ -81,4 +81,8 @@ public class SoundBoard {
 		return this.ambience.get(category).stream().anyMatch(sq -> sq.compareTo(s) == 0);
 	}
 	
+	public SoundBoard clone() {
+		return new SoundBoard(name, new HashMap<>(ambience), new HashMap<>(effects));
+	}
+	
 }

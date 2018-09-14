@@ -2,6 +2,7 @@ package vv3ird.ESDSoundboardApp.ngui.pages;
 
 import javax.swing.JPanel;
 
+import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
@@ -11,18 +12,20 @@ import vv3ird.ESDSoundboardApp.ngui.layout.WrapLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
-import java.awt.Insets;
 
 import javax.swing.JTextField;
 import javax.swing.JViewport;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.FlowLayout;
 
 import javax.swing.SwingConstants;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.rcblum.stream.deck.util.IconHelper;
 import de.rcblum.stream.deck.util.SDImage;
@@ -30,15 +33,24 @@ import de.rcblum.stream.deck.util.SDImage;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.awt.event.ActionEvent;
 
-public class JNewSoundboardPage extends Page {
+public class JCreateSoundboardPage extends Page {
+	
+	private static final long serialVersionUID = -998637210110413189L;
+
+	private static Logger logger = LogManager.getLogger(JCreateSoundboardPage.class);
 
 	private boolean newSoundBoard = true;
+	
+	private String oldSoundBoardName = null;
 	
 	private JTextField tfSoundBoardName;
 	
@@ -49,11 +61,15 @@ public class JNewSoundboardPage extends Page {
 	private Map<String, List<Sound>> themesAmbience = new HashMap<>();
 
 	private SoundBoard sb = null;
+
+	private JButton ok = new JButton("Ok");
+	
+	private JButton cancel = new JButton("Cancel");
 	
 	/**
 	 * Create the panel.
 	 */
-	public JNewSoundboardPage(SoundBoard sb) {
+	public JCreateSoundboardPage(SoundBoard sb) {
 		this.sb = sb;
 		setSize(700, 460);
 		setLayout(null);
@@ -61,6 +77,9 @@ public class JNewSoundboardPage extends Page {
 		newSoundBoard = this.sb == null;
 		if(newSoundBoard)
 			this.sb = new SoundBoard(null);
+		else
+			this.sb = this.sb.clone();
+		oldSoundBoardName = this.sb.name;
 		JLabel lblNewLabel = new JLabel(newSoundBoard ? "New Soundboard" : "Edit Soundboard");
 		lblNewLabel.setVerticalAlignment(SwingConstants.BOTTOM);
 		lblNewLabel.setForeground(ColorScheme.FOREGROUND_COLOR);
@@ -111,8 +130,8 @@ public class JNewSoundboardPage extends Page {
 		JButton btnAddTheme = new JButton("+");
 		btnAddTheme.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JNewSoundboardPage.this.sb.name = tfSoundBoardName.getText();
-				pageViewer.viewPage(new JNewThemePage(JNewSoundboardPage.this.sb, null));
+				JCreateSoundboardPage.this.sb.name = tfSoundBoardName.getText();
+				pageViewer.viewPage(new JNewThemePage(JCreateSoundboardPage.this.sb, null));
 			}
 		});
 		btnAddTheme.setBorderPainted(false);
@@ -120,27 +139,77 @@ public class JNewSoundboardPage extends Page {
 		btnAddTheme.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		btnAddTheme.setBounds(636, 81, 23, 23);
 		add(btnAddTheme);
+		updateThemes();
 	}
 	
-
-	@Override
-	public JPanel getButtonBar() {
-		// TODO Auto-generated method stub
-		return null;
+	protected void okAction() {
+		try {
+			sb.name = tfSoundBoardName.getText();
+			if(oldSoundBoardName != null && !oldSoundBoardName.equalsIgnoreCase(sb.name))
+				AudioApp.deleteSoundboard(new SoundBoard(oldSoundBoardName));
+			AudioApp.saveSoundBoard(sb);
+			pageViewer.back();
+		} catch (IOException e1) {
+			logger.error(e1);
+			JOptionPane.showMessageDialog(null, "Could not save Soundboard: " + e1.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	protected void cancelAction() {
+		pageViewer.back();
 	}
 	
 	@Override
 	public void setPageView(PageViewer pageViewer) {
 		super.setPageView(pageViewer);
+		updateThemes();
+	}
+
+	private void updateThemes() {
 		pnThemes.removeAll();
 		Set<String> categories = this.sb.getCategories();
 		Color frameColor = IconHelper.FRAME_COLOR;
 		IconHelper.FRAME_COLOR = pnThemes.getBackground();
-		SDImage image = IconHelper.createFolderImage(ColorScheme.SIDE_BAR_BACKGROUND_COLOR, true);
+		SDImage image = IconHelper.createFolderImage(ColorScheme.MAIN_BACKGROUND_COLOR, true);
 		for (String cat : categories) {
-			JSoundPanel jsp = new JSoundPanel(IconHelper.addText(image, cat, IconHelper.TEXT_BOTTOM).image, pnThemes.getBackground());
+			final String category = cat;
+			JSoundPanel jsp = new JSoundPanel(IconHelper.addText(image, category, IconHelper.TEXT_BOTTOM).image, pnThemes.getBackground());
+			jsp.addMouseListenerForDelete(new MouseListener() {
+				@Override
+				public void mouseReleased(MouseEvent e) {}
+				@Override
+				public void mousePressed(MouseEvent e) {}
+				@Override
+				public void mouseExited(MouseEvent e) {}
+				@Override
+				public void mouseEntered(MouseEvent e) {}
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					JCreateSoundboardPage.this.sb.removeCategory(category);
+					JCreateSoundboardPage.this.updateThemes();
+				}
+			});
+			jsp.addMouseListener(new MouseListener() {
+				@Override
+				public void mouseReleased(MouseEvent e) {}
+				@Override
+				public void mousePressed(MouseEvent e) {}
+				@Override
+				public void mouseExited(MouseEvent e) {}
+				@Override
+				public void mouseEntered(MouseEvent e) {}
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					JCreateSoundboardPage.this.sb.name = tfSoundBoardName.getText();
+					pageViewer.viewPage(new JNewThemePage(JCreateSoundboardPage.this.sb, category));
+					
+				}
+			});
 			pnThemes.add(jsp);
 		}
+		pnThemes.revalidate();
+		pnThemes.repaint();
 		IconHelper.FRAME_COLOR = frameColor;
 	}
 }

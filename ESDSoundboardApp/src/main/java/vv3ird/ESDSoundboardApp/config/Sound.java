@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,19 +27,17 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	
 	private Type type = Type.AMBIENCE;
 
-	public Sound(String name, String filePath, String coverPath, Type type) {
-		super();
-		this.name = name;
-		this.filePaths = new String[] {filePath};
-		this.coverPath = coverPath;
-		this.type = type;
+	public Sound(String name, String filePath, String coverPath, Type type, String[] tags) {
+		this(name, new String[] {filePath}, coverPath, type, tags);
 	}
 
-	public Sound(String name, String[] filePaths, String coverPath, Type type) {
+	public Sound(String name, String[] filePaths, String coverPath, Type type, String[] tags) {
 		super();
+		this.name = name;
 		this.filePaths = filePaths;
 		this.coverPath = coverPath;
 		this.type = type;
+		this.tags = tags != null ? Arrays.asList(tags) : null;
 	}
 	
 	private void checkLegacy() {

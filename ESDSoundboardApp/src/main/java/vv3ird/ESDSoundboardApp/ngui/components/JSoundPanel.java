@@ -71,8 +71,7 @@ public class JSoundPanel extends ImagePanel {
 		add(btnX);
 	}
 	
-	@Override
-	public synchronized void addMouseListener(MouseListener l) {
+	public synchronized void addMouseListenerForDelete(MouseListener l) {
 		btnX.addMouseListener(l);
 	}
 	

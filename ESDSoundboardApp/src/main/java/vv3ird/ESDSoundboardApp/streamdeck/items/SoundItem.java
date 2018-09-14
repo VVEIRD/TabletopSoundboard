@@ -32,4 +32,7 @@ public class SoundItem extends AbstractStreamItem {
 		}
 	}
 
+	public Sound getSound() {
+		return sound;
+	}
 }

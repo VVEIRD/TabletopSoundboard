@@ -1,4 +1,4 @@
-package vv3ird.ESDSoundboardApp.gui.elements;
+package vv3ird.ESDSoundboardApp.ngui.components;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -43,6 +43,7 @@ public class IconSelectorPanel extends JPanel {
 	}
 		
 	public IconSelectorPanel(BufferedImage image) {
+		setOpaque(false);
 		this.image = image;
 		setPreferredSize(new Dimension(140, 140));
 		setMaximumSize(new Dimension(180, 125));
@@ -59,6 +60,7 @@ public class IconSelectorPanel extends JPanel {
 		add(btnOpenImage);
 		
 		jsZoom = new JSlider();
+		jsZoom.setOpaque(false);
 		jsZoom.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {

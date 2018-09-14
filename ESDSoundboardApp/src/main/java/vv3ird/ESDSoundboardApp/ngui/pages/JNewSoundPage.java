@@ -1,4 +1,4 @@
-package vv3ird.ESDSoundboardApp.gui.pages;
+package vv3ird.ESDSoundboardApp.ngui.pages;
 
 import javax.swing.JPanel;
 
@@ -14,29 +14,25 @@ import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.AppConfiguration;
 import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.Sound.Type;
-import vv3ird.ESDSoundboardApp.config.SoundBoard;
-import vv3ird.ESDSoundboardApp.gui.elements.IconSelectorPanel;
-import vv3ird.ESDSoundboardApp.ngui.pages.Page;
+import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
+import vv3ird.ESDSoundboardApp.ngui.components.IconSelectorPanel;
 import vv3ird.ESDSoundboardApp.player.AudioPlayer;
 
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
-import java.awt.CheckboxGroup;
 import java.awt.Dimension;
 
 import javax.swing.JLabel;
 import java.awt.Font;
-import java.util.Objects;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 import java.awt.event.ActionListener;
@@ -44,22 +40,18 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.awt.event.ActionEvent;
-import java.awt.FlowLayout;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
-import javax.swing.JCheckBox;
 import javax.swing.JRadioButton;
+import javax.swing.SwingConstants;
 
 public class JNewSoundPage extends Page {
+	
+	private static File lastDirectory = null;
 	
 	Logger	logger = LogManager.getLogger(JNewSoundPage.class);
 	
@@ -86,6 +78,8 @@ public class JNewSoundPage extends Page {
 	private AudioPlayer player = null;
 	private IconSelectorPanel iPanel;
 	private JRadioButton rdbtnAmbience;
+	private JPanel pnStatus;
+	private JTextField tfTags;
 
 	/**
 	 * Create the panel.
@@ -93,47 +87,25 @@ public class JNewSoundPage extends Page {
 	public JNewSoundPage() {
 		setLayout(new BorderLayout(0, 0));
 		setSize(new Dimension(480, 290));
-		
-		JPanel panel_4 = new JPanel();
-		add(panel_4, BorderLayout.CENTER);
-		panel_4.setLayout(new BorderLayout(0, 0));
+		setOpaque(false);
+
 		dlm = new DefaultListModel<>();
 		
-		JPanel panel_1 = new JPanel();
-		panel_4.add(panel_1, BorderLayout.SOUTH);
-		panel_1.setLayout(new BorderLayout(0, 0));
-		
-		JPanel panel_2 = new JPanel();
-		panel_1.add(panel_2, BorderLayout.WEST);
+		pnStatus = new JPanel();
+//		panel_4.add(pnStatus, BorderLayout.SOUTH);
+		pnStatus.setLayout(new BorderLayout(0, 0));
 		
 		JButton btnBack = new JButton("Back");
-		panel_2.add(btnBack);
-		
-		JPanel panel_3 = new JPanel();
-		panel_1.add(panel_3, BorderLayout.EAST);
+		pnStatus.add(btnBack, BorderLayout.WEST);
 		
 		btnFinish = new JButton("Finish");
-		btnFinish.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					BufferedImage icon = iPanel.getImage();
-					icon = icon == null ? DEFAULT : icon;
-					String name = tfName.getText().trim();
-					String audio = tfAudio.getText();
-					Sound.Type type = rdbtnAmbience.isSelected() ? Type.AMBIENCE : Type.EFFECT;
-					AudioApp.saveNewSound(name, icon, audio,  type);
-				} catch (IOException e1) {
-					logger.error(e1);
-					JOptionPane.showMessageDialog(null, "Could not save Soundboard: " + e1.getMessage(), "Error",
-                            JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
-		panel_3.add(btnFinish);
+		pnStatus.add(btnFinish, BorderLayout.EAST);
+		pnStatus.setOpaque(false);
 		
 		JPanel panel = new JPanel();
-		panel_4.add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
+		panel.setOpaque(false);
+		add(panel, BorderLayout.CENTER);
 		
 		JLabel lblName = new JLabel("Name");
 		lblName.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -141,6 +113,10 @@ public class JNewSoundPage extends Page {
 		panel.add(lblName);
 		
 		tfName = new JTextField();
+		tfName.setForeground(ColorScheme.FOREGROUND_COLOR);
+		tfName.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		tfName.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		tfName.setBackground(ColorScheme.MAIN_BACKGROUND_COLOR.darker());
 		tfName.getDocument().addDocumentListener(new DocumentListener() {
 			
 			@Override
@@ -158,7 +134,7 @@ public class JNewSoundPage extends Page {
 				assertName();				
 			}
 		});
-		tfName.setBounds(10, 22, 400, 20);
+		tfName.setBounds(10, 22, 400, 25);
 		panel.add(tfName);
 		tfName.setColumns(10);
 		
@@ -167,17 +143,23 @@ public class JNewSoundPage extends Page {
 		panel.add(lblNameOk);
 		
 		iPanel = new IconSelectorPanel(DEFAULT);
-		iPanel.setBounds(10, 46, 160, 147);
+		iPanel.setBounds(10, 58, 160, 151);
 		panel.add(iPanel);
 		
 		tfAudio = new JTextField();
+		tfAudio.setForeground(ColorScheme.FOREGROUND_COLOR);
+		tfAudio.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		tfAudio.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		tfAudio.setBackground(ColorScheme.MAIN_BACKGROUND_COLOR.darker());
 		tfAudio.setEditable(false);
-		tfAudio.setBounds(180, 53, 260, 20);
+		tfAudio.setBounds(180, 58, 260, 25);
 		panel.add(tfAudio);
 		tfAudio.setColumns(10);
 		
 		JButton btnSelectAudio = new JButton("Select Audio");
-		btnSelectAudio.setBounds(180, 84, 260, 23);
+		btnSelectAudio.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		btnSelectAudio.setOpaque(false);
+		btnSelectAudio.setBounds(180, 94, 260, 23);
 		panel.add(btnSelectAudio);
 
 		btnSelectAudio.addActionListener(new ActionListener() {
@@ -186,6 +168,7 @@ public class JNewSoundPage extends Page {
 			}
 		});
 		JButton btnPlay = new JButton("Play");
+		btnPlay.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(player != null && player.isActive())
@@ -206,7 +189,7 @@ public class JNewSoundPage extends Page {
 					player.close();
 				File file = new File(tfAudio.getText());
 				if(file.exists()) {
-					player = new AudioPlayer(new Sound(tfName.getText(), file.toString(), null, rdbtnAmbience.isSelected() ? Type.AMBIENCE : Type.EFFECT), AudioApp.getConfiguration().getMixerInfo());
+					player = new AudioPlayer(new Sound(tfName.getText(), file.toString(), null, rdbtnAmbience.isSelected() ? Type.AMBIENCE : Type.EFFECT, null), AudioApp.getConfiguration().getMixerInfo());
 					try {
 						player.open();
 						float gain = AppConfiguration.linearToDecibel(AudioApp.getConfiguration().masterGain) + 2;
@@ -222,36 +205,50 @@ public class JNewSoundPage extends Page {
 				}
 			}
 		});
-		btnPlay.setBounds(180, 118, 91, 45);
+		btnPlay.setBounds(180, 128, 91, 45);
 		panel.add(btnPlay);
 		
 		rdbtnAmbience = new JRadioButton("Ambience");
-		rdbtnAmbience.setBounds(277, 117, 109, 23);
+		rdbtnAmbience.setOpaque(false);
+		rdbtnAmbience.setBounds(277, 124, 109, 23);
 		panel.add(rdbtnAmbience);
 		rdbtnAmbience.setSelected(true);
 		
 		JRadioButton rdbtnEffect = new JRadioButton("Effect");
-		rdbtnEffect.setBounds(277, 140, 109, 23);
+		rdbtnEffect.setOpaque(false);
+		rdbtnEffect.setBounds(277, 147, 109, 23);
 		panel.add(rdbtnEffect);
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(rdbtnAmbience);
 		bg.add(rdbtnEffect);
 		
-		btnBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				getPageViewer().back();
-			}
-		});
-
+		tfTags = new JTextField();
+		tfTags.setForeground(ColorScheme.FOREGROUND_COLOR);
+		tfTags.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		tfTags.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		tfTags.setBackground(ColorScheme.MAIN_BACKGROUND_COLOR.darker());
+		tfTags.setBounds(180, 184, 260, 25);
+		panel.add(tfTags);
+		tfTags.setColumns(10);
+		
+		JLabel lblTags = new JLabel("Tags");
+		lblTags.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblTags.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblTags.setBounds(394, 171, 46, 11);
+		panel.add(lblTags);
+		
 	}
 
 	private void openSound() {
 		final JFileChooser fc = new JFileChooser();
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fc.setFileFilter(new FileNameExtensionFilter("Audio files", new String[] {"mp3", "wav"}));
+		if(lastDirectory != null)
+			fc.setCurrentDirectory(lastDirectory);
 		int returnValue = fc.showOpenDialog(this);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = fc.getSelectedFile();
+			lastDirectory = selectedFile.getParentFile();
 			Mp3File song;
 			if(selectedFile.toString().toLowerCase().endsWith(".mp3"))
 				try {
@@ -291,10 +288,27 @@ public class JNewSoundPage extends Page {
 		lblNameOk.validate();
 		lblNameOk.repaint();
 	}
-
+	
 	@Override
-	public JPanel getButtonBar() {
-		// TODO Auto-generated method stub
-		return null;
+	protected void okAction() {
+		try {
+			BufferedImage icon = iPanel.getImage();
+			icon = icon == null ? DEFAULT : icon;
+			String name = tfName.getText().trim();
+			String audio = tfAudio.getText();
+			String[] tags =  tfTags.getText().split(" ");
+			Sound.Type type = rdbtnAmbience.isSelected() ? Type.AMBIENCE : Type.EFFECT;
+			AudioApp.saveNewSound(name, icon, audio,  type, tags);
+			pageViewer.back();
+		} catch (IOException e1) {
+			logger.error(e1);
+			JOptionPane.showMessageDialog(null, "Could not save Soundboard: " + e1.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	@Override
+	protected void cancelAction() {
+		getPageViewer().back();
 	}
 }

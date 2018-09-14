@@ -26,12 +26,15 @@ import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.ngui.components.JSelectablePanel;
 import vv3ird.ESDSoundboardApp.ngui.layout.UIColumnLayout;
+import vv3ird.ESDSoundboardApp.ngui.pages.JSoundPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.JSoundboardPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.Page;
 import vv3ird.ESDSoundboardApp.ngui.pages.PageViewer;
 import vv3ird.ESDSoundboardApp.ngui.soundboard.JSoundBoardPanel;
 
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
 import java.awt.Color;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
@@ -192,6 +195,10 @@ public class JSoundboardFrame extends JFrame {
 	private void displaySoundBoards() {
 		if(pnSoundBoards.isSelected()) {
 			Page p = new JSoundboardPage();
+			pnContent.viewPage(p);
+		}
+		else if(pnSounds.isSelected()) {
+			Page p = new JSoundPage();
 			pnContent.viewPage(p);
 		}
 	}

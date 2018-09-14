@@ -35,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -46,8 +47,14 @@ public class JSoundBoardPanel extends JPanel {
 	private SoundBoard soundBoard = null;
 
 	private int height = 140;
+	
+	JLabel lblSoundboardname;
 
 	private JPanel pnThemes;
+	
+	private JLabel btnX;
+	
+	private MouseListener ml = null;
 
 	public JSoundBoardPanel(SoundBoard soundBoard, boolean lightBackGround) {
 		this.soundBoard = Objects.requireNonNull(soundBoard);
@@ -55,12 +62,13 @@ public class JSoundBoardPanel extends JPanel {
 		setBackground(lightBackGround ? ColorScheme.MAIN_BACKGROUND_COLOR.darker() : ColorScheme.SIDE_BAR_BACKGROUND_COLOR);
 		setLayout(null);
 
-		JLabel lblSoundboardname = new JLabel(soundBoard.name);
+		lblSoundboardname = new JLabel(soundBoard.name);
 		lblSoundboardname.setForeground(Color.LIGHT_GRAY.brighter() );
 		lblSoundboardname.setVerticalAlignment(SwingConstants.TOP);
 		lblSoundboardname.setFont(new Font("Segoe UI", lblSoundboardname.getFont().getStyle() & ~Font.BOLD & ~Font.ITALIC, 14));
 		lblSoundboardname.setHorizontalAlignment(SwingConstants.LEFT);
-		lblSoundboardname.setBounds(10, 10, 430, 23);
+		lblSoundboardname.setBounds(10, 10, 300, 23);
+		lblSoundboardname.setOpaque(false);
 		add(lblSoundboardname);
 		pnThemes = new JPanel();
 		pnThemes.setOpaque(false);
@@ -98,6 +106,48 @@ public class JSoundBoardPanel extends JPanel {
 		setPreferredSize(new Dimension((int)super.getSize().getWidth(), height));
 		setMaximumSize(new Dimension((int)super.getSize().getWidth(), height));
 		setMinimumSize(new Dimension((int)super.getSize().getWidth(), height));
+		btnX = new JLabel("X");
+		btnX.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+		btnX.setForeground(ColorScheme.FOREGROUND_COLOR);
+		btnX.setBounds(getWidth()-25, 0, 23, 23);
+		btnX.setOpaque(false);
+		add(btnX);
+		addComponentListener(new ComponentListener() {
+			@Override
+			public void componentShown(ComponentEvent e) {}
+			@Override
+			public void componentResized(ComponentEvent e) {
+				btnX.setBounds((int)JSoundBoardPanel.super.getSize().getWidth()-23, 0, 23, 23);
+			}
+			@Override
+			public void componentMoved(ComponentEvent e) {}
+			@Override
+			public void componentHidden(ComponentEvent e) {}
+		});
+	}
+	
+	public synchronized void addMouseListenerForDelete(MouseListener l) {
+		btnX.addMouseListener(l);
+	}
+	
+	@Override
+	public synchronized void addMouseListener(MouseListener l) {
+		super.addMouseListener(l);
+		ml = l;
+		pnThemes.addMouseListener(ml);
+		lblSoundboardname.addMouseListener(ml);
+		for(int i=0; i<pnThemes.getComponentCount();i++)
+			pnThemes.getComponent(i).addMouseListener(ml);
+	}
+	
+	@Override
+	public synchronized void removeMouseListener(MouseListener l) {
+		super.removeMouseListener(l);
+		pnThemes.removeMouseListener(ml);
+		lblSoundboardname.removeMouseListener(ml);
+		for(int i=0; i<pnThemes.getComponentCount();i++)
+			pnThemes.getComponent(i).removeMouseListener(ml);
+		ml = null;
 	}
 	
 	@Override

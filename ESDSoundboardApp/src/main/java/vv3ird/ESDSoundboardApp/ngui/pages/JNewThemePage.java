@@ -40,7 +40,7 @@ public class JNewThemePage extends Page {
 	
 	private static final long serialVersionUID = -6433885518054038664L;
 
-	private JTextField textField;
+	private JTextField tfThemeName;
 	
 	private JPanel pnAmbience = null;
 	
@@ -66,11 +66,13 @@ public class JNewThemePage extends Page {
 	 * Create the panel.
 	 */
 	public JNewThemePage(SoundBoard soundBoard, String themeName) {
-		this.soundBoard = soundBoard;
-		this.themeName  = themeName;
 		setSize(700, 450);
 		setLayout(null);
 		setBackground(ColorScheme.MAIN_BACKGROUND_COLOR);
+		
+		this.soundBoard = soundBoard;
+		this.themeName  = themeName;
+		
 		JLabel lblNewLabel = new JLabel("New Theme");
 		lblNewLabel.setVerticalAlignment(SwingConstants.BOTTOM);
 		lblNewLabel.setForeground(ColorScheme.FOREGROUND_COLOR);
@@ -78,14 +80,14 @@ public class JNewThemePage extends Page {
 		lblNewLabel.setBounds(10, 11, 83, 30);
 		add(lblNewLabel);
 		
-		textField = new JTextField(themeName);
-		textField.setForeground(ColorScheme.FOREGROUND_COLOR);
-		textField.setFont(new Font("Segoe UI", textField.getFont().getStyle() & ~Font.BOLD & ~Font.ITALIC, 14));
-		textField.setBounds(10, 40, 680, 30);
-		textField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		textField.setBackground(ColorScheme.MAIN_BACKGROUND_COLOR.darker());
-		add(textField);
-		textField.setColumns(10);
+		tfThemeName = new JTextField(themeName);
+		tfThemeName.setForeground(ColorScheme.FOREGROUND_COLOR);
+		tfThemeName.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		tfThemeName.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		tfThemeName.setBackground(ColorScheme.MAIN_BACKGROUND_COLOR.darker());
+		tfThemeName.setBounds(10, 40, 680, 30);
+		add(tfThemeName);
+		tfThemeName.setColumns(10);
 		
 		//
 		// AMBIENCE FIELD
@@ -159,25 +161,8 @@ public class JNewThemePage extends Page {
 					final Sound s = (Sound)cbAmbeince.getSelectedItem();
 					if(!effectSounds.containsKey(s)) {
 						System.out.println("Adding sound: " + s);
-						final JSoundPanel sp = new JSoundPanel(s, pnEffect.getBackground());
+						final JSoundPanel sp = createSoundPanel(s, pnEffect, effectSounds);
 						effectSounds.put(s, sp);
-						sp.addMouseListener(new MouseListener() {
-							@Override
-							public void mouseReleased(MouseEvent e) {}
-							@Override
-							public void mousePressed(MouseEvent e) {}
-							@Override
-							public void mouseExited(MouseEvent e) {}
-							@Override
-							public void mouseEntered(MouseEvent e) {}
-							@Override
-							public void mouseClicked(MouseEvent e) {
-								effectSounds.remove(s);
-								pnEffect.remove(sp);
-								pnEffect.revalidate();
-								pnEffect.repaint();
-							}
-						});
 						pnEffect.add(sp);
 						pnEffect.revalidate();
 						pnEffect.repaint();
@@ -210,25 +195,8 @@ public class JNewThemePage extends Page {
 					final Sound s = (Sound)cbAmbeince.getSelectedItem();
 					if(!ambienceSounds.containsKey(s)) {
 						System.out.println("Adding sound: " + s);
-						final JSoundPanel sp = new JSoundPanel(s, pnAmbience.getBackground());
+						final JSoundPanel sp = createSoundPanel(s, pnAmbience, ambienceSounds);
 						ambienceSounds.put(s, sp);
-						sp.addMouseListener(new MouseListener() {
-							@Override
-							public void mouseReleased(MouseEvent e) {}
-							@Override
-							public void mousePressed(MouseEvent e) {}
-							@Override
-							public void mouseExited(MouseEvent e) {}
-							@Override
-							public void mouseEntered(MouseEvent e) {}
-							@Override
-							public void mouseClicked(MouseEvent e) {
-								ambienceSounds.remove(s);
-								pnAmbience.remove(sp);
-								pnAmbience.revalidate();
-								pnAmbience.repaint();
-							}
-						});
 						pnAmbience.add(sp);
 						pnAmbience.revalidate();
 						pnAmbience.repaint();
@@ -287,6 +255,29 @@ public class JNewThemePage extends Page {
 		});
 		cancel.setBorderPainted(false);
 		cancel.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
+		//
+		// DATA
+		//
+		if(this.themeName != null && this.soundBoard.getAmbienceSounds(this.themeName) != null) {
+			List<Sound> amb = this.soundBoard.getAmbienceSounds(this.themeName);
+			for (Sound sound : amb) {
+				final JSoundPanel sp = createSoundPanel(sound, pnAmbience, ambienceSounds);
+				ambienceSounds.put(sound, sp);
+				pnAmbience.add(sp);
+				pnAmbience.revalidate();
+				pnAmbience.repaint();
+			}
+		}
+		if(this.themeName != null && this.soundBoard.getEffectSounds(this.themeName) != null) {
+			List<Sound> amb = this.soundBoard.getEffectSounds(this.themeName);
+			for (Sound sound : amb) {
+				final JSoundPanel sp = createSoundPanel(sound, pnEffect, effectSounds);
+				effectSounds.put(sound, sp);
+				pnEffect.add(sp);
+				pnEffect.revalidate();
+				pnEffect.repaint();
+			}
+		}
 	}
 
 	@Override
@@ -301,10 +292,32 @@ public class JNewThemePage extends Page {
 		bb.add(ok);
 		return bb;
 	}
+
+	private JSoundPanel createSoundPanel(final Sound s, JPanel panel, Map<Sound, JSoundPanel> sounds) {
+		final JSoundPanel sp = new JSoundPanel(s, panel.getBackground());
+		sp.addMouseListenerForDelete(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+			@Override
+			public void mousePressed(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				sounds.remove(s);
+				panel.remove(sp);
+				panel.revalidate();
+				panel.repaint();
+			}
+		});
+		return sp;
+	}
 	
 	public void okAction() {
-		if(!textField.getText().trim().isEmpty()) {
-			String newName = textField.getText();
+		if(!tfThemeName.getText().trim().isEmpty()) {
+			String newName = tfThemeName.getText();
 			if(!newName.trim().isEmpty()) {
 				if(themeName != null)
 					soundBoard.removeCategory(themeName);
