@@ -65,13 +65,13 @@ public class IconSelectorPanel extends JPanel {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				BufferedImage b = getImage();
-				if(b != null) {
+				/*if(b != null) {
 					try {
 						ImageIO.write(b, "PNG", new File("output.png"));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				}
+				}*/
 			}
 		});
 		jsZoom.setValue(100);
