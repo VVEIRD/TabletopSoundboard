@@ -1,10 +1,6 @@
 # ESD Soundboard App
 Soundboard App for the Elgato Stream Deck (ESD from now on).
 
-It is written in Java and comes prepackaged with the openjdk 10.
-
-With this release you can Manage your Sounds and Soundboards.
-
 ## Managing sounds
 
 In the Sound menu you can manage all sounds added to the App. Removal of sounds is not implemented yet:
