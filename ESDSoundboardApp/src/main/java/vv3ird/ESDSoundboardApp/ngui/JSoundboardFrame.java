@@ -8,6 +8,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import de.rcblum.stream.deck.device.SoftStreamDeck;
+
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -47,11 +50,12 @@ public class JSoundboardFrame extends JFrame {
 	private JLabel lblSoundBoards;
 	private JSelectablePanel pnSounds;
 	private JLabel lblSounds;
-	private JSelectablePanel pn;
+	private JSelectablePanel pnOptions;
 	private JLabel lblOptions;
 	private JScrollPane scrollPane;
 	private PageViewer pnContent;
 	private JPanel pnStatus;
+	private JLabel lblShowSoftdecks;
 
 	/**
 	 * Launch the application.
@@ -130,55 +134,54 @@ public class JSoundboardFrame extends JFrame {
 		lblSounds.setBounds(10, 0, 180, 40);
 		pnSounds.add(lblSounds);
 		
-		pn = new JSelectablePanel();
-		pn.setLayout(null);
-		pn.setBackground(new Color(0, 81, 108));
-		pn.setBounds(0, 80, 200, 40);
-		pnSideBar.add(pn);
+		pnOptions = new JSelectablePanel();
+		pnOptions.setLayout(null);
+		pnOptions.setBackground(new Color(0, 81, 108));
+		pnOptions.setBounds(0, 80, 200, 40);
+		JSelectablePanel.JSelectablePanelGroup pnGroup = new JSelectablePanel.JSelectablePanelGroup();
+		pnGroup.add(pnSoundBoards);
+		pnGroup.add(pnSounds);
+		pnSideBar.add(pnOptions);
+		
+		JSelectablePanel pnDecks = new JSelectablePanel();
+		pnDecks.setSelected(true);
+		pnDecks.addSelectionListener(new JSelectablePanel.SelectionListener() {
+			
+			@Override
+			public void selectionChanged(JSelectablePanel source, boolean newValue) {
+				if(newValue)
+					SoftStreamDeck.showDecks();
+				else
+					SoftStreamDeck.hideDecks();
+			}
+		});
+		pnDecks.setLayout(null);
+		pnDecks.setBounds(0, 410, 200, 40);
+		pnSideBar.add(pnDecks);
+		
+		lblShowSoftdecks = new JLabel("Show SoftDecks");
+		lblShowSoftdecks.setOpaque(false);
+		lblShowSoftdecks.setHorizontalAlignment(SwingConstants.CENTER);
+		lblShowSoftdecks.setForeground(Color.LIGHT_GRAY);
+		lblShowSoftdecks.setBounds(10, 0, 180, 40);
+		pnDecks.add(lblShowSoftdecks);
 		
 		lblOptions = new JLabel("Options");
 		lblOptions.setOpaque(false);
 		lblOptions.setHorizontalAlignment(SwingConstants.CENTER);
 		lblOptions.setBounds(10, 0, 180, 40);
-		MouseListener ml = new MouseListener() {
+		JSelectablePanel.SelectionListener sl = new JSelectablePanel.SelectionListener() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				mouseClicked(e);
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (e.getSource() == JSoundboardFrame.this.pnSoundBoards) {
-					JSoundboardFrame.this.pnSounds.setSelected(false);
-					JSoundboardFrame.this.pn.setSelected(false);
-					JSoundboardFrame.this.pnSoundBoards.setSelected(true);
-				} 
-				else if (e.getSource() == JSoundboardFrame.this.pn) {
-					JSoundboardFrame.this.pnSounds.setSelected(false);
-					JSoundboardFrame.this.pnSoundBoards.setSelected(false);
-					JSoundboardFrame.this.pn.setSelected(true);
+			public void selectionChanged(JSelectablePanel source, boolean newValue) {
+				if(newValue) {
+					switchContent();
 				}
-				else if (e.getSource() == JSoundboardFrame.this.pnSounds) {
-					JSoundboardFrame.this.pn.setSelected(false);
-					JSoundboardFrame.this.pnSoundBoards.setSelected(false);
-					JSoundboardFrame.this.pnSounds.setSelected(true);
-				}
-				switchContent();
 			}
 		};
-		pn.add(lblOptions);
-		this.pnSounds.addMouseListener(ml);
-		this.pnSoundBoards.addMouseListener(ml);
-		this.pn.addMouseListener(ml);
+		pnOptions.add(lblOptions);
+		this.pnSounds.addSelectionListener(sl);
+		this.pnSoundBoards.addSelectionListener(sl);
+//		this.pnOptions.addSelectionListener(sl);
 		JSoundboardFrame.this.pnSoundBoards.setSelected(true);
 		lblSoundBoards.setForeground(ColorScheme.SIDE_BAR_FOREGROUND_COLOR);
 		lblSounds.setForeground(ColorScheme.SIDE_BAR_FOREGROUND_COLOR);
@@ -193,14 +196,19 @@ public class JSoundboardFrame extends JFrame {
 	}
 
 	private void displaySoundBoards() {
-		if(pnSoundBoards.isSelected()) {
-			Page p = new JSoundboardPage();
-			pnContent.viewPage(p);
-		}
-		else if(pnSounds.isSelected()) {
-			Page p = new JSoundPage();
-			pnContent.viewPage(p);
-		}
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (pnSoundBoards.isSelected()) {
+					Page p = new JSoundboardPage();
+					pnContent.viewPage(p);
+				} else if (pnSounds.isSelected()) {
+					Page p = new JSoundPage();
+					pnContent.viewPage(p);
+				}
+			}
+
+		});
 	}
 
 	private void setSize(Component comp, int width, int height) {

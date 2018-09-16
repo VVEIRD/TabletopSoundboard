@@ -49,7 +49,6 @@ public class JNewThemePage extends Page {
 	private JComboBox<Sound> cbAmbeince;
 	private JComboBox<Sound> cbEffects;
 	private JButton btnAddAmbience;
-	private JButton btnRemoveAMbience;
 	
 	private Map<Sound, JSoundPanel> ambienceSounds = new HashMap<>();
 	
@@ -134,26 +133,6 @@ public class JNewThemePage extends Page {
 		lblAmbience.setBounds(10, 80, 163, 30);
 		add(lblAmbience);
 		
-		JButton btnRemoveEffect = new JButton("-");
-		btnRemoveEffect.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(cbEffects.getSelectedItem() != null && cbEffects.getSelectedItem() instanceof Sound) {
-					final Sound s = (Sound)cbEffects.getSelectedItem();
-					if(effectSounds.containsKey(s)) {
-						pnEffect.add(effectSounds.get(s));
-						effectSounds.remove(s);
-						pnEffect.revalidate();
-						pnEffect.repaint();
-					}
-				}
-			}
-		});
-//		btnRemove.setOpaque(true);
-		btnRemoveEffect.setBounds(667, 421, 23, 23);
-		btnRemoveEffect.setBorder(BorderFactory.createLineBorder(ColorScheme.MAIN_BACKGROUND_COLOR.darker(), 2));
-		btnRemoveEffect.setBorderPainted(false);
-		add(btnRemoveEffect);
-		
 		JButton btnAddEffect = new JButton("+");
 		btnAddEffect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -172,7 +151,7 @@ public class JNewThemePage extends Page {
 		});
 		btnAddEffect.setBorderPainted(false);
 		btnAddEffect.setBorder(BorderFactory.createLineBorder(ColorScheme.MAIN_BACKGROUND_COLOR.darker(), 2));
-		btnAddEffect.setBounds(634, 421, 23, 23);
+		btnAddEffect.setBounds(667, 421, 23, 23);
 		add(btnAddEffect);
 		
 		lblSoundBoardName = new JLabel(this.soundBoard.name);
@@ -206,35 +185,16 @@ public class JNewThemePage extends Page {
 		});
 		btnAddAmbience.setBorderPainted(false);
 		btnAddAmbience.setBorder(BorderFactory.createLineBorder(ColorScheme.MAIN_BACKGROUND_COLOR.darker(), 2));
-		btnAddAmbience.setBounds(284, 421, 23, 23);
+		btnAddAmbience.setBounds(317, 421, 23, 23);
 		add(btnAddAmbience);
-		
-		btnRemoveAMbience = new JButton("-");
-		btnRemoveAMbience.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(cbAmbeince.getSelectedItem() != null && cbAmbeince.getSelectedItem() instanceof Sound) {
-					final Sound s = (Sound)cbAmbeince.getSelectedItem();
-					if(ambienceSounds.containsKey(s)) {
-						pnAmbience.add(ambienceSounds.get(s));
-						ambienceSounds.remove(s);
-						pnAmbience.revalidate();
-						pnAmbience.repaint();
-					}
-				}
-			}
-		});
-		btnRemoveAMbience.setBorderPainted(false);
-		btnRemoveAMbience.setBorder(BorderFactory.createLineBorder(ColorScheme.MAIN_BACKGROUND_COLOR.darker(), 2));
-		btnRemoveAMbience.setBounds(317, 421, 23, 23);
-		add(btnRemoveAMbience);
 
 		cbAmbeince = new FilterComboBox(AudioApp.getAmbienceSounds());
-		cbAmbeince.setBounds(10, 421, 265, 22);
+		cbAmbeince.setBounds(10, 421, 297, 22);
 		add(cbAmbeince);
 		
 		
 		cbEffects = new FilterComboBox(AudioApp.getEffectSounds());
-		cbEffects.setBounds(359, 421, 265, 22);
+		cbEffects.setBounds(359, 421, 298, 22);
 		add(cbEffects);
 
 		ok.setFont(new Font("Segoe UI", Font.PLAIN, 12));

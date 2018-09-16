@@ -27,7 +27,7 @@ public class AppConfiguration {
 
 	public String soundLib = "soundlib";
 	
-	public String soundBoardLib = "soundboards";
+	public String soundBoardLib = "soundboards"; 
 	
 	public String audioInterface = null;
 	

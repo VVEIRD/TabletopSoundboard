@@ -59,7 +59,7 @@ public class JSoundBoardPanel extends JPanel {
 	public JSoundBoardPanel(SoundBoard soundBoard, boolean lightBackGround) {
 		this.soundBoard = Objects.requireNonNull(soundBoard);
 		this.setLayout(null);
-		setBackground(lightBackGround ? ColorScheme.MAIN_BACKGROUND_COLOR.darker() : ColorScheme.SIDE_BAR_BACKGROUND_COLOR);
+		setBackground(lightBackGround ? ColorScheme.MAIN_BACKGROUND_COLOR : ColorScheme.MAIN_BACKGROUND_COLOR.darker());
 		setLayout(null);
 
 		lblSoundboardname = new JLabel(soundBoard.name);
@@ -86,13 +86,15 @@ public class JSoundBoardPanel extends JPanel {
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		List<String> catNames = new ArrayList<>(this.soundBoard.getCategories());
 		for(int i=0; i<catNames.size(); i++) {
-			boolean applyOldVal = IconHelper.APPLY_FRAME;
-			IconHelper.APPLY_FRAME = false;
+			Color oldVal = IconHelper.FRAME_COLOR;
+			IconHelper.FRAME_COLOR = getBackground();
+			IconHelper.TEXT_BOX_ALPHA_VALUE = 170;
 			String catName = catNames.get(i);
 			FolderItem fi = new FolderItem(catName, null, new StreamItem[0]);
-			fi.setIcon(IconHelper.createFolderImage(getBackground(), false));
+			fi.setIcon(IconHelper.createFolderImage(lightBackGround ? getBackground().darker() : getBackground().brighter(), false));
 			JLabel jl = new JLabel(new ImageIcon(fi.getIcon().image));
-			IconHelper.APPLY_FRAME = applyOldVal;
+			IconHelper.FRAME_COLOR = oldVal;
+			IconHelper.TEXT_BOX_ALPHA_VALUE = 200;
 			jl.setSize(new Dimension(72, 72));
 			pnThemes.add(jl);
 		}

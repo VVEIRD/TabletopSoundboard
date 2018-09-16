@@ -96,15 +96,12 @@ public class AudioApp {
 		}
 	}
 
-	public static SDImage FOLDER_ICON = IconHelper.loadImageSafe("icons" + File.separator + "folder.png");
-	public static SDImage AUDIO_ICON = IconHelper.loadImageSafe("icons" + File.separator + "audio.png");
-	public static SDImage BACK_ICON = IconHelper.loadImageSafe("icons" + File.separator + "back.png");
-
 	public final static StopItem STOP_ITEM = new StopItem();
 	
 	public final static StatusAmbienceItem AMBIENCE_STATUS_ITEM =  new StatusAmbienceItem();
 		
 	public static void playAmbience(Sound sound) {
+		sound.resetCurrentFile();
 		AudioPlayer player = new AudioPlayer(sound, configuration.getMixerInfo());
 		STOP_ITEM.setRollingText(sound.getName());
 		try {
@@ -347,7 +344,7 @@ public class AudioApp {
 						Files.createDirectories(backupPath.getParent());
 					if(!Files.isDirectory(t))
 						Files.copy(t, backupPath, StandardCopyOption.REPLACE_EXISTING);
-					System.out.println(t);
+					//System.out.println(t);
 					if(!t.equals(ambiencePath))
 						Files.delete(t);
 				} catch (IOException e) {
@@ -367,7 +364,7 @@ public class AudioApp {
 						Files.createDirectories(backupPath.getParent());
 					if(!Files.isDirectory(t))
 						Files.copy(t, backupPath, StandardCopyOption.REPLACE_EXISTING);
-					System.out.println(t);
+					//System.out.println(t);
 					if(!t.equals(effectsPath))
 						Files.delete(t);
 				} catch (IOException e) {

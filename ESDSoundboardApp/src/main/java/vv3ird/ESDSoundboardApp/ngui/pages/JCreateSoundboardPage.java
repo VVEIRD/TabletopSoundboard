@@ -3,7 +3,6 @@ package vv3ird.ESDSoundboardApp.ngui.pages;
 import javax.swing.JPanel;
 
 import vv3ird.ESDSoundboardApp.AudioApp;
-import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
 import vv3ird.ESDSoundboardApp.ngui.components.JSoundPanel;
@@ -56,16 +55,8 @@ public class JCreateSoundboardPage extends Page {
 	
 	private JPanel pnThemes = null;
 	
-	private Map<String, List<Sound>> themesEffect = new HashMap<>();
-	
-	private Map<String, List<Sound>> themesAmbience = new HashMap<>();
-
 	private SoundBoard sb = null;
 
-	private JButton ok = new JButton("Ok");
-	
-	private JButton cancel = new JButton("Cancel");
-	
 	/**
 	 * Create the panel.
 	 */
@@ -96,7 +87,7 @@ public class JCreateSoundboardPage extends Page {
 		add(tfSoundBoardName);
 		tfSoundBoardName.setColumns(10);
 		pnThemes = new JPanel();
-		pnThemes.setBackground(getBackground().brighter());
+		pnThemes.setBackground(ColorScheme.MAIN_BACKGROUND_COLOR.brighter());
 		pnThemes.setLayout(new WrapLayout(FlowLayout.LEFT));
 		JViewport viewport = new JViewport();
 		viewport.setOpaque(false);
@@ -120,13 +111,6 @@ public class JCreateSoundboardPage extends Page {
 		lblThemes.setBounds(10, 80, 163, 30);
 		add(lblThemes);
 		
-		JButton btnRemoveTheme = new JButton("-");
-//		btnRemove.setOpaque(true);
-		btnRemoveTheme.setBounds(667, 81, 23, 23);
-		btnRemoveTheme.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		btnRemoveTheme.setBorderPainted(false);
-		add(btnRemoveTheme);
-		
 		JButton btnAddTheme = new JButton("+");
 		btnAddTheme.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -137,7 +121,7 @@ public class JCreateSoundboardPage extends Page {
 		btnAddTheme.setBorderPainted(false);
 //		btnAddTheme.setOpaque(false);
 		btnAddTheme.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		btnAddTheme.setBounds(636, 81, 23, 23);
+		btnAddTheme.setBounds(667, 81, 23, 23);
 		add(btnAddTheme);
 		updateThemes();
 	}
@@ -169,12 +153,13 @@ public class JCreateSoundboardPage extends Page {
 	private void updateThemes() {
 		pnThemes.removeAll();
 		Set<String> categories = this.sb.getCategories();
-		Color frameColor = IconHelper.FRAME_COLOR;
-		IconHelper.FRAME_COLOR = pnThemes.getBackground();
+		Color c = IconHelper.FRAME_COLOR;
+		IconHelper.FRAME_COLOR = ColorScheme.MAIN_BACKGROUND_COLOR.brighter();
 		SDImage image = IconHelper.createFolderImage(ColorScheme.MAIN_BACKGROUND_COLOR, true);
+		IconHelper.FRAME_COLOR = c;
 		for (String cat : categories) {
 			final String category = cat;
-			JSoundPanel jsp = new JSoundPanel(IconHelper.addText(image, category, IconHelper.TEXT_BOTTOM).image, pnThemes.getBackground());
+			JSoundPanel jsp = new JSoundPanel(image.image, cat, ColorScheme.MAIN_BACKGROUND_COLOR.brighter());
 			jsp.addMouseListenerForDelete(new MouseListener() {
 				@Override
 				public void mouseReleased(MouseEvent e) {}
@@ -210,6 +195,5 @@ public class JCreateSoundboardPage extends Page {
 		}
 		pnThemes.revalidate();
 		pnThemes.repaint();
-		IconHelper.FRAME_COLOR = frameColor;
 	}
 }
