@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.awt.event.ActionEvent;
 
-public class JNewThemePage extends Page {
+public class JCreateThemePage extends Page {
 	
 	
 	private static final long serialVersionUID = -6433885518054038664L;
@@ -64,7 +64,7 @@ public class JNewThemePage extends Page {
 	/**
 	 * Create the panel.
 	 */
-	public JNewThemePage(SoundBoard soundBoard, String themeName) {
+	public JCreateThemePage(SoundBoard soundBoard, String themeName) {
 		setSize(700, 450);
 		setLayout(null);
 		setBackground(ColorScheme.MAIN_BACKGROUND_COLOR);

@@ -111,7 +111,7 @@ public class JSoundPage extends Page{
 		JButton btnAddSoundboard = new JButton("+");
 		btnAddSoundboard.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				pageViewer.viewPage(new JNewSoundPage());
+				pageViewer.viewPage(new JCreateSoundPage());
 			}
 		});
 		btnAddSoundboard.setBorderPainted(false);

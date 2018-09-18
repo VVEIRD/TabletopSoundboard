@@ -102,7 +102,7 @@ public class JCreateSoundboardPage extends Page {
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(8);
-		scrollPane.setBounds(10, 110, 680, 340);
+		scrollPane.setBounds(10, 110, 680, 330);
 		add(scrollPane);
 		
 		JLabel lblThemes = new JLabel("Themes");
@@ -115,7 +115,7 @@ public class JCreateSoundboardPage extends Page {
 		btnAddTheme.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JCreateSoundboardPage.this.sb.name = tfSoundBoardName.getText();
-				pageViewer.viewPage(new JNewThemePage(JCreateSoundboardPage.this.sb, null));
+				pageViewer.viewPage(new JCreateThemePage(JCreateSoundboardPage.this.sb, null));
 			}
 		});
 		btnAddTheme.setBorderPainted(false);
@@ -187,7 +187,7 @@ public class JCreateSoundboardPage extends Page {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					JCreateSoundboardPage.this.sb.name = tfSoundBoardName.getText();
-					pageViewer.viewPage(new JNewThemePage(JCreateSoundboardPage.this.sb, category));
+					pageViewer.viewPage(new JCreateThemePage(JCreateSoundboardPage.this.sb, category));
 					
 				}
 			});

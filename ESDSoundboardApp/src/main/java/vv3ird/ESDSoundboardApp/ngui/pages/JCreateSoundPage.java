@@ -49,11 +49,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
-public class JNewSoundPage extends Page {
+public class JCreateSoundPage extends Page {
 	
 	private static File lastDirectory = null;
 	
-	Logger	logger = LogManager.getLogger(JNewSoundPage.class);
+	Logger	logger = LogManager.getLogger(JCreateSoundPage.class);
 	
 	static BufferedImage OK = null;
 	static BufferedImage FALSE = null;
@@ -62,9 +62,9 @@ public class JNewSoundPage extends Page {
 	static {
 		
 		try {
-			OK = ImageIO.read(JNewSoundPage.class.getClassLoader().getResource("resources/icons/ok.png"));
-			FALSE = ImageIO.read(JNewSoundPage.class.getClassLoader().getResource("resources/icons/false.png"));
-			DEFAULT = ImageIO.read(JNewSoundPage.class.getClassLoader().getResource("resources/icons/audio.png"));
+			OK = ImageIO.read(JCreateSoundPage.class.getClassLoader().getResource("resources/icons/ok.png"));
+			FALSE = ImageIO.read(JCreateSoundPage.class.getClassLoader().getResource("resources/icons/false.png"));
+			DEFAULT = ImageIO.read(JCreateSoundPage.class.getClassLoader().getResource("resources/icons/audio.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -84,7 +84,7 @@ public class JNewSoundPage extends Page {
 	/**
 	 * Create the panel.
 	 */
-	public JNewSoundPage() {
+	public JCreateSoundPage() {
 		setLayout(new BorderLayout(0, 0));
 		setSize(new Dimension(480, 290));
 		setOpaque(false);

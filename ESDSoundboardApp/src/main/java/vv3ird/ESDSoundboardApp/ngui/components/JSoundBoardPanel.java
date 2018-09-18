@@ -1,4 +1,4 @@
-package vv3ird.ESDSoundboardApp.ngui.soundboard;
+package vv3ird.ESDSoundboardApp.ngui.components;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
-import vv3ird.ESDSoundboardApp.ngui.components.PDControlScrollPane;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;

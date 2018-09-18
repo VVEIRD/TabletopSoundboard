@@ -28,12 +28,12 @@ import net.miginfocom.swing.MigLayout;
 import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.ngui.components.JSelectablePanel;
+import vv3ird.ESDSoundboardApp.ngui.components.JSoundBoardPanel;
 import vv3ird.ESDSoundboardApp.ngui.layout.UIColumnLayout;
 import vv3ird.ESDSoundboardApp.ngui.pages.JSoundPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.JSoundboardPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.Page;
 import vv3ird.ESDSoundboardApp.ngui.pages.PageViewer;
-import vv3ird.ESDSoundboardApp.ngui.soundboard.JSoundBoardPanel;
 
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
