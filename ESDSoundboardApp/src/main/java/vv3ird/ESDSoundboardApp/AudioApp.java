@@ -42,7 +42,7 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.Sound.Type;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.player.AudioPlayer;
-import vv3ird.ESDSoundboardApp.streamdeck.items.SoundBoardItemNew;
+import vv3ird.ESDSoundboardApp.streamdeck.items.SoundBoardItem;
 import vv3ird.ESDSoundboardApp.streamdeck.items.StatusAmbienceItem;
 import vv3ird.ESDSoundboardApp.streamdeck.items.StopItem;
 import vv3ird.ESDSoundboardApp.streamdeck.items.configuration.ConfigItem;
@@ -411,7 +411,7 @@ public class AudioApp {
 		StreamItem[] sbItems = new StreamItem[soundboardLibrary.size()];
 		int sbC = 0;
 		for (SoundBoard sb : soundboardLibrary.values()) {
-			sbItems[sbC++] = new SoundBoardItemNew(sb, null);
+			sbItems[sbC++] = new SoundBoardItem(sb, null);
 		}
 		PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems, streamDeck.getKeySize());
 		AudioApp.addStatusBarItems(root, root.getChildren());
@@ -645,7 +645,7 @@ public class AudioApp {
 			streamDeck = new SoftStreamDeck("Sound Board App", null);
 		StreamItem[] sbItems = new StreamItem[soundboardLibrary.size()];
 		for (SoundBoard sb : soundboardLibrary.values()) {
-			sbItems[sbC++] = new SoundBoardItemNew(sb, null);
+			sbItems[sbC++] = new SoundBoardItem(sb, null);
 		}
 		PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems, streamDeck.getKeySize());
 		AudioApp.addStatusBarItems(root, root.getChildren());

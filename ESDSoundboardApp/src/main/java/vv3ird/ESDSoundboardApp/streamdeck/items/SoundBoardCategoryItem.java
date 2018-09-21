@@ -23,7 +23,7 @@ public class SoundBoardCategoryItem extends FolderItem {
 		children = children != null ? children : new SoundItem[buttonCount];
 		int maxItems = buttonCount - 6;
 		// Create Sub-folder for more then 9/buttonCount-5 children (with parent/without parent)
-		int countTotal= previous == null ? 1 : 0;
+		int countTotal = previous == null ? 1 : 0;
 		if(previous == null) {
 			List<String> files = new LinkedList<>();
 			Arrays.asList(children).stream().map(s -> Arrays.asList(s.getSound().getFilePaths())).forEach(files::addAll);
@@ -34,11 +34,11 @@ public class SoundBoardCategoryItem extends FolderItem {
 			SoundItem playAll = new SoundItem(playAllSound);
 			playAll.setText( "Play all");
 			playAll.setParent(this);
-			this.getChildren()[buttonCount-2] = playAll;
+			this.getChildren()[buttonCount-3] = playAll;
 			playAllSound.resetCurrentFile();
 		}
 		else {
-			this.getChildren()[buttonCount-2] = previous.getChild(buttonCount-2);
+			this.getChildren()[buttonCount-3] = previous.getChild(buttonCount-3);
 		}
 		for (SoundItem streamItem : children) {
 			if (streamItem != null)
@@ -56,7 +56,7 @@ public class SoundBoardCategoryItem extends FolderItem {
 			}
 		}
 		// Create status bar
-		 AudioApp.addStatusBarItems(this, this.getChildren());
+//		 AudioApp.addStatusBarItems(this, this.getChildren());
 		if (previous != null) {
 			this.getChildren()[11] = new PreviousItem(previous);
 		}

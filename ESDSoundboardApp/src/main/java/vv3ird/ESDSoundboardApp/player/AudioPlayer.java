@@ -98,7 +98,7 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 		public void open() throws IOException, LineUnavailableException, UnsupportedAudioFileException
 		{
 			String audioFile = sound.next();
-			System.out.println("Opening audiofile: " + audioFile);
+			logger.debug("Opening audiofile: " + audioFile);
 			intendetState = LineEvent.Type.OPEN;
 			try {
 				stream = getAudioStream(audioFile); 
