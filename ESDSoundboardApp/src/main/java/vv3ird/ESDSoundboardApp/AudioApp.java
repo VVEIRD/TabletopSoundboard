@@ -48,6 +48,7 @@ import vv3ird.ESDSoundboardApp.streamdeck.items.StopItem;
 import vv3ird.ESDSoundboardApp.streamdeck.items.configuration.ConfigItem;
 import de.rcblum.stream.deck.StreamDeckController;
 import de.rcblum.stream.deck.device.IStreamDeck;
+import de.rcblum.stream.deck.device.SoftStreamDeck;
 import de.rcblum.stream.deck.device.StreamDeckDevices;
 import de.rcblum.stream.deck.items.PagedFolderItem;
 import de.rcblum.stream.deck.items.StreamItem;
@@ -412,7 +413,7 @@ public class AudioApp {
 		for (SoundBoard sb : soundboardLibrary.values()) {
 			sbItems[sbC++] = new SoundBoardItemNew(sb, null);
 		}
-		PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems);
+		PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems, streamDeck.getKeySize());
 		AudioApp.addStatusBarItems(root, root.getChildren());
 		controller = new StreamDeckController(streamDeck, root);
 		logger.debug("Done resetting controller");
@@ -638,54 +639,24 @@ public class AudioApp {
 	}
 
 	public static void main(String[] args) {
-		StreamItem[] sbItems = new StreamItem[soundboardLibrary.size()];
 		int sbC = 0;
+		streamDeck = StreamDeckDevices.getStreamDeck();
+		if (streamDeck == null)
+			streamDeck = new SoftStreamDeck("Sound Board App", null);
+		StreamItem[] sbItems = new StreamItem[soundboardLibrary.size()];
 		for (SoundBoard sb : soundboardLibrary.values()) {
 			sbItems[sbC++] = new SoundBoardItemNew(sb, null);
 		}
-		PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems);
+		PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems, streamDeck.getKeySize());
 		AudioApp.addStatusBarItems(root, root.getChildren());
-//		File lib = new File("sounds");
-//		StreamItem[] categories = new StreamItem[15];
-//		int catCount = 0;
-//		File[] categorieFiles = lib.listFiles();
-//		if (categorieFiles == null || categorieFiles.length == 0)
-//			System.exit(4);
-//		for (File catFile : categorieFiles) {
-//			if (catFile.isDirectory()) {
-//				File[] audios = catFile.listFiles();
-//				AudioItem[] audioItems = new AudioItem[15];
-//				int count = 0;
-//				for (File file : audios) {
-//					if (count >= 14)
-//						break;
-//					if (!file.getAbsolutePath().endsWith(".mp3"))
-//						continue;
-//					AudioItem audioItem = new AudioItem(AUDIO_ICON, file.getAbsolutePath());
-//					audioItem.setTextPosition(StreamItem.TEXT_POS_CENTER);
-//					audioItems[count++] = audioItem;
-//					if(count == 4)
-//						count++;
-//				}
-//				
-//				FolderItem categoryitem = new FolderItem(catFile.getName(), null, audioItems);
-//				categories[catCount++] = categoryitem;
-//			}
-//		}
-//		categories[14] = STOP_ITEM ;
-//		FolderItem root = new FolderItem("root", null, categories);
-		streamDeck = StreamDeckDevices.getStreamDeck();
-		if (streamDeck != null) {
-			streamDeck.reset();
-			streamDeck.addKeyListener(new DelayedReduceBrightness(streamDeck));
-			StreamDeckController.setKeyDeadzone(50);
-			AudioApp.controller = new StreamDeckController(streamDeck, root);
-			AudioApp.controller.setBrightness(75);
-		}
-		else {
-			logger.error("No Stream Deck Device found. Please check your devices connection");
-			logger.error("Shutting down");
-			System.exit(5);
-		}
+		streamDeck.reset();
+		streamDeck.addKeyListener(new DelayedReduceBrightness(streamDeck));
+		StreamDeckController.setKeyDeadzone(50);
+		AudioApp.controller = new StreamDeckController(streamDeck, root);
+		AudioApp.controller.setBrightness(75);
+	}
+
+	public static IStreamDeck getStreamDeck() {
+		return streamDeck;
 	}
 }

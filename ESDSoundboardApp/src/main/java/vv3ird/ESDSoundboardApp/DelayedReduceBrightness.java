@@ -38,7 +38,7 @@ public class DelayedReduceBrightness implements Runnable, StreamKeyListener{
 	@Override
 	public void onKeyEvent(KeyEvent event) {
 		lastPressed  = System.currentTimeMillis();
-		this.streamDeck.setBrightness(75);
+		this.streamDeck.setBrightness(60);
 	}
 
 }

@@ -63,11 +63,11 @@ public class SoundBoardItemNew extends FolderItem {
 			SoundBoardCategoryItem effectsCategoryItem = null;
 			SoundBoardCategoryItem ambienceCategoryItem = null;
 			if (ambienceItems != null) {
-				ambienceCategoryItem = new SoundBoardCategoryItem(category, this, null, ambienceItems);
+				ambienceCategoryItem = new SoundBoardCategoryItem(category, this, null, ambienceItems, AudioApp.getStreamDeck().getKeySize());
 				AudioApp.addStatusBarItems(ambienceCategoryItem, ambienceCategoryItem.getChildren());
 			}
 			if (effectsItems != null) {
-				effectsCategoryItem = new SoundBoardCategoryItem(category, this, null, effectsItems);
+				effectsCategoryItem = new SoundBoardCategoryItem(category, this, null, effectsItems, AudioApp.getStreamDeck().getKeySize());
 				AudioApp.addStatusBarItems(effectsCategoryItem, effectsCategoryItem.getChildren());
 				ProxyItem p1 = new ProxyItem(ambienceCategoryItem, null);
 				p1.setIcon(IconHelper.loadImageFromResourceSafe("/resources/icons/change.png"));

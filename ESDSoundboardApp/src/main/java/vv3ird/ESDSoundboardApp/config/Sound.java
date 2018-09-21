@@ -87,8 +87,9 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	@Override
 	public String next() {
 		checkLegacy();
+		int currentIdx = this.currentFile;
 		this.currentFile = this.currentFile+1 >= this.filePaths.length ? 0 : this.currentFile+1;
-		return this.filePaths[this.currentFile];
+		return this.filePaths[currentIdx];
 	}
 	
 	public boolean isPlaylist() {

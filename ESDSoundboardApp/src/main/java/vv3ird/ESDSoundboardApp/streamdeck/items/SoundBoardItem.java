@@ -19,9 +19,9 @@ public class SoundBoardItem extends FolderItem {
 		StreamItem[] ambienceCategories = createCategoryItems(soundBoard.ambience);
 		StreamItem[] effectCategories = createCategoryItems(soundBoard.effects);
 		// Create Folders for ambience and effect sounds
-		PagedFolderItem ambience = new PagedFolderItem("Ambience", this, null, ambienceCategories);
+		PagedFolderItem ambience = new PagedFolderItem("Ambience", this, null, ambienceCategories, AudioApp.getStreamDeck().getKeySize());
 		AudioApp.addStatusBarItems(ambience, ambience.getChildren());
-		PagedFolderItem effects = new PagedFolderItem("Effects", this, null, effectCategories);
+		PagedFolderItem effects = new PagedFolderItem("Effects", this, null, effectCategories, AudioApp.getStreamDeck().getKeySize());
 		AudioApp.addStatusBarItems(effects, effects.getChildren());
 		// Add to Folder
 		this.getChildren()[8] = ambience;
@@ -41,7 +41,7 @@ public class SoundBoardItem extends FolderItem {
 			for(int i=0;i<soundItems.length;i++) {
 				soundItems[i] = new SoundItem(sounds.get(i));
 			}
-			PagedFolderItem categoryItem = new PagedFolderItem(category, this, null, soundItems);
+			PagedFolderItem categoryItem = new PagedFolderItem(category, this, null, soundItems, AudioApp.getStreamDeck().getKeySize());
 			AudioApp.addStatusBarItems(categoryItem, categoryItem.getChildren());
 			result[catCount++] = categoryItem;
 		}

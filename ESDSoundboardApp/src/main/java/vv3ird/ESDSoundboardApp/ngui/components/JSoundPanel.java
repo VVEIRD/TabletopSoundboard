@@ -49,7 +49,7 @@ public class JSoundPanel extends ImagePanel {
 		Color oldC = IconHelper.FRAME_COLOR;
 		IconHelper.FRAME_COLOR = background;
 		IconHelper.TEXT_BOX_ALPHA_VALUE = 150;
-		SDImage bImg = IconHelper.addText(img, text, IconHelper.TEXT_BOTTOM);
+		SDImage bImg = IconHelper.addText(img, text, IconHelper.TEXT_CENTER);
 		IconHelper.FRAME_COLOR = oldC;
 		IconHelper.TEXT_BOX_ALPHA_VALUE = alpha;
 		setSize(StreamDeck.ICON_SIZE, StreamDeck.ICON_SIZE);
