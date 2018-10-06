@@ -390,6 +390,13 @@ public class AudioPlayer implements Runnable {
 	}
 
 	public void setGain(float gain) {
+		if(sound.isSpotifySound()) {
+			int vol = (int) (decibelToLinear(gain)*100);
+			System.out.println("Volume: " + vol);
+			System.out.println("        " + decibelToLinear(gain));
+			System.out.println("        " + gain);
+			AudioApp.setSpotifyVolume(vol);
+		}
 		try {
 			FloatControl control = (FloatControl) this.getControl(FloatControl.Type.MASTER_GAIN);
 			if (control != null) {

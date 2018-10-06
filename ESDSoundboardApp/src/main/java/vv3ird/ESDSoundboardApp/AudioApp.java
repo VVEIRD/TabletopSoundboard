@@ -152,6 +152,7 @@ public class AudioApp {
 		try {
 			player.open();
 			float gain = linearToDecibel(configuration.masterGain) + 2;
+			
 			logger.debug("Setting gain for effects player: " + gain);
 			player.setGain(gain);
 		} catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
@@ -190,16 +191,24 @@ public class AudioApp {
 		vol = vol < 0 ? 0 : vol > 100 ? 100 : vol;
 		configuration.masterGain = vol / 100f;
 		if (player != null) {
-			float min = player.getMinGain();
-			float max = player.getMaxGain();
-			float gain = linearToDecibel(configuration.masterGain) + 2;
-			gain = gain > max ? max : gain < min ? min : gain;
+//			float min = player.getMinGain();
+//			float max = player.getMaxGain();
+			float gain = linearToDecibel(configuration.masterGain) ;
+//			gain = gain > max ? max : gain < min ? min : gain;
 //			float gain = min + ((max-min)*configuration.masterGain);
 			logger.debug("Setting gain for player: " + gain);
 			player.setGain(gain);
 		}
 		saveConfig();
 	}
+
+	public static void setSpotifyVolume(int vol) {
+		if(isSpotifyEnabled()) {
+			SpotifyFrontend sf = getSpotifyFrontend();
+			sf.setVolumeForUsersPlayback(vol);
+		}
+	}
+	
 
 	public static boolean setSpotifyConfiguration(String clientId, String clientSecret, String responseUrl) {
 		boolean loggedIn = false;

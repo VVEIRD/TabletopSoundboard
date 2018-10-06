@@ -32,6 +32,7 @@ import com.wrapper.spotify.requests.authorization.authorization_code.Authorizati
 import com.wrapper.spotify.requests.data.player.GetInformationAboutUsersCurrentPlaybackRequest;
 import com.wrapper.spotify.requests.data.player.GetUsersAvailableDevicesRequest;
 import com.wrapper.spotify.requests.data.player.PauseUsersPlaybackRequest;
+import com.wrapper.spotify.requests.data.player.SetVolumeForUsersPlaybackRequest;
 import com.wrapper.spotify.requests.data.player.StartResumeUsersPlaybackRequest;
 import com.wrapper.spotify.requests.data.player.ToggleShuffleForUsersPlaybackRequest;
 import com.wrapper.spotify.requests.data.playlists.GetListOfCurrentUsersPlaylistsRequest;
@@ -247,6 +248,18 @@ public class SpotifyFrontend {
 		}
 	}
 
+	  public static void setVolumeForUsersPlayback_Sync(SpotifyApi api, int volumePercent) {
+			SetVolumeForUsersPlaybackRequest setVolumeForUsersPlaybackRequest = api
+			          .setVolumeForUsersPlayback(volumePercent)
+//			          .device_id("5fbb3ba6aa454b5534c4ba43a8c7e8e45a63ad0e")
+			          .build();
+	    try {
+	      final String string = setVolumeForUsersPlaybackRequest.execute();
+	    } catch (IOException | SpotifyWebApiException e) {
+	      System.out.println("Error: " + e.getMessage());
+	    }
+	  }
+
 	private static boolean startResumeUsersPlaybackPlaylist_Sync(SpotifyApi api, String playlistId, String deviceId) {
 		final StartResumeUsersPlaybackRequest startResumeUsersPlaybackRequest = api.startResumeUsersPlayback()
 				.context_uri("spotify:playlist:" + playlistId).device_id(deviceId)
@@ -405,6 +418,11 @@ public class SpotifyFrontend {
 	public void setDefaultDevice(Device defaultDevice) {
 		defaultDevice = Objects.requireNonNull(defaultDevice, "Device cannot be null");
 		this.defaultDevice = defaultDevice;
+	}
+	
+	public void setVolumeForUsersPlayback(int volumePercent) {
+		volumePercent = volumePercent > 100 ? 100 : volumePercent < 0 ? 0 : volumePercent;
+		setVolumeForUsersPlayback_Sync(api, volumePercent);
 	}
 
 	public boolean startResumeUsersPlaybackPlaylist(String playlistId) {
