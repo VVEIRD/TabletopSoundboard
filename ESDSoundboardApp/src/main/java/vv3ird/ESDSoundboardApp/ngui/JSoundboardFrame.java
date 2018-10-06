@@ -30,6 +30,7 @@ import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.ngui.components.JSelectablePanel;
 import vv3ird.ESDSoundboardApp.ngui.components.JSoundBoardPanel;
 import vv3ird.ESDSoundboardApp.ngui.layout.UIColumnLayout;
+import vv3ird.ESDSoundboardApp.ngui.pages.JOptionsPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.JSoundPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.JSoundboardPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.Page;
@@ -141,6 +142,7 @@ public class JSoundboardFrame extends JFrame {
 		JSelectablePanel.JSelectablePanelGroup pnGroup = new JSelectablePanel.JSelectablePanelGroup();
 		pnGroup.add(pnSoundBoards);
 		pnGroup.add(pnSounds);
+		pnGroup.add(pnOptions);
 		pnSideBar.add(pnOptions);
 		
 		JSelectablePanel pnDecks = new JSelectablePanel();
@@ -181,7 +183,7 @@ public class JSoundboardFrame extends JFrame {
 		pnOptions.add(lblOptions);
 		this.pnSounds.addSelectionListener(sl);
 		this.pnSoundBoards.addSelectionListener(sl);
-//		this.pnOptions.addSelectionListener(sl);
+		this.pnOptions.addSelectionListener(sl);
 		JSoundboardFrame.this.pnSoundBoards.setSelected(true);
 		lblSoundBoards.setForeground(ColorScheme.SIDE_BAR_FOREGROUND_COLOR);
 		lblSounds.setForeground(ColorScheme.SIDE_BAR_FOREGROUND_COLOR);
@@ -204,6 +206,9 @@ public class JSoundboardFrame extends JFrame {
 					pnContent.viewPage(p);
 				} else if (pnSounds.isSelected()) {
 					Page p = new JSoundPage();
+					pnContent.viewPage(p);
+				}else if (pnOptions.isSelected()) {
+					Page p = new JOptionsPage();
 					pnContent.viewPage(p);
 				}
 			}

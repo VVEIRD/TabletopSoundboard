@@ -6,8 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
@@ -35,7 +37,15 @@ public class AppConfiguration {
 	
 	public int fadeOutMs = 1500;
 	
+	public String spotifyClientId = null;
+	
+	public String spotifyClientSecret = null;
+	
+	public String spotifyResponseUrl = "http://localhost:5000/spotify-redirect";
+	
 	public boolean crossfade = true;
+	
+	public Map<String, String> configStore = new HashMap<>();
 	
 	public AppConfiguration() {
 		this.setAudioInterface(AudioDevices.getDefaultAudioDevice());
@@ -94,5 +104,22 @@ public class AppConfiguration {
 		return (float) dB;
 	}
 	
+	public String getConfig(String key) {
+		if(configStore == null)
+			configStore = new HashMap<>();
+		return configStore.get(key);
+	}
+	
+	public String addConfig(String key, String value) {
+		if(configStore == null)
+			configStore = new HashMap<>();
+		return configStore.put(key, value);
+	}
+	
+	public String removeConfig(String key) {
+		if(configStore == null)
+			configStore = new HashMap<>();
+		return configStore.remove(key);
+	}
 
 }

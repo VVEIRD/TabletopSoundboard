@@ -190,6 +190,15 @@ public class AudioApp {
 		saveConfig();
 	}
 	
+	public static boolean setSpotifyConfiguration(String clientId, String clientSecret, String responseUrl) {
+		boolean loggedIn = false;
+		configuration.spotifyClientId = clientId;
+		configuration.spotifyClientSecret = clientSecret;
+		configuration.spotifyResponseUrl = responseUrl;
+		saveConfig();
+		return loggedIn;
+	}
+	
 	private static float linearToDecibel(float linear) {
 		double dB;
 

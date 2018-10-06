@@ -10,6 +10,7 @@ import vv3ird.ESDSoundboardApp.ngui.components.FilterComboBox;
 import vv3ird.ESDSoundboardApp.ngui.components.JSoundPanel;
 import vv3ird.ESDSoundboardApp.ngui.components.PDControlScrollPane;
 import vv3ird.ESDSoundboardApp.ngui.layout.WrapLayout;
+import vv3ird.ESDSoundboardApp.ngui.util.Helper;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -80,10 +81,11 @@ public class JCreateThemePage extends Page {
 		add(lblNewLabel);
 		
 		tfThemeName = new JTextField(themeName);
-		tfThemeName.setForeground(ColorScheme.FOREGROUND_COLOR);
-		tfThemeName.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-		tfThemeName.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		tfThemeName.setBackground(ColorScheme.MAIN_BACKGROUND_COLOR.darker());
+//		tfThemeName.setForeground(ColorScheme.FOREGROUND_COLOR);
+//		tfThemeName.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+//		tfThemeName.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+//		tfThemeName.setBackground(ColorScheme.MAIN_BACKGROUND_COLOR.darker());
+		Helper.setTextfieldStyle(tfThemeName);
 		tfThemeName.setBounds(10, 40, 680, 30);
 		add(tfThemeName);
 		tfThemeName.setColumns(10);
