@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
+import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 
 public class PageViewer extends JPanel {
 

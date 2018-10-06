@@ -26,7 +26,7 @@ public class SoundBoardCategoryItem extends FolderItem {
 		int countTotal = previous == null ? 1 : 0;
 		if(previous == null) {
 			List<String> files = new LinkedList<>();
-			Arrays.asList(children).stream().map(s -> Arrays.asList(s.getSound().getFilePaths())).forEach(files::addAll);
+			Arrays.asList(children).stream().filter(s -> !s.getSound().isSpotifySound()).map(s -> Arrays.asList(s.getSound().getFilePaths())).forEach(files::addAll);
 			Collections.sort(files);
 //			String coverPath = Arrays.asList(children).stream().map(s -> s.getSound().getCoverPath()).findFirst().orElse("BLACK");
 			Sound.Type type = Arrays.asList(children).stream().map(s -> s.getSound().getType()).findFirst().orElse(Sound.Type.AMBIENCE);

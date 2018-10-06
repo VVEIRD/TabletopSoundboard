@@ -8,14 +8,18 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +39,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.wrapper.spotify.model_objects.miscellaneous.CurrentlyPlayingContext;
+import com.wrapper.spotify.model_objects.specification.Image;
+import com.wrapper.spotify.model_objects.specification.Playlist;
 
+import vv3ird.ESDSoundboardApp.Spotify.SpotifyFrontend;
 import vv3ird.ESDSoundboardApp.config.AppConfiguration;
 import vv3ird.ESDSoundboardApp.config.AudioDevices;
 import vv3ird.ESDSoundboardApp.config.Sound;
@@ -56,21 +64,21 @@ import de.rcblum.stream.deck.util.IconHelper;
 import de.rcblum.stream.deck.util.SDImage;
 
 public class AudioApp {
-	
+
 	private static Logger logger;
-	
+
 	private static AudioPlayer player = null;
-	
+
 	private static StreamDeckController controller = null;
-	
+
 	private static AppConfiguration configuration = null;
-	
+
 	public static List<Sound> soundLibrary = new LinkedList<>();
-	
+
 	public static Map<String, SoundBoard> soundboardLibrary = new HashMap<>();
-	
+
 	private static IStreamDeck streamDeck = null;
-	
+
 	static {
 		try (InputStream in = AudioApp.class.getResourceAsStream("/resources/log4j.xml")) {
 			Path tempConfig = File.createTempFile("audioapp", ".xml").toPath();
@@ -82,25 +90,27 @@ public class AudioApp {
 			checkOldLibFormate();
 			loadSoundLibrary();
 			loadSoundBoards();
+			isSpotifyEnabled();
 			Runtime.getRuntime().addShutdownHook(new Thread() {
-			    public void run() {
-			    	if(streamDeck != null) {
-				    	streamDeck.reset();
-				    	streamDeck.setBrightness(5);
-			    	}
-			    	if(AudioApp.controller != null)
-			    		AudioApp.controller.stop(true, false); 
+				public void run() {
+					if (streamDeck != null) {
+						streamDeck.setBrightness(5);
+						streamDeck.reset();
+					}
+					if (AudioApp.controller != null)
+						AudioApp.controller.stop(true, false);
+					AudioApp.stop();
 				}
-			 });
+			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public final static StopItem STOP_ITEM = new StopItem();
-	
-	public final static StatusAmbienceItem AMBIENCE_STATUS_ITEM =  new StatusAmbienceItem();
-		
+
+	public final static StatusAmbienceItem AMBIENCE_STATUS_ITEM = new StatusAmbienceItem();
+
 	public static void playAmbience(Sound sound) {
 		sound.resetCurrentFile();
 		AudioPlayer player = new AudioPlayer(sound, configuration.getMixerInfo());
@@ -124,7 +134,7 @@ public class AudioApp {
 				AudioApp.player.addLineListener(new LineListener() {
 					@Override
 					public void update(LineEvent event) {
-						if  (event.getType() == LineEvent.Type.STOP) {
+						if (event.getType() == LineEvent.Type.STOP) {
 							player.start();
 						}
 					}
@@ -136,7 +146,7 @@ public class AudioApp {
 //			player.start();
 		AudioApp.player = player;
 	}
-	
+
 	public static void playEffect(Sound sound) {
 		AudioPlayer player = new AudioPlayer(sound, configuration.getMixerInfo());
 		try {
@@ -154,31 +164,32 @@ public class AudioApp {
 	}
 
 	public static void stop() {
-		if(AudioApp.player != null) {
+		if (AudioApp.player != null) {
 			AudioApp.player.stop(true);
 			STOP_ITEM.setText("Start");
 		}
 	}
 
 	public static void start() {
-		if(AudioApp.player != null) {
+		if (AudioApp.player != null) {
 			AudioApp.player.start();
 			STOP_ITEM.setText("Stop");
 		}
 	}
-	
+
 	public static int getVolume() {
 		return Math.round(configuration.masterGain * 100);
 	}
-	
+
 	/**
 	 * Set the volume of the app.
+	 * 
 	 * @param vol Volume from 0 .. 100 %
 	 */
 	public static void setVolume(int vol) {
 		vol = vol < 0 ? 0 : vol > 100 ? 100 : vol;
-		configuration.masterGain = vol/100f;
-		if(player != null) {
+		configuration.masterGain = vol / 100f;
+		if (player != null) {
 			float min = player.getMinGain();
 			float max = player.getMaxGain();
 			float gain = linearToDecibel(configuration.masterGain) + 2;
@@ -189,7 +200,7 @@ public class AudioApp {
 		}
 		saveConfig();
 	}
-	
+
 	public static boolean setSpotifyConfiguration(String clientId, String clientSecret, String responseUrl) {
 		boolean loggedIn = false;
 		configuration.spotifyClientId = clientId;
@@ -198,7 +209,7 @@ public class AudioApp {
 		saveConfig();
 		return loggedIn;
 	}
-	
+
 	private static float linearToDecibel(float linear) {
 		double dB;
 
@@ -209,7 +220,7 @@ public class AudioApp {
 
 		return (float) dB;
 	}
-	
+
 	private static void loadConfiguration() {
 		try {
 			configuration = AppConfiguration.load(Paths.get("config.json"));
@@ -223,6 +234,52 @@ public class AudioApp {
 				e1.printStackTrace();
 			}
 		}
+	}
+	
+	public static boolean isSpotifyEnabled() {
+		if(configuration.spotifyClientId != null && configuration.spotifyClientSecret != null && configuration.spotifyResponseUrl != null) {
+			SpotifyFrontend sf = SpotifyFrontend.createInstance(configuration.spotifyClientId, configuration.spotifyClientSecret, configuration.spotifyResponseUrl, true);
+			return sf.isLoggedIn();
+		}
+		return false;
+	}
+	
+	public static boolean isSpotifyPlaying() {
+		if(isSpotifyEnabled()) {
+			SpotifyFrontend sf = getSpotifyFrontend();
+			CurrentlyPlayingContext cp = sf.getInformationAboutUsersCurrentPlayback();
+			return cp.getIs_playing();
+		}
+		return false;
+	}
+	
+	private static String lastSpotifyId = null;
+
+	public static void playSpotifyPlaylist(String spotifyOwner, String spotifyId) {
+		if(isSpotifyEnabled()) {
+			SpotifyFrontend sf = getSpotifyFrontend();
+			sf.startResumeUsersPlaybackPlaylist(spotifyId);
+			lastSpotifyId = spotifyId;
+		}
+	}
+	
+	public static String getCurrentSpotifyId() {
+		return lastSpotifyId;
+	}
+
+	public static void pauseSpotifyPlayback() {
+		if(isSpotifyEnabled()) {
+			SpotifyFrontend sf = getSpotifyFrontend();
+			sf.pauseUsersPlayback();
+		}
+	}
+	
+	public static SpotifyFrontend getSpotifyFrontend() {
+		if(configuration.spotifyClientId != null && configuration.spotifyClientSecret != null && configuration.spotifyResponseUrl != null) {
+			SpotifyFrontend sf = SpotifyFrontend.createInstance(configuration.spotifyClientId, configuration.spotifyClientSecret, configuration.spotifyResponseUrl, true);
+			return sf;
+		}
+		return null;
 	}
 
 	public static AppConfiguration getConfiguration() {
@@ -239,9 +296,9 @@ public class AudioApp {
 				return pathname.isDirectory();
 			}
 		});
-		if(soundBoardDirs != null) {
+		if (soundBoardDirs != null) {
 			for (File soundBoardDir : soundBoardDirs) {
-				if(Files.isDirectory(soundBoardDir.toPath()) && soundBoardDir.list().length == 0) {
+				if (Files.isDirectory(soundBoardDir.toPath()) && soundBoardDir.list().length == 0) {
 					soundBoardDir.delete();
 					continue;
 				}
@@ -253,16 +310,16 @@ public class AudioApp {
 				logger.debug("    effects root: " + effectsRoot);
 				Map<String, List<Sound>> ambience = loadSoundsForSoundBoard(ambienceRoot);
 				Map<String, List<Sound>> effects = loadSoundsForSoundBoard(effectsRoot);
-				for(String cat : effects.keySet()) {
+				for (String cat : effects.keySet()) {
 					List<Sound> sounds = effects.get(cat);
 					for (Sound sound : sounds) {
-						logger.debug("Effect sound ("+ cat + "): " + sound.getName());
+						logger.debug("Effect sound (" + cat + "): " + sound.getName());
 					}
 				}
-				for(String cat : ambience.keySet()) {
+				for (String cat : ambience.keySet()) {
 					List<Sound> sounds = ambience.get(cat);
 					for (Sound sound : sounds) {
-						logger.debug("Ambience sound ("+ cat + "): " + sound.getName());
+						logger.debug("Ambience sound (" + cat + "): " + sound.getName());
 					}
 				}
 				SoundBoard soundBoard = new SoundBoard(name, ambience, effects);
@@ -270,18 +327,17 @@ public class AudioApp {
 			}
 		}
 	}
-	
+
 	private static Map<String, List<Sound>> loadSoundsForSoundBoard(Path root) {
 		Map<String, List<Sound>> categories = new HashMap<>();
 		try {
-			Map<Path, List<Sound>> categoryP = Files.list(root)
-					.filter(p -> Files.isDirectory(p))
+			Map<Path, List<Sound>> categoryP = Files.list(root).filter(p -> Files.isDirectory(p))
 					.collect(Collectors.toMap(Path::getFileName, AudioApp::loadSounds));
 			Set<Path> ks = categoryP.keySet();
 			for (Path path : ks) {
 				categories.put(path.toString(), categoryP.get(path));
 			}
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -298,7 +354,7 @@ public class AudioApp {
 	private static List<Sound> loadSounds(Path root) {
 		List<Sound> soundLibrary = new LinkedList<>();
 		logger.debug("Sound root: " + root.toString());
-		if(Files.exists(root) && Files.isDirectory(root)) {
+		if (Files.exists(root) && Files.isDirectory(root)) {
 			File[] soundPaths = root.toFile().listFiles(new FileFilter() {
 				@Override
 				public boolean accept(File pathname) {
@@ -308,7 +364,7 @@ public class AudioApp {
 			for (File soundPath : soundPaths) {
 				logger.debug("Loading sound: " + soundPath.toString());
 				String soundString;
-				try (FileInputStream fin = new FileInputStream(soundPath)){
+				try (FileInputStream fin = new FileInputStream(soundPath)) {
 					byte[] soundBytes = fin.readAllBytes();
 					fin.close();
 					soundString = new String(soundBytes, "UTF-8");
@@ -320,8 +376,7 @@ public class AudioApp {
 					e.printStackTrace();
 				}
 			}
-		}
-		else {
+		} else {
 			try {
 				Files.createDirectories(root);
 			} catch (IOException e) {
@@ -331,31 +386,28 @@ public class AudioApp {
 		}
 		return soundLibrary;
 	}
-	
+
 	public static void saveSoundBoard(SoundBoard sb) throws IOException {
 		Path root = configuration.getSoundBoardLibPath();
 		if (!Files.exists(root)) {
 			Files.createDirectories(root);
 		}
 		Path soundBoardPath = Paths.get(root.toString(), sb.name);
-		Path soundBoardPathBackup = Paths.get(root.toString(), "_"+sb.name);
+		Path soundBoardPathBackup = Paths.get(root.toString(), "_" + sb.name);
 		Path ambiencePath = Paths.get(soundBoardPath.toString(), "ambience");
 		Path ambiencePathBackup = Paths.get(soundBoardPathBackup.toString(), "ambience");
 		Path effectsPath = Paths.get(soundBoardPath.toString(), "effects");
 		Path effectsPathBackup = Paths.get(soundBoardPathBackup.toString(), "effects");
-		if(Files.exists(ambiencePath)) {
-			Files.walk(ambiencePath)
-		    .sorted(Comparator.reverseOrder())
-		    .filter(Files::exists)
-		    .forEach(t -> {
+		if (Files.exists(ambiencePath)) {
+			Files.walk(ambiencePath).sorted(Comparator.reverseOrder()).filter(Files::exists).forEach(t -> {
 				try {
 					Path backupPath = ambiencePathBackup.resolve(ambiencePath.relativize(t));
-					if(!Files.exists(backupPath.getParent()))
+					if (!Files.exists(backupPath.getParent()))
 						Files.createDirectories(backupPath.getParent());
-					if(!Files.isDirectory(t))
+					if (!Files.isDirectory(t))
 						Files.copy(t, backupPath, StandardCopyOption.REPLACE_EXISTING);
-					//System.out.println(t);
-					if(!t.equals(ambiencePath))
+					// System.out.println(t);
+					if (!t.equals(ambiencePath))
 						Files.delete(t);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -363,19 +415,16 @@ public class AudioApp {
 				}
 			});
 		}
-		if(Files.exists(effectsPath)) {
-			Files.walk(effectsPath)
-		    .sorted(Comparator.reverseOrder())
-		    .filter(Files::exists)
-		    .forEach(t -> {
+		if (Files.exists(effectsPath)) {
+			Files.walk(effectsPath).sorted(Comparator.reverseOrder()).filter(Files::exists).forEach(t -> {
 				try {
 					Path backupPath = effectsPathBackup.resolve(effectsPath.relativize(t));
-					if(!Files.exists(backupPath.getParent()))
+					if (!Files.exists(backupPath.getParent()))
 						Files.createDirectories(backupPath.getParent());
-					if(!Files.isDirectory(t))
+					if (!Files.isDirectory(t))
 						Files.copy(t, backupPath, StandardCopyOption.REPLACE_EXISTING);
-					//System.out.println(t);
-					if(!t.equals(effectsPath))
+					// System.out.println(t);
+					if (!t.equals(effectsPath))
 						Files.delete(t);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -386,7 +435,7 @@ public class AudioApp {
 		Files.createDirectories(soundBoardPath);
 		Files.createDirectories(ambiencePath);
 		Files.createDirectories(effectsPath);
-		for(String cat : sb.getCategories()) {
+		for (String cat : sb.getCategories()) {
 			Path ambienceCatPath = Paths.get(ambiencePath.toString(), cat);
 			Path effectsCatPath = Paths.get(effectsPath.toString(), cat);
 			Files.createDirectories(ambienceCatPath);
@@ -396,11 +445,8 @@ public class AudioApp {
 		}
 		logger.debug("Adding soundboard: " + sb.name);
 		soundboardLibrary.put(sb.name, sb);
-		if(Files.exists(soundBoardPathBackup)) {
-			Files.walk(soundBoardPathBackup)
-		    .sorted(Comparator.reverseOrder())
-		    .filter(Files::exists)
-		    .forEach(t -> {
+		if (Files.exists(soundBoardPathBackup)) {
+			Files.walk(soundBoardPathBackup).sorted(Comparator.reverseOrder()).filter(Files::exists).forEach(t -> {
 				try {
 					Files.delete(t);
 				} catch (IOException e) {
@@ -411,10 +457,10 @@ public class AudioApp {
 		}
 		resetStreamDeckController();
 	}
-	
+
 	private static void resetStreamDeckController() {
 		logger.debug("Resetting controller");
-		if(controller != null) {
+		if (controller != null) {
 			controller.stop(true, false);
 		}
 		StreamItem[] sbItems = new StreamItem[soundboardLibrary.size()];
@@ -431,42 +477,44 @@ public class AudioApp {
 	public static void deleteSoundboard(SoundBoard sb) throws IOException {
 		Path root = configuration.getSoundBoardLibPath();
 		Path soundBoardPath = Paths.get(root.toString(), sb.name);
-		
-		if(Files.exists(soundBoardPath)) {
+
+		if (Files.exists(soundBoardPath)) {
 			deleteFolder(soundBoardPath.toFile());
 		}
 		soundboardLibrary.remove(sb.name);
 		resetStreamDeckController();
 	}
-	
+
 	public static void deleteFolder(File folder) {
-	    File[] files = folder.listFiles();
-	    if(files!=null) { //some JVMs return null for empty dirs
-	        for(File f: files) {
-	            if(f.isDirectory()) {
-	                deleteFolder(f);
-	            } else {
-	                boolean suc = f.delete();
-	                if(!suc)
-	                	f.deleteOnExit();
-	            }
-	        }
-	    }
-        boolean suc = folder.delete();
-        if(!suc)
-        	folder.deleteOnExit();
+		File[] files = folder.listFiles();
+		if (files != null) { // some JVMs return null for empty dirs
+			for (File f : files) {
+				if (f.isDirectory()) {
+					deleteFolder(f);
+				} else {
+					boolean suc = f.delete();
+					if (!suc)
+						f.deleteOnExit();
+				}
+			}
+		}
+		boolean suc = folder.delete();
+		if (!suc)
+			folder.deleteOnExit();
 	}
 
 	private static void saveSounds(Path root, List<Sound> sounds) {
-		if(sounds == null)
+		if (sounds == null)
 			return;
 		logger.debug("Sound root: " + root.toString());
 		try {
-			if(!Files.exists(root) || !Files.isDirectory(root)) {
-					Files.createDirectories(root);
+			if (!Files.exists(root) || !Files.isDirectory(root)) {
+				Files.createDirectories(root);
 			}
 			for (Sound sound : sounds) {
-				Path soundPath = Paths.get(root.toString(), sound.getName() + ".json");
+				String name = sound.getName();
+				name = name.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+				Path soundPath = Paths.get(root.toString(), name + ".json");
 				logger.debug("Saving sound: " + soundPath.toString());
 				String soundString;
 				try {
@@ -501,14 +549,15 @@ public class AudioApp {
 	}
 
 	/**
-	 * Checks if old soud format is present and no new sound format, then converts it to the new.
+	 * Checks if old soud format is present and no new sound format, then converts
+	 * it to the new.
 	 */
 	private static void checkOldLibFormate() {
 		if (!Files.exists(configuration.getSoundBoardLibPath()) && Files.exists(Paths.get("sounds"))) {
 			convertOldLib();
 		}
 	}
-	
+
 	/**
 	 * Converts the old sound library format to the new format.
 	 */
@@ -527,7 +576,11 @@ public class AudioApp {
 				Path ambPath = soundBoardLibPath.resolve("Default").resolve("ambience").resolve(category);
 				Path effPath = soundBoardLibPath.resolve("Default").resolve("effects");
 				logger.debug("Found category: " + category);
-				File[] soundFiles = file.listFiles(new FilenameFilter() {public boolean accept(File dir, String name) {return name.endsWith(".mp3");}});
+				File[] soundFiles = file.listFiles(new FilenameFilter() {
+					public boolean accept(File dir, String name) {
+						return name.endsWith(".mp3");
+					}
+				});
 				for (File soundFile : soundFiles) {
 					logger.debug("  Found sound: " + soundFile.getName());
 					String name = soundFile.getName();
@@ -535,9 +588,9 @@ public class AudioApp {
 					Path source = soundFile.toPath();
 					Path destFolder = soundLibPath.resolve(name);
 					Path destAudio = soundLibPath.resolve(name).resolve(soundFile.getName());
-					Path destSBSound = ambPath.resolve(name+".json");
-					Path destSound = soundLibPath.resolve(name+".json");
-					Path desticon= soundLibPath.resolve(name).resolve(name+".png");
+					Path destSBSound = ambPath.resolve(name + ".json");
+					Path destSound = soundLibPath.resolve(name + ".json");
+					Path desticon = soundLibPath.resolve(name).resolve(name + ".png");
 					try {
 						Files.createDirectories(destFolder);
 						Files.createDirectories(ambPath);
@@ -548,9 +601,12 @@ public class AudioApp {
 						String jsonString = new GsonBuilder().setPrettyPrinting().create().toJson(sound);
 						try {
 							byte[] utf8JsonString = jsonString.getBytes("UTF-8");
-							Files.write(destSound, utf8JsonString, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-							Files.write(destSBSound, utf8JsonString, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-						} catch (UnsupportedEncodingException e) {}
+							Files.write(destSound, utf8JsonString, StandardOpenOption.CREATE,
+									StandardOpenOption.TRUNCATE_EXISTING);
+							Files.write(destSBSound, utf8JsonString, StandardOpenOption.CREATE,
+									StandardOpenOption.TRUNCATE_EXISTING);
+						} catch (UnsupportedEncodingException e) {
+						}
 					} catch (IOException e) {
 						logger.error("Cannot copy sound file: " + soundFile.getPath());
 						e.printStackTrace();
@@ -559,15 +615,16 @@ public class AudioApp {
 			}
 		}
 	}
-	
-	public static Sound saveNewSound(String name, BufferedImage icon, String audioFile, Sound.Type type, String[] tags) throws IOException {
+
+	public static Sound saveNewSound(String name, BufferedImage icon, String audioFile, Sound.Type type, String[] tags)
+			throws IOException {
 		Path soundSource = Paths.get(audioFile);
 		String extension = audioFile.substring(audioFile.lastIndexOf("."));
 		Path soundLibPath = AudioApp.getConfiguration().getSoundLibPath();
 		Path soundFolder = soundLibPath.resolve(name);
 		Path soundJson = soundLibPath.resolve(name + ".json");
-		Path soundFile = soundFolder.resolve(name + extension );
-		Path soundIcon = soundFolder.resolve(name + ".png" );
+		Path soundFile = soundFolder.resolve(name + extension);
+		Path soundIcon = soundFolder.resolve(name + ".png");
 		Files.createDirectories(soundFolder);
 		Files.copy(soundSource, soundFile);
 		ImageIO.write(icon, "PNG", soundIcon.toFile());
@@ -576,18 +633,19 @@ public class AudioApp {
 		soundLibrary.add(s);
 		return s;
 	}
-	
-	public static Sound saveNewSoundplaylist(String name, BufferedImage icon, String[] audioFiles, Sound.Type type, String[] tags) throws IOException {
+
+	public static Sound saveNewSoundplaylist(String name, BufferedImage icon, String[] audioFiles, Sound.Type type,
+			String[] tags) throws IOException {
 		Path soundLibPath = AudioApp.getConfiguration().getSoundLibPath();
 		Path soundFolder = soundLibPath.resolve(name);
 		Path soundJson = soundLibPath.resolve(name + ".json");
-		Path soundIcon = soundFolder.resolve(name + ".png" );
+		Path soundIcon = soundFolder.resolve(name + ".png");
 		Files.createDirectories(soundFolder);
 		for (int i = 0; i < audioFiles.length; i++) {
 			String audioFile = audioFiles[i];
 			Path soundSource = Paths.get(audioFile);
 			String extension = audioFile.substring(audioFile.lastIndexOf("."));
-			Path soundFile = soundFolder.resolve(name + extension );
+			Path soundFile = soundFolder.resolve(name + extension);
 			Files.copy(soundSource, soundFile);
 		}
 		ImageIO.write(icon, "PNG", soundIcon.toFile());
@@ -600,16 +658,16 @@ public class AudioApp {
 	public static boolean crossfade() {
 		return configuration.crossfade;
 	}
-	
+
 	public static void setCrossfade(boolean cf) {
 		configuration.crossfade = cf;
 		saveConfig();
 	}
-	
+
 	public static void setAudioInterface(Mixer.Info info) {
-		if(AudioDevices.getAudioDeviceByName(info.getName(), false) != null) {
+		if (AudioDevices.getAudioDeviceByName(info.getName(), false) != null) {
 			configuration.setAudioInterface(info);
-			if(player != null)
+			if (player != null)
 				playAmbience(player.getSound());
 			saveConfig();
 		}
@@ -626,25 +684,82 @@ public class AudioApp {
 	public static int getFadeOutMs() {
 		return configuration.fadeOutMs;
 	}
-	
+
 	public static SoundBoard getSoundboard(String name) {
 		return soundboardLibrary.get(name);
 	}
-	
+
 	public static List<SoundBoard> getSoundboardLibrary() {
 		return new ArrayList<>(soundboardLibrary.values());
 	}
-	
+
 	public static List<Sound> getSoundLibrary() {
 		return soundLibrary;
 	}
-	
+
 	public static List<Sound> getEffectSounds() {
-		return soundLibrary.stream().filter(s -> s.getType() == Type.EFFECT).collect(Collectors.toList());
+		List<Sound> localSoundList = soundLibrary.stream().filter(s -> s.getType() == Type.EFFECT).collect(Collectors.toList());
+		if(isSpotifyEnabled()) {
+			List<Sound> spotifyPlaylists = getSpotifyPlaylistSounds(Type.EFFECT);
+			if(spotifyPlaylists != null)
+				localSoundList.addAll(spotifyPlaylists);
+		}
+		return localSoundList;
 	}
-	
+
 	public static List<Sound> getAmbienceSounds() {
-		return soundLibrary.stream().filter(s -> s.getType() == Type.AMBIENCE).collect(Collectors.toList());
+		List<Sound> localSoundList = soundLibrary.stream().filter(s -> s.getType() == Type.AMBIENCE).collect(Collectors.toList());
+		if(isSpotifyEnabled()) {
+			List<Sound> spotifyPlaylists = getSpotifyPlaylistSounds(Type.AMBIENCE);
+			if(spotifyPlaylists != null)
+				localSoundList.addAll(spotifyPlaylists);
+		}
+		return localSoundList;
+	}
+
+	private static List<Sound> getSpotifyPlaylistSounds(Type type) {
+		if(isSpotifyEnabled()) {
+			SpotifyFrontend sf = getSpotifyFrontend();
+			List<Sound> s = sf.getListOfCurrentUsersPlaylists().stream().map(p -> new Sound(p.getName(), p.getOwner().getId(), p.getId(), p.getType().type, type)).collect(Collectors.toList());
+			Collections.sort(s);
+			List<Sound> finalSounds = new ArrayList<>(s.size());
+			Sound lSound = null;
+			for (Sound sound : s) {
+				if(lSound == null || sound.compareTo(lSound) != 0) {
+					finalSounds.add(sound);
+				}
+				lSound = sound;
+			}
+			return finalSounds;
+		}
+		return null;
+	}
+
+	public static IStreamDeck getStreamDeck() {
+		return streamDeck;
+	}
+
+	public static SDImage getSpotifyCover(Sound sound) {
+		Path cachFolder = Paths.get("cache", "spotify", sound.getSpotifyOwner(), sound.getSpotifyType());
+		try {
+			if (!Files.exists(cachFolder))
+				Files.createDirectories(cachFolder);
+			Path imagePath = cachFolder.resolve(sound.getSpotifyId() + ".png");
+			if(!Files.exists(imagePath)) {
+				SpotifyFrontend sf = SpotifyFrontend.createInstance(configuration.spotifyClientId, configuration.spotifyClientSecret, configuration.spotifyResponseUrl, true);
+				Playlist pl = sf.getPlaylist(sound.getSpotifyOwner(), sound.getSpotifyId());
+				Image[] is = pl.getImages();
+				if(is.length > 0) {
+					BufferedImage img = ImageIO.read(new URL(is[0].getUrl()));
+					ImageIO.write(img, "PNG", imagePath.toFile());
+				}
+			}
+			BufferedImage img = ImageIO.read(imagePath.toFile());
+			return IconHelper.convertImage(img);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static void main(String[] args) {
@@ -663,9 +778,5 @@ public class AudioApp {
 		StreamDeckController.setKeyDeadzone(50);
 		AudioApp.controller = new StreamDeckController(streamDeck, root);
 		AudioApp.controller.setBrightness(75);
-	}
-
-	public static IStreamDeck getStreamDeck() {
-		return streamDeck;
 	}
 }

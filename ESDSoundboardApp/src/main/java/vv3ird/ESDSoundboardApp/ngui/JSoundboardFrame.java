@@ -35,6 +35,7 @@ import vv3ird.ESDSoundboardApp.ngui.pages.JSoundPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.JSoundboardPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.Page;
 import vv3ird.ESDSoundboardApp.ngui.pages.PageViewer;
+import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -92,6 +93,7 @@ public class JSoundboardFrame extends JFrame {
 	 */
 	public JSoundboardFrame() {
 		super("Soundboard App");
+		setTitle("Soundboard App" + (AudioApp.isSpotifyEnabled() ? " (Spotify enabled)" : ""));
 		pnContent = new PageViewer();
 		pnContent.setOpaque(false);
 		setBackground(ColorScheme.MAIN_BACKGROUND_COLOR);

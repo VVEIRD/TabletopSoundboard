@@ -25,9 +25,9 @@ import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.Spotify.SpotifyFrontend;
 import vv3ird.ESDSoundboardApp.config.AppConfiguration;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
-import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
 import vv3ird.ESDSoundboardApp.ngui.components.JSoundBoardPanel;
 import vv3ird.ESDSoundboardApp.ngui.layout.UIColumnLayout;
+import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 import vv3ird.ESDSoundboardApp.ngui.util.Helper;
 
 import javax.swing.JCheckBox;
@@ -64,6 +64,8 @@ public class JOptionsPage extends Page{
 		pnContent.setLayout(new UIColumnLayout(5, 5));
 		
 		chckbxEnableSpotify = new JCheckBox("Enable Spotify");
+		chckbxEnableSpotify.setForeground(ColorScheme.FOREGROUND_COLOR);
+		chckbxEnableSpotify.setFont(Helper.defaultUiFont);
 		chckbxEnableSpotify.setOpaque(false);
 		chckbxEnableSpotify.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -86,6 +88,8 @@ public class JOptionsPage extends Page{
 		pnSpotify.setLayout(null);
 		
 		JLabel lblClientId = new JLabel("Client ID:");
+		lblClientId.setForeground(ColorScheme.FOREGROUND_COLOR);
+		lblClientId.setFont(Helper.defaultUiFont);
 		lblClientId.setBounds(10, 18, 83, 14);
 		pnSpotify.add(lblClientId);
 		
@@ -110,10 +114,14 @@ public class JOptionsPage extends Page{
 		pnSpotify.add(tfResponseUrl);
 		
 		JLabel lblRedirectUrl = new JLabel("Redirect URL:");
+		lblRedirectUrl.setFont(Helper.defaultUiFont);
+		lblRedirectUrl.setForeground(ColorScheme.FOREGROUND_COLOR);
 		lblRedirectUrl.setBounds(10, 98, 83, 14);
 		pnSpotify.add(lblRedirectUrl);
 		
 		JLabel lblClientSecret = new JLabel("Client Secret:");
+		lblClientSecret.setFont(Helper.defaultUiFont);
+		lblClientSecret.setForeground(ColorScheme.FOREGROUND_COLOR);
 		lblClientSecret.setBounds(10, 58, 83, 14);
 		pnSpotify.add(lblClientSecret);
 		

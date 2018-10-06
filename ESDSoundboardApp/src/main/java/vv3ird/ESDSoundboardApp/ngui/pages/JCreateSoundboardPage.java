@@ -4,10 +4,10 @@ import javax.swing.JPanel;
 
 import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
-import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
 import vv3ird.ESDSoundboardApp.ngui.components.JSoundPanel;
 import vv3ird.ESDSoundboardApp.ngui.components.PDControlScrollPane;
 import vv3ird.ESDSoundboardApp.ngui.layout.WrapLayout;
+import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;

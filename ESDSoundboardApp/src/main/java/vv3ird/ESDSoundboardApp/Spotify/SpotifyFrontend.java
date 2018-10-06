@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -23,15 +22,20 @@ import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
+import com.wrapper.spotify.model_objects.miscellaneous.CurrentlyPlayingContext;
 import com.wrapper.spotify.model_objects.miscellaneous.Device;
 import com.wrapper.spotify.model_objects.specification.Paging;
+import com.wrapper.spotify.model_objects.specification.Playlist;
 import com.wrapper.spotify.model_objects.specification.PlaylistSimplified;
 import com.wrapper.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
 import com.wrapper.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
+import com.wrapper.spotify.requests.data.player.GetInformationAboutUsersCurrentPlaybackRequest;
 import com.wrapper.spotify.requests.data.player.GetUsersAvailableDevicesRequest;
+import com.wrapper.spotify.requests.data.player.PauseUsersPlaybackRequest;
 import com.wrapper.spotify.requests.data.player.StartResumeUsersPlaybackRequest;
 import com.wrapper.spotify.requests.data.player.ToggleShuffleForUsersPlaybackRequest;
 import com.wrapper.spotify.requests.data.playlists.GetListOfCurrentUsersPlaylistsRequest;
+import com.wrapper.spotify.requests.data.playlists.GetPlaylistRequest;
 
 public class SpotifyFrontend {
 
@@ -49,13 +53,14 @@ public class SpotifyFrontend {
 		public void handle(HttpExchange t) throws IOException {
 			System.out.println("Request: " + t.getRequestURI().toString());
 			Map<String, String> gets = queryToMap(t.getRequestURI().getQuery());
-			System.out.println("Code: " + gets.get("code"));
-			System.out.println("State: " + gets.get("state"));
+//			System.out.println("Code: " + gets.get("code"));
+//			System.out.println("State: " + gets.get("state"));
 			sf.authCode = gets.get("code");
-			if("access_denied".equalsIgnoreCase(gets.get("error")))
+			if ("access_denied".equalsIgnoreCase(gets.get("error")))
 				sf.accessDenied = true;
-			String response = sf.authCode != null ? "Authorization aquired, this page can be closed" : "Invalid Spotify response, cannot login further" + 
-				(sf.accessDenied ? ": Access Denied by user" : "");
+			String response = sf.authCode != null ? "Authorization aquired, this page can be closed"
+					: "Invalid Spotify response, cannot login further"
+							+ (sf.accessDenied ? ": Access Denied by user" : "");
 			t.sendResponseHeaders(200, response.length());
 			OutputStream os = t.getResponseBody();
 			os.write(response.getBytes());
@@ -76,8 +81,9 @@ public class SpotifyFrontend {
 			return result;
 		}
 	}
+
 	private static SpotifyFrontend instance = null;
-	
+
 	private static HttpServer server = null;
 
 	public static void authorizationCodeRefresh_Sync(SpotifyApi api) {
@@ -107,14 +113,14 @@ public class SpotifyFrontend {
 			System.out.println("Error: " + e.getCause().getMessage());
 		}
 	}
-	
+
 	private static void authorizationCodeUri_Sync(AuthorizationCodeUriRequest authorizationCodeUriRequest) {
 		final URI uri = authorizationCodeUriRequest.execute();
 
 		System.out.println("Auth-URI: " + uri.toString());
 		openWebpage(uri);
 	}
-	
+
 	private static AuthorizationCodeCredentials authorizationCode_Sync(SpotifyApi api, String authCode) {
 		try {
 			AuthorizationCodeRequest authorizationCodeRequest = api.authorizationCode(authCode).build();
@@ -130,13 +136,15 @@ public class SpotifyFrontend {
 		return null;
 	}
 
-	public static SpotifyFrontend createInstance(String clientId, String clientSecret, String responseUrl, boolean autoLogin) {
-		if(instance != null && instance.clientId.equals(clientId) && instance.clientSecret.equals(clientSecret) && instance.responseUri.equals(responseUrl)) {
+	public static SpotifyFrontend createInstance(String clientId, String clientSecret, String responseUrl,
+			boolean autoLogin) {
+		if (instance != null && instance.clientId.equals(clientId) && instance.clientSecret.equals(clientSecret)
+				&& instance.responseUri.equals(responseUrl)) {
 			if (!instance.isLoggedIn() && autoLogin)
 				instance.login();
 			return instance;
 		}
-		SpotifyFrontend instance = new SpotifyFrontend(clientId, clientSecret, responseUrl);
+		instance = new SpotifyFrontend(clientId, clientSecret, responseUrl);
 		if (!instance.isLoggedIn() && autoLogin)
 			instance.login();
 		return instance;
@@ -155,11 +163,11 @@ public class SpotifyFrontend {
 				PlaylistSimplified[] asas = playlistSimplifiedPaging.getItems();
 				for (PlaylistSimplified playlistSimplified : asas) {
 					playlists.add(playlistSimplified);
-					System.out.println("Playlist :" + playlistSimplified.getName());
-					System.out.println("ID :      " + playlistSimplified.getId());
-					System.out.println();
+//					System.out.println("Playlist :" + playlistSimplified.getName());
+//					System.out.println("ID :      " + playlistSimplified.getId());
+//					System.out.println();
 				}
-				getListOfCurrentUsersPlaylistsRequest = api.getListOfCurrentUsersPlaylists().limit(20).offset(20)
+				getListOfCurrentUsersPlaylistsRequest = api.getListOfCurrentUsersPlaylists().limit(20).offset(i)
 						.build();
 				playlistSimplifiedPaging = getListOfCurrentUsersPlaylistsRequest.execute();
 			}
@@ -169,6 +177,36 @@ public class SpotifyFrontend {
 		}
 		return null;
 	}
+
+	public static Playlist getPlaylist_Sync(SpotifyApi api, String userId, String playlistId) {
+		GetPlaylistRequest getPlaylistRequest = api.getPlaylist(userId, playlistId)
+//		          .fields("description")
+				.build();
+		try {
+			final Playlist playlist = getPlaylistRequest.execute();
+			return playlist;
+		} catch (IOException | SpotifyWebApiException e) {
+			System.out.println("Error: " + e.getMessage());
+		}
+		return null;
+	}
+	
+	public CurrentlyPlayingContext getInformationAboutUsersCurrentPlayback() {
+		return getInformationAboutUsersCurrentPlayback_Sync(api);
+	}
+	
+
+	  public static CurrentlyPlayingContext getInformationAboutUsersCurrentPlayback_Sync(SpotifyApi api) {
+		  GetInformationAboutUsersCurrentPlaybackRequest getInformationAboutUsersCurrentPlaybackRequest =
+				  api.getInformationAboutUsersCurrentPlayback()
+		                  .build();
+	    try {
+	      return getInformationAboutUsersCurrentPlaybackRequest.execute();
+	    } catch (IOException | SpotifyWebApiException e) {
+	      System.out.println("Error: " + e.getMessage());
+	    }
+	    return null;
+	  }
 
 	private static Device[] getUsersAvailableDevices_Sync(SpotifyApi api) {
 		try {
@@ -195,6 +233,18 @@ public class SpotifyFrontend {
 			}
 		}
 		return false;
+	}
+
+	public static void pauseUsersPlayback_Sync(SpotifyApi api) {
+		PauseUsersPlaybackRequest pauseUsersPlaybackRequest = api.pauseUsersPlayback()
+//			          .device_id(deviceId)
+				.build();
+		try {
+			final String string = pauseUsersPlaybackRequest.execute();
+			System.out.println("Null: " + string);
+		} catch (IOException | SpotifyWebApiException e) {
+			System.out.println("Error: " + e.getMessage());
+		}
 	}
 
 	private static boolean startResumeUsersPlaybackPlaylist_Sync(SpotifyApi api, String playlistId, String deviceId) {
@@ -226,7 +276,7 @@ public class SpotifyFrontend {
 		}
 		return false;
 	}
-	
+
 	private String clientId = null;
 
 	private String clientSecret = null;
@@ -242,13 +292,13 @@ public class SpotifyFrontend {
 	private transient String refreshToken = null;
 
 	private transient String accessToken = null;
-	
+
 	private transient SpotifyApi api = null;
-	
+
 	private transient String authCode = null;
-	
+
 	private transient boolean accessDenied = false;
-	
+
 	private transient boolean loggedIn = false;
 
 	public SpotifyFrontend(String clientId, String clientSecret, String redirectUri) {
@@ -256,11 +306,11 @@ public class SpotifyFrontend {
 		this.clientSecret = clientSecret;
 		this.responseUri = redirectUri;
 	}
-	
+
 	public AuthorizationCodeCredentials authorizationCode() {
 		return authorizationCode_Sync(api, authCode);
 	}
-		
+
 	public AuthorizationCodeCredentials authorizationCode(String authCode) {
 		return authorizationCode_Sync(api, authCode);
 	}
@@ -269,14 +319,18 @@ public class SpotifyFrontend {
 		return defaultDevice;
 	}
 
+	public Playlist getPlaylist(String userId, String playlistId) {
+		return getPlaylist_Sync(api, userId, playlistId);
+	}
+
 	public Device[] getUsersAvailableDevices() {
 		return getUsersAvailableDevices_Sync(api);
 	}
-	
+
 	public List<PlaylistSimplified> getListOfCurrentUsersPlaylists() {
 		return getListOfCurrentUsersPlaylists_Sync(api);
 	}
-	
+
 	private void init() {
 		refershTimer = new Timer(true);
 		refershTimer.schedule(new TimerTask() {
@@ -286,23 +340,22 @@ public class SpotifyFrontend {
 			}
 		}, 3_000_000, 3_000_000);
 		Device[] devices = getUsersAvailableDevices_Sync(api);
-		if(defaultDevice != null && devices != null && devices.length > 0) {
+		if (defaultDevice != null && devices != null && devices.length > 0) {
 			boolean containesDefaultDevice = false;
 			for (Device device : devices) {
-				if(device.getId().equals(defaultDevice.getId()))
+				if (device.getId().equals(defaultDevice.getId()))
 					containesDefaultDevice = true;
 			}
-			if(!containesDefaultDevice && devices != null && devices.length > 0)
+			if (!containesDefaultDevice && devices != null && devices.length > 0)
 				this.defaultDevice = devices[0];
-		}
-		else if (devices != null && devices.length > 0)
+		} else if (devices != null && devices.length > 0)
 			this.defaultDevice = devices[0];
 	}
-	
+
 	public boolean isLoggedIn() {
 		return loggedIn;
 	}
-	
+
 	public void login() {
 		this.api = new SpotifyApi.Builder().setClientId(this.clientId).setClientSecret(this.clientSecret)
 				.setRedirectUri(SpotifyHttpManager.makeUri(responseUri)).build();
@@ -311,7 +364,7 @@ public class SpotifyFrontend {
 		this.authCode = null;
 		this.accessDenied = false;
 		try {
-			if(server == null) {
+			if (server == null) {
 				server = HttpServer.create(new InetSocketAddress("localhost", 5000), 0);
 				server.start();
 			}
@@ -328,22 +381,27 @@ public class SpotifyFrontend {
 				if (acc != null) {
 					accessToken = acc.getAccessToken();
 					refreshToken = acc.getRefreshToken();
-					System.out.println();
-					System.out.println("Access Token: " + acc.getAccessToken());
-					System.out.println("Refresh Token: " + acc.getRefreshToken());
-					System.out.println("Expires in: " + acc.getExpiresIn());
-					if(accessToken != null && refreshToken != null) {
+//					System.out.println();
+//					System.out.println("Access Token: " + acc.getAccessToken());
+//					System.out.println("Refresh Token: " + acc.getRefreshToken());
+//					System.out.println("Expires in: " + acc.getExpiresIn());
+					if (accessToken != null && refreshToken != null) {
 						loggedIn = true;
+						System.out.println("Logged into spotify");
 					}
 				}
 			}
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
-		if(loggedIn)
+		if (loggedIn)
 			init();
 	}
-	
+
+	public void pauseUsersPlayback() {
+		pauseUsersPlayback_Sync(api);
+	}
+
 	public void setDefaultDevice(Device defaultDevice) {
 		defaultDevice = Objects.requireNonNull(defaultDevice, "Device cannot be null");
 		this.defaultDevice = defaultDevice;
@@ -386,8 +444,8 @@ public class SpotifyFrontend {
 			System.out.println("    ID: " + device.getId());
 			System.out.println();
 		}
-		while(true) {
-			int playlistIndex = (int) Math.round(Math.random()*playlists.size());
+		while (true) {
+			int playlistIndex = (int) Math.round(Math.random() * playlists.size());
 			System.out.println("===============================================");
 			System.out.println(" Playing playlist \"" + playlists.get(playlistIndex).getName() + "\"");
 			System.out.println("===============================================");

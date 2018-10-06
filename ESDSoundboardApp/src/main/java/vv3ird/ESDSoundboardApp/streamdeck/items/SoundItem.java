@@ -14,7 +14,7 @@ public class SoundItem extends AbstractStreamItem {
 	private Sound sound = null;
 
 	public SoundItem(Sound sound) {
-		super(IconHelper.loadImageSafe(sound.getCoverPath()));
+		super(!sound.isSpotifySound() ? IconHelper.loadImageSafe(sound.getCoverPath()) : AudioApp.getSpotifyCover(sound));
 		this.sound = sound;
 		this.setTextPosition(TEXT_POS_CENTER);
 		this.setText(sound.getName());

@@ -21,9 +21,9 @@ import javax.swing.JViewport;
 import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
-import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
 import vv3ird.ESDSoundboardApp.ngui.components.JSoundPanel;
 import vv3ird.ESDSoundboardApp.ngui.layout.WrapLayout;
+import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 
 public class JSoundPage extends Page{
 	

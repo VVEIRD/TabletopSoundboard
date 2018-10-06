@@ -1,4 +1,4 @@
-package vv3ird.ESDSoundboardApp.ngui;
+package vv3ird.ESDSoundboardApp.ngui.util;
 
 import java.awt.Color;
 

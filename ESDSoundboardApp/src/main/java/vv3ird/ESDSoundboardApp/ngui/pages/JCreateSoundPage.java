@@ -14,8 +14,8 @@ import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.AppConfiguration;
 import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.Sound.Type;
-import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
 import vv3ird.ESDSoundboardApp.ngui.components.IconSelectorPanel;
+import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 import vv3ird.ESDSoundboardApp.player.AudioPlayer;
 
 import java.awt.BorderLayout;

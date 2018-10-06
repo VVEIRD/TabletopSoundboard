@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
+import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 
 public class JSelectablePanel extends JPanel {
 

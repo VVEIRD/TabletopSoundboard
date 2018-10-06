@@ -4,6 +4,7 @@ import de.rcblum.stream.deck.event.KeyEvent;
 import de.rcblum.stream.deck.event.KeyEvent.Type;
 import de.rcblum.stream.deck.items.AbstractStreamItem;
 import de.rcblum.stream.deck.util.IconHelper;
+import vv3ird.ESDSoundboardApp.AudioApp;
 
 public class QuitItem extends AbstractStreamItem {
 
@@ -15,8 +16,10 @@ public class QuitItem extends AbstractStreamItem {
 
 	@Override
 	public void onKeyEvent(KeyEvent event) {
-		if(event.getType() == Type.RELEASED_CLICKED)
+		if(event.getType() == Type.RELEASED_CLICKED) {
+			AudioApp.stop();
 			System.exit(0);
+		}
 	}
 
 }

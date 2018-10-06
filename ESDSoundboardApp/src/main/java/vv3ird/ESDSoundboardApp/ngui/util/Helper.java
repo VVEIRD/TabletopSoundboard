@@ -6,9 +6,9 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.JTextField;
 
-import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
-
 public class Helper {
+	
+	public static Font defaultUiFont = new Font("Segoe UI", Font.PLAIN, 14);
 
 	public static void setTextfieldStyle(JTextField c) {
 		c.setForeground(ColorScheme.FOREGROUND_COLOR);

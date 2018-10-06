@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.google.gson.GsonBuilder;
@@ -26,6 +28,14 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	private List<String> tags = null;
 	
 	private Type type = Type.AMBIENCE;
+	
+	private boolean isSpotifySound = false;
+	
+	private String spotifyOwner = null;
+	
+	private String spotifyId = null;
+	
+	private String spotifyType = "playlist";
 
 	public Sound(String name, String filePath, String coverPath, Type type, String[] tags) {
 		this(name, new String[] {filePath}, coverPath, type, tags);
@@ -38,6 +48,20 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 		this.coverPath = coverPath;
 		this.type = type;
 		this.tags = tags != null ? Arrays.asList(tags) : null;
+	}
+
+	public Sound(String name, String spotifyOwner, String spotifyId, String spotifyType, Type type) {
+		super();
+		this.name = name;
+		this.type = type;
+		this.isSpotifySound = true;
+		this.spotifyOwner = spotifyOwner;
+		this.spotifyId = spotifyId;
+		this.spotifyType = spotifyType;
+		this.tags = new ArrayList<>();
+		this.tags.add("Spotify");
+		this.filePaths = new String[0];
+		
 	}
 	
 	private void checkLegacy() {
@@ -103,7 +127,7 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	
 	public String getCurrentFile() {
 		checkLegacy();
-		return this.filePaths[currentFile];
+		return this.filePaths.length > 0 ? this.filePaths[currentFile] : null;
 	}
 	
 	public void resetCurrentFile() {
@@ -145,5 +169,21 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	
 	public void setType(Type type) {
 		this.type = type;
+	}
+	
+	public boolean isSpotifySound() {
+		return isSpotifySound;
+	}
+	
+	public String getSpotifyId() {
+		return spotifyId;
+	}
+	
+	public String getSpotifyOwner() {
+		return spotifyOwner;
+	}
+	
+	public String getSpotifyType() {
+		return spotifyType;
 	}
 }

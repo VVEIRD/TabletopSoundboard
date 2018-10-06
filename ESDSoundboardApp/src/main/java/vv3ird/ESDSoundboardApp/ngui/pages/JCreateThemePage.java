@@ -5,11 +5,11 @@ import javax.swing.JPanel;
 import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
-import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
 import vv3ird.ESDSoundboardApp.ngui.components.FilterComboBox;
 import vv3ird.ESDSoundboardApp.ngui.components.JSoundPanel;
 import vv3ird.ESDSoundboardApp.ngui.components.PDControlScrollPane;
 import vv3ird.ESDSoundboardApp.ngui.layout.WrapLayout;
+import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 import vv3ird.ESDSoundboardApp.ngui.util.Helper;
 
 import javax.swing.BorderFactory;

@@ -9,7 +9,7 @@ import java.util.Objects;
 import javax.swing.JPanel;
 
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
-import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
+import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;

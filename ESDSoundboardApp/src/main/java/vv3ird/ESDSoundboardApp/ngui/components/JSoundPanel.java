@@ -5,8 +5,9 @@ import javax.swing.JLabel;
 import de.rcblum.stream.deck.device.StreamDeck;
 import de.rcblum.stream.deck.util.IconHelper;
 import de.rcblum.stream.deck.util.SDImage;
+import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.Sound;
-import vv3ird.ESDSoundboardApp.ngui.ColorScheme;
+import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -31,9 +32,12 @@ public class JSoundPanel extends ImagePanel {
 		SDImage bImg = null;
 		try {
 			IconHelper.FRAME_COLOR = background;
-			bImg = IconHelper.loadImage(this.s.getCoverPath(), new FileInputStream(new File(this.s.getCoverPath())), true);
+			if (this.s.isSpotifySound())
+				bImg = AudioApp.getSpotifyCover(this.s);
+			else
+				bImg = IconHelper.loadImage(this.s.getCoverPath(), new FileInputStream(new File(this.s.getCoverPath())), true);
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 		}
 		IconHelper.FRAME_COLOR = oldC;
 		init(bImg.image, s.getName(), background);
