@@ -29,6 +29,8 @@ Here you can name/rename your soundboard and add/remove themes contained by it. 
 
 ![Add Theme](https://raw.githubusercontent.com/WElRD/Images/master/ESDSoundboardApp/Frontend-03-New-Theme.png)
 
-Here you can add Ambience and Effect sounds. Both types will be displayed seperatly on the ESD and ambience sounds will be repeated, while effects will be played once. Effects cannot be stopped, ambience sounds on the other hand cann be stopped and started. 
+Here you can add Ambience and Effect sounds. Both types will be displayed seperatly on the ESD and ambience sounds will be repeated, while effects will be played once. Effects cannot be stopped, ambience sounds on the other hand can be stopped and started. 
+
+If you have spotify support enabled, your spotify playlist will show up in the drop down fields and cam be filtered by the tag "Spotify".
 
 Both dropdown menus for ambience and effect sounds can be filtered by typing in them. The sounds will be filtered by name and by tags.
