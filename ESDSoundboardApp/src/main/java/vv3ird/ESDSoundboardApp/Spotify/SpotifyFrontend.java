@@ -367,7 +367,7 @@ public class SpotifyFrontend {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		String clientId = "9c236ce791684c0788d2b84ff8e2f6a7";
-		String clientSecret = "b9e7cbc5d64043a8b9813be494c6b00b";
+		String clientSecret = "???";
 		String redirectUri = "http://localhost:5000/spotify-redirect";
 		SpotifyFrontend sf = new SpotifyFrontend(clientId, clientSecret, redirectUri);
 		sf.login();
