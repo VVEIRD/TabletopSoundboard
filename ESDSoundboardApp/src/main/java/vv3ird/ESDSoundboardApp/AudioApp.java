@@ -117,14 +117,14 @@ public class AudioApp {
 		STOP_ITEM.setRollingText(sound.getName());
 		try {
 			player.open();
-			float gain = linearToDecibel(configuration.masterGain) + 2;
-			logger.debug("Setting gain for ambience player: " + gain);
-			player.setGain(gain);
 		} catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
 			logger.error("Error opening audio file: " + player.getAudioFile());
 			logger.error(e);
 			e.printStackTrace();
 		}
+		float gain = linearToDecibel(configuration.masterGain) + 2;
+		logger.debug("Setting gain for ambience player: " + gain);
+		player.setGain(gain);
 		player.loop(AudioPlayer.LOOP_FOREVER);
 		if (AudioApp.crossfade())
 			player.start();
@@ -145,6 +145,7 @@ public class AudioApp {
 //		if (!configuration.crossfade)
 //			player.start();
 		AudioApp.player = player;
+		player.setGain(gain);
 	}
 
 	public static void playEffect(Sound sound) {

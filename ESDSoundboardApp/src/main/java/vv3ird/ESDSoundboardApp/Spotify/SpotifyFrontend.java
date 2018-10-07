@@ -87,19 +87,23 @@ public class SpotifyFrontend {
 
 	private static HttpServer server = null;
 
-	public static void authorizationCodeRefresh_Sync(SpotifyApi api) {
+	public static AuthorizationCodeCredentials authorizationCodeRefresh_Sync(SpotifyApi api) {
 		try {
 			final AuthorizationCodeCredentials authorizationCodeCredentials = api.authorizationCodeRefresh().build()
 					.execute();
 
 			// Set access and refresh token for further "spotifyApi" object usage
 			api.setAccessToken(authorizationCodeCredentials.getAccessToken());
-			api.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
+//			api.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
 
+			System.out.println("New access token: " + authorizationCodeCredentials.getAccessToken());
+			System.out.println("New refresh token: " + authorizationCodeCredentials.getRefreshToken());
 			System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
+			return authorizationCodeCredentials;
 		} catch (IOException | SpotifyWebApiException e) {
 			System.out.println("Error: " + e.getMessage());
 		}
+		return null;
 	}
 
 	public static void authorizationCodeUri_Async(AuthorizationCodeUriRequest authorizationCodeUriRequest) {
@@ -191,23 +195,21 @@ public class SpotifyFrontend {
 		}
 		return null;
 	}
-	
+
 	public CurrentlyPlayingContext getInformationAboutUsersCurrentPlayback() {
 		return getInformationAboutUsersCurrentPlayback_Sync(api);
 	}
-	
 
-	  public static CurrentlyPlayingContext getInformationAboutUsersCurrentPlayback_Sync(SpotifyApi api) {
-		  GetInformationAboutUsersCurrentPlaybackRequest getInformationAboutUsersCurrentPlaybackRequest =
-				  api.getInformationAboutUsersCurrentPlayback()
-		                  .build();
-	    try {
-	      return getInformationAboutUsersCurrentPlaybackRequest.execute();
-	    } catch (IOException | SpotifyWebApiException e) {
-	      System.out.println("Error: " + e.getMessage());
-	    }
-	    return null;
-	  }
+	public static CurrentlyPlayingContext getInformationAboutUsersCurrentPlayback_Sync(SpotifyApi api) {
+		GetInformationAboutUsersCurrentPlaybackRequest getInformationAboutUsersCurrentPlaybackRequest = api
+				.getInformationAboutUsersCurrentPlayback().build();
+		try {
+			return getInformationAboutUsersCurrentPlaybackRequest.execute();
+		} catch (IOException | SpotifyWebApiException e) {
+			System.out.println("Error: " + e.getMessage());
+		}
+		return null;
+	}
 
 	private static Device[] getUsersAvailableDevices_Sync(SpotifyApi api) {
 		try {
@@ -248,17 +250,16 @@ public class SpotifyFrontend {
 		}
 	}
 
-	  public static void setVolumeForUsersPlayback_Sync(SpotifyApi api, int volumePercent) {
-			SetVolumeForUsersPlaybackRequest setVolumeForUsersPlaybackRequest = api
-			          .setVolumeForUsersPlayback(volumePercent)
+	public static void setVolumeForUsersPlayback_Sync(SpotifyApi api, int volumePercent) {
+		SetVolumeForUsersPlaybackRequest setVolumeForUsersPlaybackRequest = api.setVolumeForUsersPlayback(volumePercent)
 //			          .device_id("5fbb3ba6aa454b5534c4ba43a8c7e8e45a63ad0e")
-			          .build();
-	    try {
-	      final String string = setVolumeForUsersPlaybackRequest.execute();
-	    } catch (IOException | SpotifyWebApiException e) {
-	      System.out.println("Error: " + e.getMessage());
-	    }
-	  }
+				.build();
+		try {
+			final String string = setVolumeForUsersPlaybackRequest.execute();
+		} catch (IOException | SpotifyWebApiException e) {
+			System.out.println("Error: " + e.getMessage());
+		}
+	}
 
 	private static boolean startResumeUsersPlaybackPlaylist_Sync(SpotifyApi api, String playlistId, String deviceId) {
 		final StartResumeUsersPlaybackRequest startResumeUsersPlaybackRequest = api.startResumeUsersPlayback()
@@ -349,9 +350,14 @@ public class SpotifyFrontend {
 		refershTimer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				authorizationCodeRefresh_Sync(api);
+//				api.setRefreshToken(refreshToken);
+				AuthorizationCodeCredentials acc = authorizationCodeRefresh_Sync(api);
+				accessToken = acc.getAccessToken();
+				refreshToken = acc.getRefreshToken();
+//				api.setAccessToken(accessToken);
+//				api.setRefreshToken(refreshToken);
 			}
-		}, 3_000_000, 3_000_000);
+		}, 600_000, 600_000);
 		Device[] devices = getUsersAvailableDevices_Sync(api);
 		if (defaultDevice != null && devices != null && devices.length > 0) {
 			boolean containesDefaultDevice = false;
@@ -419,7 +425,7 @@ public class SpotifyFrontend {
 		defaultDevice = Objects.requireNonNull(defaultDevice, "Device cannot be null");
 		this.defaultDevice = defaultDevice;
 	}
-	
+
 	public void setVolumeForUsersPlayback(int volumePercent) {
 		volumePercent = volumePercent > 100 ? 100 : volumePercent < 0 ? 0 : volumePercent;
 		setVolumeForUsersPlayback_Sync(api, volumePercent);
