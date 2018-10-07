@@ -708,11 +708,11 @@ public class AudioApp {
 
 	public static List<Sound> getEffectSounds() {
 		List<Sound> localSoundList = soundLibrary.stream().filter(s -> s.getType() == Type.EFFECT).collect(Collectors.toList());
-		if(isSpotifyEnabled()) {
-			List<Sound> spotifyPlaylists = getSpotifyPlaylistSounds(Type.EFFECT);
-			if(spotifyPlaylists != null)
-				localSoundList.addAll(spotifyPlaylists);
-		}
+//		if(isSpotifyEnabled()) {
+//			List<Sound> spotifyPlaylists = getSpotifyPlaylistSounds(Type.EFFECT);
+//			if(spotifyPlaylists != null)
+//				localSoundList.addAll(spotifyPlaylists);
+//		}
 		return localSoundList;
 	}
 

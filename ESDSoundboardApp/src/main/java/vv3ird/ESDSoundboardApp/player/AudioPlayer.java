@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 
 import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.Sound;
+import vv3ird.ESDSoundboardApp.player.internal.DummySourceDataLine;
 
 /**
  * AudioPlayer for a streamable Clip alternative
@@ -95,10 +96,7 @@ public class AudioPlayer implements Runnable {
 
 	public void open() throws IOException, LineUnavailableException, UnsupportedAudioFileException {
 		if (sound.isSpotifySound()) {
-			int frameSize = 160;
-	        AudioFormat audioFormat = new AudioFormat(Encoding.ULAW, 8000, 8, 1, frameSize, 50, true);
-	 
-			line = (SourceDataLine) AudioSystem.getSourceDataLine(null, mixer);
+			line = new DummySourceDataLine();
 			return;
 		}
 		String audioFile = sound.next();
@@ -200,6 +198,8 @@ public class AudioPlayer implements Runnable {
 				thread.start();
 			} else
 				AudioApp.playSpotifyPlaylist(sound.getSpotifyOwner(), sound.getSpotifyId());
+			if(line == null && sound.isSpotifySound())
+				line = new DummySourceDataLine();
 			this.fireLineEvent(new LineEvent(line, LineEvent.Type.START, 0));
 		}
 	}
@@ -392,9 +392,6 @@ public class AudioPlayer implements Runnable {
 	public void setGain(float gain) {
 		if(sound.isSpotifySound()) {
 			int vol = (int) (decibelToLinear(gain)*100);
-			System.out.println("Volume: " + vol);
-			System.out.println("        " + decibelToLinear(gain));
-			System.out.println("        " + gain);
 			AudioApp.setSpotifyVolume(vol);
 		}
 		try {
