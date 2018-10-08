@@ -258,7 +258,7 @@ public class AudioApp {
 		if(isSpotifyEnabled()) {
 			SpotifyFrontend sf = getSpotifyFrontend();
 			CurrentlyPlayingContext cp = sf.getInformationAboutUsersCurrentPlayback();
-			return cp.getIs_playing();
+			return cp != null && cp.getIs_playing();
 		}
 		return false;
 	}
@@ -788,5 +788,19 @@ public class AudioApp {
 		StreamDeckController.setKeyDeadzone(50);
 		AudioApp.controller = new StreamDeckController(streamDeck, root);
 		AudioApp.controller.setBrightness(75);
+	}
+
+	public static void addConfig(String key, String value) {
+		getConfiguration().addConfig(key, value);
+		saveConfig();
+	}
+
+	public static void removeConfig(String key) {
+		getConfiguration().removeConfig(key);
+		saveConfig();
+	}
+
+	public static String getConfig(String key) {
+		return getConfiguration().getConfig(key);
 	}
 }

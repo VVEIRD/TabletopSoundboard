@@ -38,6 +38,8 @@ import com.wrapper.spotify.requests.data.player.ToggleShuffleForUsersPlaybackReq
 import com.wrapper.spotify.requests.data.playlists.GetListOfCurrentUsersPlaylistsRequest;
 import com.wrapper.spotify.requests.data.playlists.GetPlaylistRequest;
 
+import vv3ird.ESDSoundboardApp.AudioApp;
+
 public class SpotifyFrontend {
 
 	static class SpotifyResponseHandler implements HttpHandler {
@@ -152,6 +154,10 @@ public class SpotifyFrontend {
 		instance = new SpotifyFrontend(clientId, clientSecret, responseUrl);
 		if (!instance.isLoggedIn() && autoLogin)
 			instance.login();
+		return instance;
+	}
+	
+	public static SpotifyFrontend getInstance() {
 		return instance;
 	}
 
@@ -295,7 +301,7 @@ public class SpotifyFrontend {
 
 	private String clientSecret = null;
 
-	private Device defaultDevice = null;
+	private Device activeDevice = null;
 
 	private String responseUri = "http://localhost:5000/spotify-redirect";
 
@@ -329,8 +335,8 @@ public class SpotifyFrontend {
 		return authorizationCode_Sync(api, authCode);
 	}
 
-	public Device getDefaultDevice() {
-		return defaultDevice;
+	public Device getActiveDevice() {
+		return activeDevice;
 	}
 
 	public Playlist getPlaylist(String userId, String playlistId) {
@@ -340,6 +346,13 @@ public class SpotifyFrontend {
 	public Device[] getUsersAvailableDevices() {
 		return getUsersAvailableDevices_Sync(api);
 	}
+	
+	public void setActiveDevice(Device device) {
+		activeDevice = Objects.requireNonNull(device);
+		AudioApp.addConfig("spotify.device", device.getName());
+	}
+	
+	
 
 	public List<PlaylistSimplified> getListOfCurrentUsersPlaylists() {
 		return getListOfCurrentUsersPlaylists_Sync(api);
@@ -359,16 +372,17 @@ public class SpotifyFrontend {
 			}
 		}, 600_000, 600_000);
 		Device[] devices = getUsersAvailableDevices_Sync(api);
-		if (defaultDevice != null && devices != null && devices.length > 0) {
-			boolean containesDefaultDevice = false;
+		String activeDeviceName = AudioApp.getConfig("spotify.device");
+		
+		if (activeDeviceName != null && devices != null && devices.length > 0) { 
 			for (Device device : devices) {
-				if (device.getId().equals(defaultDevice.getId()))
-					containesDefaultDevice = true;
+				if (device.getName().equals(activeDeviceName)) {
+					this.setActiveDevice(device);
+				}
 			}
-			if (!containesDefaultDevice && devices != null && devices.length > 0)
-				this.defaultDevice = devices[0];
-		} else if (devices != null && devices.length > 0)
-			this.defaultDevice = devices[0];
+		} 
+		if (this.activeDevice  == null && devices != null && devices.length > 0)
+			this.activeDevice = devices[0];
 	}
 
 	public boolean isLoggedIn() {
@@ -423,7 +437,7 @@ public class SpotifyFrontend {
 
 	public void setDefaultDevice(Device defaultDevice) {
 		defaultDevice = Objects.requireNonNull(defaultDevice, "Device cannot be null");
-		this.defaultDevice = defaultDevice;
+		this.activeDevice = defaultDevice;
 	}
 
 	public void setVolumeForUsersPlayback(int volumePercent) {
@@ -432,7 +446,7 @@ public class SpotifyFrontend {
 	}
 
 	public boolean startResumeUsersPlaybackPlaylist(String playlistId) {
-		return startResumeUsersPlaybackPlaylist_Sync(api, playlistId, defaultDevice.getId());
+		return startResumeUsersPlaybackPlaylist_Sync(api, playlistId, activeDevice.getId());
 	}
 
 	public boolean startResumeUsersPlaybackPlaylist(String playlistId, Device device) {
@@ -440,7 +454,7 @@ public class SpotifyFrontend {
 	}
 
 	public boolean toggleShuffleForUsersPlayback(boolean enable) {
-		return toggleShuffleForUsersPlayback_Sync(api, enable, defaultDevice.getId());
+		return toggleShuffleForUsersPlayback_Sync(api, enable, activeDevice.getId());
 	}
 
 	public boolean toggleShuffleForUsersPlayback(boolean enable, Device device) {
