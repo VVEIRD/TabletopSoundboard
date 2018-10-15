@@ -41,4 +41,4 @@ To enable Spotify go to the Options Tab and enter your Client-Id and Client Secr
 
 ![Enable Spotify](https://raw.githubusercontent.com/WElRD/Images/master/ESDSoundboardApp/Frontend-06-Spotify-Options.png)
 
-To create a spotify app, goto "https://developer.spotify.com/dashboard" and create an App. Name your app and select "Desktop App" From the dashboard goto the App and copy the Client ID and Secret. Goto "Edit Settings" and add the URL from "Redirect URL" to the whitelisted Redirect URIs. Scroll down to save. Then click on Login.
+To create a spotify app, goto "https://developer.spotify.com/dashboard" and create an App. Name your app and select "Desktop App" From the dashboard goto the App and copy the Client ID and Secret. Goto "Edit Settings" and add the URL http://localhost:5000/spotify-redirect from "Redirect URL" to the whitelisted Redirect URIs. Scroll down to save. Then click on Login.
