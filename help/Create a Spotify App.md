@@ -28,3 +28,5 @@ Once you copied your Id and secret click on the "Edit Settings" button and add "
 ![Whitelist](https://raw.githubusercontent.com/WElRD/Images/master/spotify/06-Add-Redirect_URI.png)
 
 Click on save and your done setting up your spotify app.
+
+Now click on Login in your ESD Soundboard App and if the login was successful, click on save. Fater that your Spotify Playlist should be present when you edit themes of Soundboards.
