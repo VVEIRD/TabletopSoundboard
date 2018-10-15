@@ -34,3 +34,9 @@ Here you can add Ambience and Effect sounds. Both types will be displayed sepera
 If you have spotify support enabled, your spotify playlist will show up in the drop down fields and cam be filtered by the tag "Spotify".
 
 Both dropdown menus for ambience and effect sounds can be filtered by typing in them. The sounds will be filtered by name and by tags.
+
+## Enabling Spotify support
+
+To enable Spotify go to the Options Tab and enter your Client-Id and Client Secret from your Spotify-App.
+
+![Enable Spotify](https://raw.githubusercontent.com/WElRD/Images/master/ESDSoundboardApp/Frontend-06-Spotify-Options.png)
