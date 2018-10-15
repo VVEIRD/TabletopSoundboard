@@ -40,3 +40,5 @@ Both dropdown menus for ambience and effect sounds can be filtered by typing in 
 To enable Spotify go to the Options Tab and enter your Client-Id and Client Secret from your Spotify-App.
 
 ![Enable Spotify](https://raw.githubusercontent.com/WElRD/Images/master/ESDSoundboardApp/Frontend-06-Spotify-Options.png)
+
+To create a spotify app, goto "https://developer.spotify.com/dashboard" and create an App. Name your app and select "Desktop App" From the dashboard goto the App and copy the Client ID and Secret. Goto "Edit Settings" and add the URL from "Redirect URL" to the whitelisted Redirect URIs. Scroll down to save. Then click on Login.
