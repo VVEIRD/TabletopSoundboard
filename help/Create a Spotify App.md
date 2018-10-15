@@ -29,4 +29,4 @@ Once you copied your Id and secret click on the "Edit Settings" button and add "
 
 Click on save and your done setting up your spotify app.
 
-Now click on Login in your ESD Soundboard App and if the login was successful, click on save. Fater that your Spotify Playlist should be present when you edit themes of Soundboards.
+Now click on Login in the Options panel of your ESD Soundboard App and if the login was successful, click on save. After that your Spotify Playlists should be present when you edit the themes of your Soundboards.
