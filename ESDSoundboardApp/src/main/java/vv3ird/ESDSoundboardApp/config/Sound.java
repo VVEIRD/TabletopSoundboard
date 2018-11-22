@@ -7,7 +7,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.gson.GsonBuilder;
@@ -105,12 +104,15 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 
 	@Override
 	public boolean hasNext() {
-		return true;
+		checkLegacy();
+		return this.filePaths.length > 0;
 	}
 
 	@Override
 	public String next() {
 		checkLegacy();
+		if(this.filePaths.length == 0)
+			return null;
 		int currentIdx = this.currentFile;
 		this.currentFile = this.currentFile+1 >= this.filePaths.length ? 0 : this.currentFile+1;
 		return this.filePaths[currentIdx];

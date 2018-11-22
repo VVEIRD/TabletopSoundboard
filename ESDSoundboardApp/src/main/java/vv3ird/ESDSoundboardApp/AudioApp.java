@@ -757,7 +757,7 @@ public class AudioApp {
 			Path imagePath = cachFolder.resolve(sound.getSpotifyId() + ".png");
 			if(!Files.exists(imagePath)) {
 				SpotifyFrontend sf = SpotifyFrontend.createInstance(configuration.spotifyClientId, configuration.spotifyClientSecret, configuration.spotifyResponseUrl, true);
-				Playlist pl = sf.getPlaylist(sound.getSpotifyOwner(), sound.getSpotifyId());
+				Playlist pl = sf.getPlaylist(sound.getSpotifyId());
 				Image[] is = pl.getImages();
 				if(is.length > 0) {
 					BufferedImage img = ImageIO.read(new URL(is[0].getUrl()));

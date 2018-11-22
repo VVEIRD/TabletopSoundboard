@@ -96,7 +96,8 @@ public class SpotifyFrontend {
 
 			// Set access and refresh token for further "spotifyApi" object usage
 			api.setAccessToken(authorizationCodeCredentials.getAccessToken());
-//			api.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
+			if (authorizationCodeCredentials.getRefreshToken() != null)	
+				api.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
 
 			System.out.println("New access token: " + authorizationCodeCredentials.getAccessToken());
 			System.out.println("New refresh token: " + authorizationCodeCredentials.getRefreshToken());
@@ -189,8 +190,8 @@ public class SpotifyFrontend {
 		return null;
 	}
 
-	public static Playlist getPlaylist_Sync(SpotifyApi api, String userId, String playlistId) {
-		GetPlaylistRequest getPlaylistRequest = api.getPlaylist(userId, playlistId)
+	public static Playlist getPlaylist_Sync(SpotifyApi api, String playlistId) {
+		GetPlaylistRequest getPlaylistRequest = api.getPlaylist(playlistId)
 //		          .fields("description")
 				.build();
 		try {
@@ -261,7 +262,7 @@ public class SpotifyFrontend {
 //			          .device_id("5fbb3ba6aa454b5534c4ba43a8c7e8e45a63ad0e")
 				.build();
 		try {
-			final String string = setVolumeForUsersPlaybackRequest.execute();
+			setVolumeForUsersPlaybackRequest.execute();
 		} catch (IOException | SpotifyWebApiException e) {
 			System.out.println("Error: " + e.getMessage());
 		}
@@ -339,8 +340,8 @@ public class SpotifyFrontend {
 		return activeDevice;
 	}
 
-	public Playlist getPlaylist(String userId, String playlistId) {
-		return getPlaylist_Sync(api, userId, playlistId);
+	public Playlist getPlaylist(String playlistId) {
+		return getPlaylist_Sync(api, playlistId);
 	}
 
 	public Device[] getUsersAvailableDevices() {
@@ -366,11 +367,17 @@ public class SpotifyFrontend {
 //				api.setRefreshToken(refreshToken);
 				AuthorizationCodeCredentials acc = authorizationCodeRefresh_Sync(api);
 				accessToken = acc.getAccessToken();
-				refreshToken = acc.getRefreshToken();
+				if(acc.getRefreshToken() != null)	
+					refreshToken = acc.getRefreshToken();
 //				api.setAccessToken(accessToken);
 //				api.setRefreshToken(refreshToken);
 			}
 		}, 600_000, 600_000);
+		initActiveDevice();
+	}
+
+
+	private void initActiveDevice() {
 		Device[] devices = getUsersAvailableDevices_Sync(api);
 		String activeDeviceName = AudioApp.getConfig("spotify.device");
 		
@@ -446,7 +453,9 @@ public class SpotifyFrontend {
 	}
 
 	public boolean startResumeUsersPlaybackPlaylist(String playlistId) {
-		return startResumeUsersPlaybackPlaylist_Sync(api, playlistId, activeDevice.getId());
+		if(activeDevice == null)
+			initActiveDevice();
+		return startResumeUsersPlaybackPlaylist_Sync(api, playlistId, activeDevice != null ? activeDevice.getId() : null);
 	}
 
 	public boolean startResumeUsersPlaybackPlaylist(String playlistId, Device device) {

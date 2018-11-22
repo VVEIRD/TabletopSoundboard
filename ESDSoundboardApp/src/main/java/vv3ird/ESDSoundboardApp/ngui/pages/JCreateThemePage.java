@@ -138,8 +138,8 @@ public class JCreateThemePage extends Page {
 		JButton btnAddEffect = new JButton("+");
 		btnAddEffect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(cbAmbeince.getSelectedItem() != null && cbAmbeince.getSelectedItem() instanceof Sound) {
-					final Sound s = (Sound)cbAmbeince.getSelectedItem();
+				if(cbEffects.getSelectedItem() != null && cbEffects.getSelectedItem() instanceof Sound) {
+					final Sound s = (Sound)cbEffects.getSelectedItem();
 					if(!effectSounds.containsKey(s)) {
 						System.out.println("Adding sound: " + s);
 						final JSoundPanel sp = createSoundPanel(s, pnEffect, effectSounds);
