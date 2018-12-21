@@ -7,21 +7,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
-import javax.sound.sampled.Mixer.Info;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import vv3ird.ESDSoundboardApp.AudioApp;
 
 public class AppConfiguration {
 	
@@ -108,6 +103,12 @@ public class AppConfiguration {
 		if(configStore == null)
 			configStore = new HashMap<>();
 		return configStore.get(key);
+	}
+	
+	public String[] getConfigKeys(String prefix) {
+		if(configStore == null)
+			configStore = new HashMap<>();
+		return configStore.keySet().stream().filter(k -> k.startsWith(prefix)).collect(Collectors.toList()).toArray(new String[0]);
 	}
 	
 	public String addConfig(String key, String value) {

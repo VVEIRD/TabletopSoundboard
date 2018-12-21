@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Queue;
 
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Control;
@@ -27,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.player.internal.DummySourceDataLine;
+import vv3ird.ESDSoundboardApp.plugins.listener.PlaybackListener;
 
 /**
  * AudioPlayer for a streamable Clip alternative
@@ -43,6 +43,8 @@ public class AudioPlayer implements Runnable {
 	private Sound sound = null;
 
 	private int loop = 0;
+
+	private List<PlaybackListener> playbackListeners = new LinkedList<>();
 
 	private List<LineListener> listeners = new LinkedList<>();
 
@@ -91,6 +93,18 @@ public class AudioPlayer implements Runnable {
 	public void removeLineListener(LineListener listener) {
 		synchronized (listenerLock) {
 			this.listeners.remove(listener);
+		}
+	}
+
+	public void addPlaybackListener(PlaybackListener listener) {
+		synchronized (listenerLock) {
+			this.playbackListeners.add(listener);
+		}
+	}
+
+	public void removePlaybackListener(PlaybackListener listener) {
+		synchronized (listenerLock) {
+			this.playbackListeners.remove(listener);
 		}
 	}
 
@@ -146,11 +160,9 @@ public class AudioPlayer implements Runnable {
 		// Getting the format and sanitizing it
 		AudioFormat format = stream.getFormat();
 		if (file.endsWith(".mp3")) {
-			format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, // Encoding
-																		// to
-																		// use
-					format.getSampleRate(), // sample rate (same as base
-											// format)
+			format = new AudioFormat(
+					AudioFormat.Encoding.PCM_SIGNED, // Encoding to use
+					format.getSampleRate(), // sample rate (same as base format)
 					16, // sample size in bits (thx to Javazoom)
 					format.getChannels(), // # of Channels
 					format.getChannels() * 2, // Frame Size
@@ -159,9 +171,14 @@ public class AudioPlayer implements Runnable {
 			);
 			stream = AudioSystem.getAudioInputStream(format, stream);
 		} else if (format.getEncoding() != AudioFormat.Encoding.PCM_SIGNED) {
-			format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, format.getSampleRate(),
-					format.getSampleSizeInBits() * 2, format.getChannels(), format.getFrameSize() * 2,
-					format.getFrameRate(), true); // big endian
+			format = new AudioFormat(
+					AudioFormat.Encoding.PCM_SIGNED, 
+					format.getSampleRate(),
+					format.getSampleSizeInBits() * 2, 
+					format.getChannels(), 
+					format.getFrameSize() * 2,
+					format.getFrameRate(), true // big endian
+				); 
 			stream = AudioSystem.getAudioInputStream(format, stream);
 		}
 		return stream;
@@ -201,6 +218,7 @@ public class AudioPlayer implements Runnable {
 			if(line == null && sound.isSpotifySound())
 				line = new DummySourceDataLine();
 			this.fireLineEvent(new LineEvent(line, LineEvent.Type.START, 0));
+			this.firePlaybackEvent(true);
 		}
 	}
 
@@ -280,7 +298,7 @@ public class AudioPlayer implements Runnable {
 
 	private static float decibelToLinear(float dB) {
 		float linear = (float) Math.pow(10.0f, dB / 20.0f);
-		return linear;
+		return (float) Math.exp( dB / 20 * Math.log( 10 ) );//linear;
 	}
 
 	public void loop(int loops) {
@@ -360,6 +378,17 @@ public class AudioPlayer implements Runnable {
 		synchronized (listenerLock) {
 			for (LineListener lineListener : listeners) {
 				lineListener.update(evnt);
+			}
+		}
+	}
+
+	private void firePlaybackEvent(boolean start) {
+		synchronized (listenerLock) {
+			for (PlaybackListener pbListener : playbackListeners) {
+				if(start)
+					pbListener.onStart(sound);
+				else
+					pbListener.onStop(sound);
 			}
 		}
 	}

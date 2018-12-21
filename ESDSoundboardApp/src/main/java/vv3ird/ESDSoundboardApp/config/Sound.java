@@ -6,10 +6,15 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.GsonBuilder;
+
+import vv3ird.ESDSoundboardApp.plugins.data.SoundPluginMetadata;
 
 public class Sound implements Comparable<Sound>, Iterator<String>{
 
@@ -35,6 +40,8 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	private String spotifyId = null;
 	
 	private String spotifyType = "playlist";
+	
+	private Map<String, List<SoundPluginMetadata>> pluginMetadata = new HashMap<>();
 
 	public Sound(String name, String filePath, String coverPath, Type type, String[] tags) {
 		this(name, new String[] {filePath}, coverPath, type, tags);
@@ -187,5 +194,17 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	
 	public String getSpotifyType() {
 		return spotifyType;
+	}
+	
+	public List<SoundPluginMetadata> getMetadataFor(String pluginClass) {
+		return pluginMetadata.get(pluginClass);
+	}
+	
+	public void addMetadataFor(String pluginClass, List<SoundPluginMetadata> metadata) {
+		pluginMetadata.put(pluginClass, metadata);
+	}
+	
+	public void removeMetadataFor(String pluginClass) {
+		pluginMetadata.remove(pluginClass);
 	}
 }

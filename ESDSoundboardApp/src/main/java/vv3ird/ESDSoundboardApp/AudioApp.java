@@ -50,6 +50,8 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.Sound.Type;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.player.AudioPlayer;
+import vv3ird.ESDSoundboardApp.plugins.PluginManager;
+import vv3ird.ESDSoundboardApp.plugins.listener.PlaybackListener;
 import vv3ird.ESDSoundboardApp.streamdeck.items.SoundBoardItem;
 import vv3ird.ESDSoundboardApp.streamdeck.items.StatusAmbienceItem;
 import vv3ird.ESDSoundboardApp.streamdeck.items.StopItem;
@@ -76,6 +78,8 @@ public class AudioApp {
 	public static List<Sound> soundLibrary = new LinkedList<>();
 
 	public static Map<String, SoundBoard> soundboardLibrary = new HashMap<>();
+	
+	private static List<PlaybackListener> playbackListeners = new LinkedList<>();
 
 	private static IStreamDeck streamDeck = null;
 
@@ -114,6 +118,7 @@ public class AudioApp {
 	public static void playAmbience(Sound sound) {
 		sound.resetCurrentFile();
 		AudioPlayer player = new AudioPlayer(sound, configuration.getMixerInfo());
+		addPlaybackListeners(player);
 		STOP_ITEM.setRollingText(sound.getName());
 		try {
 			player.open();
@@ -150,6 +155,7 @@ public class AudioApp {
 
 	public static void playEffect(Sound sound) {
 		AudioPlayer player = new AudioPlayer(sound, configuration.getMixerInfo());
+		addPlaybackListeners(player);
 		try {
 			player.open();
 			float gain = linearToDecibel(configuration.masterGain) + 2;
@@ -270,13 +276,22 @@ public class AudioApp {
 			SpotifyFrontend sf = getSpotifyFrontend();
 			sf.startResumeUsersPlaybackPlaylist(spotifyId);
 			lastSpotifyId = spotifyId;
+			sf.setVolumeForUsersPlayback((int)(100*configuration.masterGain));
 		}
 	}
 	
+	/**
+	 * Returns the last played Spotify Id of the playlist.
+	 * 
+	 * @return The spotify id of the Playlist or null, if no playlist was played yet
+	 */
 	public static String getCurrentSpotifyId() {
 		return lastSpotifyId;
 	}
 
+	/**
+	 * Pauses the spotify playback
+	 */
 	public static void pauseSpotifyPlayback() {
 		if(isSpotifyEnabled()) {
 			SpotifyFrontend sf = getSpotifyFrontend();
@@ -284,6 +299,10 @@ public class AudioApp {
 		}
 	}
 	
+	/**
+	 * Returns the frontend for spotify
+	 * @return {@link SpotifyFrontend} if spotify was configured, <code>null</code> if spotify has not been configured.
+	 */
 	public static SpotifyFrontend getSpotifyFrontend() {
 		if(configuration.spotifyClientId != null && configuration.spotifyClientSecret != null && configuration.spotifyResponseUrl != null) {
 			SpotifyFrontend sf = SpotifyFrontend.createInstance(configuration.spotifyClientId, configuration.spotifyClientSecret, configuration.spotifyResponseUrl, true);
@@ -292,12 +311,18 @@ public class AudioApp {
 		return null;
 	}
 
+	/**
+	 * @return Returns the configuration of the app.
+	 */
 	public static AppConfiguration getConfiguration() {
 		if (configuration == null)
 			loadConfiguration();
 		return configuration;
 	}
 
+	/**
+	 * Loads all soundboards from the filesystem
+	 */
 	private static void loadSoundBoards() {
 		Path soundBoardRoot = configuration.getSoundBoardLibPath();
 		logger.debug("SoundBoard root: " + soundBoardRoot.toString());
@@ -338,6 +363,11 @@ public class AudioApp {
 		}
 	}
 
+	/**
+	 * Loads all Sounds for a certain soundboard.
+	 * @param root Directory in which the sound configuration files are stored
+	 * @return Map with the soundboard categories as key and a List of {@link Sound} Objects.
+	 */
 	private static Map<String, List<Sound>> loadSoundsForSoundBoard(Path root) {
 		Map<String, List<Sound>> categories = new HashMap<>();
 		try {
@@ -355,12 +385,20 @@ public class AudioApp {
 		return categories;
 	}
 
+	/**
+	 * Loads all Sounds that where added to the app.
+	 */
 	private static void loadSoundLibrary() {
 		Path soundLibRoot = configuration.getSoundLibPath();
 		logger.debug("SoundLib root: " + soundLibRoot.toString());
 		soundLibrary.addAll(loadSounds(soundLibRoot));
 	}
 
+	/**
+	 * load a list of {@link Sound} Objects stored as json files on disk. 
+	 * @param root Folder where the json-files are stored.
+	 * @return List of {@link Sound} Objects that were added previously to the app. 
+	 */
 	private static List<Sound> loadSounds(Path root) {
 		List<Sound> soundLibrary = new LinkedList<>();
 		logger.debug("Sound root: " + root.toString());
@@ -397,6 +435,19 @@ public class AudioApp {
 		return soundLibrary;
 	}
 
+	/**
+	 * Saves a soundboard to disk.<br>
+	 * Creates a folderstructure that resembles the sounndboard:<br>
+	 * SoundBoardname/<br>
+	 * __ambience/<br>
+	 * ____Ambience Sound 1.json<br>
+	 * ____Ambience Sound 2.json<br>
+	 * __effects/<br>
+	 * ____Effect Sound 1.json<br>
+	 * ____Effect Sound 2.json<br>
+	 * @param sb
+	 * @throws IOException
+	 */
 	public static void saveSoundBoard(SoundBoard sb) throws IOException {
 		Path root = configuration.getSoundBoardLibPath();
 		if (!Files.exists(root)) {
@@ -468,22 +519,32 @@ public class AudioApp {
 		resetStreamDeckController();
 	}
 
+	/**
+	 * Resets the root folder of the StreamController
+	 */
 	private static void resetStreamDeckController() {
 		logger.debug("Resetting controller");
 		if (controller != null) {
-			controller.stop(true, false);
+			// controller.stop(true, false);
+
+			StreamItem[] sbItems = new StreamItem[soundboardLibrary.size()];
+			int sbC = 0;
+			for (SoundBoard sb : soundboardLibrary.values()) {
+				sbItems[sbC++] = new SoundBoardItem(sb, null);
+			}
+			PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems, streamDeck.getKeySize());
+			AudioApp.addStatusBarItems(root, root.getChildren());
+			controller.setRoot(root);
+			// controller = new StreamDeckController(streamDeck, root);
+			logger.debug("Done resetting controller");
 		}
-		StreamItem[] sbItems = new StreamItem[soundboardLibrary.size()];
-		int sbC = 0;
-		for (SoundBoard sb : soundboardLibrary.values()) {
-			sbItems[sbC++] = new SoundBoardItem(sb, null);
-		}
-		PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems, streamDeck.getKeySize());
-		AudioApp.addStatusBarItems(root, root.getChildren());
-		controller = new StreamDeckController(streamDeck, root);
-		logger.debug("Done resetting controller");
 	}
 
+	/**
+	 * Deletes a Soundboard from the app and disk.
+	 * @param sb SoundBoard to delete
+	 * @throws IOException 
+	 */
 	public static void deleteSoundboard(SoundBoard sb) throws IOException {
 		Path root = configuration.getSoundBoardLibPath();
 		Path soundBoardPath = Paths.get(root.toString(), sb.name);
@@ -495,6 +556,10 @@ public class AudioApp {
 		resetStreamDeckController();
 	}
 
+	/**
+	 * Delets a folder from disk.
+	 * @param folder
+	 */
 	public static void deleteFolder(File folder) {
 		File[] files = folder.listFiles();
 		if (files != null) { // some JVMs return null for empty dirs
@@ -513,6 +578,11 @@ public class AudioApp {
 			folder.deleteOnExit();
 	}
 
+	/**
+	 * Saves a sound to the sound library
+	 * @param root Sound library root directory
+	 * @param sounds Sound to be saved to the lib.
+	 */
 	private static void saveSounds(Path root, List<Sound> sounds) {
 		if (sounds == null)
 			return;
@@ -788,6 +858,7 @@ public class AudioApp {
 		StreamDeckController.setKeyDeadzone(50);
 		AudioApp.controller = new StreamDeckController(streamDeck, root);
 		AudioApp.controller.setBrightness(75);
+		PluginManager.init();
 	}
 
 	public static void addConfig(String key, String value) {
@@ -802,5 +873,27 @@ public class AudioApp {
 
 	public static String getConfig(String key) {
 		return getConfiguration().getConfig(key);
+	}
+
+	public static String[] getConfigKeys(String key) {
+		return getConfiguration().getConfigKeys(key);
+	}
+
+	private static void addPlaybackListeners(AudioPlayer player) {
+		for (PlaybackListener playbackListener : playbackListeners) {
+			player.addPlaybackListener(playbackListener);
+		}
+	}
+
+	public static void addPlaybackListener(PlaybackListener listener) {
+		boolean added = playbackListeners.add(listener);
+		if (added && player != null)
+			player.addPlaybackListener(listener);
+	}
+
+	public static void removePlaybackListener(PlaybackListener listener) {
+		boolean removed = playbackListeners.remove(listener);
+		if (removed && player != null)
+			player.removePlaybackListener(listener);
 	}
 }

@@ -35,6 +35,13 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.11.1</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/com.mpatric/mp3agic -->
 		<dependency>
 			<groupId>com.mpatric</groupId>
@@ -51,6 +58,17 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.8.5</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jcraft/jorbis -->
+		<dependency>
+			<groupId>org.jcraft</groupId>
+			<artifactId>jorbis</artifactId>
+			<version>0.0.17</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.rowak</groupId>
+			<artifactId>nanoleaf-aurora</artifactId>
+			<version>1.2.1</version>
 		</dependency>
 	</dependencies>
 </project>
