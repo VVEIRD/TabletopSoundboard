@@ -254,6 +254,7 @@ public class AudioPlayer implements Runnable {
 					line.drain();
 					line.stop();
 					fireLineEvent(new LineEvent(line, LineEvent.Type.STOP, 0));
+					firePlaybackEvent(false);
 					line = null;
 				}
 			});

@@ -886,14 +886,14 @@ public class AudioApp {
 	}
 
 	public static void addPlaybackListener(PlaybackListener listener) {
-		boolean added = playbackListeners.add(listener);
-		if (added && player != null)
+		playbackListeners.add(listener);
+		if (player != null)
 			player.addPlaybackListener(listener);
 	}
 
 	public static void removePlaybackListener(PlaybackListener listener) {
-		boolean removed = playbackListeners.remove(listener);
-		if (removed && player != null)
+		playbackListeners.remove(listener);
+		if (player != null)
 			player.removePlaybackListener(listener);
 	}
 }

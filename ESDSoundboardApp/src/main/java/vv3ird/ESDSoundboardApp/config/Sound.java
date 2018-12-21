@@ -197,14 +197,20 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	}
 	
 	public List<SoundPluginMetadata> getMetadataFor(String pluginClass) {
+		if (pluginMetadata == null)
+			pluginMetadata = new HashMap<>();
 		return pluginMetadata.get(pluginClass);
 	}
 	
 	public void addMetadataFor(String pluginClass, List<SoundPluginMetadata> metadata) {
+		if (pluginMetadata == null)
+			pluginMetadata = new HashMap<>();
 		pluginMetadata.put(pluginClass, metadata);
 	}
 	
 	public void removeMetadataFor(String pluginClass) {
+		if (pluginMetadata == null)
+			pluginMetadata = new HashMap<>();
 		pluginMetadata.remove(pluginClass);
 	}
 }
