@@ -28,8 +28,10 @@ import vv3ird.ESDSoundboardApp.config.AppConfiguration;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.ngui.components.JSoundBoardPanel;
 import vv3ird.ESDSoundboardApp.ngui.layout.UIColumnLayout;
+import vv3ird.ESDSoundboardApp.ngui.plugins.JPluginConfigurationPanel;
 import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 import vv3ird.ESDSoundboardApp.ngui.util.Helper;
+import vv3ird.ESDSoundboardApp.plugins.PluginManager;
 
 import javax.swing.JCheckBox;
 import javax.swing.border.EtchedBorder;
@@ -57,6 +59,7 @@ public class JOptionsPage extends Page {
 	private JLabel lblLoginSuccessful;
 	private JLabel lblNotSucc;
 	private JComboBox<DeviceWrapper> cbSpotifyDevices;
+	private List<JPluginConfigurationPanel> plugins = null;
 
 	public JOptionsPage() {
 		setSize(700, 460);
@@ -209,6 +212,27 @@ public class JOptionsPage extends Page {
 		gl.setVgap(0);
 		updateOptions(false);
 		add(scrollPane, BorderLayout.CENTER);
+		addPluginPanels();
+	}
+	
+	public void addPluginPanels() {
+		plugins = PluginManager.getOptionPanels();
+		for (JPluginConfigurationPanel plugin : plugins) {
+			plugin.setVisible(plugin.isEnabled());
+			JCheckBox chckbxEnablePlugin = new JCheckBox(plugin.getPluginName());
+			chckbxEnablePlugin.setForeground(ColorScheme.FOREGROUND_COLOR);
+			chckbxEnablePlugin.setFont(Helper.defaultUiFont);
+			chckbxEnablePlugin.setOpaque(false);
+			chckbxEnablePlugin.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					plugin.setVisible(chckbxEnablePlugin.isSelected());
+					plugin.enablePlugin();
+				}
+			});
+			chckbxEnablePlugin.setBounds(6, 7, 208, 23);
+			pnContent.add(chckbxEnablePlugin);
+			pnContent.add(plugin);
+		}
 	}
 
 	private void updateOptions(boolean onlyDevices) {
@@ -270,6 +294,11 @@ public class JOptionsPage extends Page {
 					if (sf != null) {
 						sf.setActiveDevice(device);
 					}
+				}
+				for (JPluginConfigurationPanel plugin : plugins) {
+					plugin.save();
+					if(plugin.isEnabled())
+						plugin.initPlugin();
 				}
 			}
 		});

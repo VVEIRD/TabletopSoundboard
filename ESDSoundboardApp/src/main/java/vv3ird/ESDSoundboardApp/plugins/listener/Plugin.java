@@ -3,6 +3,7 @@ package vv3ird.ESDSoundboardApp.plugins.listener;
 import java.util.List;
 
 import vv3ird.ESDSoundboardApp.ngui.pages.Page;
+import vv3ird.ESDSoundboardApp.ngui.plugins.JPluginConfigurationPanel;
 import vv3ird.ESDSoundboardApp.plugins.data.SoundPluginMetadataTemplate;
 
 public interface Plugin {
@@ -11,7 +12,7 @@ public interface Plugin {
 	
 	public String getDisplayName();
 	
-	public Page getConfigurationPage();
+	public JPluginConfigurationPanel getConfigurationPanel();
 	
 	public boolean isEnabled();
 

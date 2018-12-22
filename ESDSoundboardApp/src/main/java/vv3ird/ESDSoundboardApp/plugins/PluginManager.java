@@ -25,6 +25,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import vv3ird.ESDSoundboardApp.AudioApp;
+import vv3ird.ESDSoundboardApp.ngui.plugins.JPluginConfigurationPanel;
+import vv3ird.ESDSoundboardApp.ngui.util.DynamicURLClassLoader;
 import vv3ird.ESDSoundboardApp.plugins.data.SoundPluginMetadata;
 import vv3ird.ESDSoundboardApp.plugins.data.SoundPluginMetadataTemplate;
 import vv3ird.ESDSoundboardApp.plugins.listener.PlaybackListener;
@@ -101,6 +103,15 @@ public class PluginManager {
 		return templates;
 	}
 	
+	public static List<JPluginConfigurationPanel> getOptionPanels() {
+		List<JPluginConfigurationPanel> templates = new LinkedList<>();
+		for (String key : plugins.keySet()) {
+			Plugin p = plugins.get(key);
+			templates.add(p.getConfigurationPanel());
+		}
+		return templates;
+	}
+	
 	public static List<String> getListForMetadata(SoundPluginMetadata metadata) {
 		Plugin p = plugins.get(metadata.pluginClass);
 		if (p != null) {
@@ -125,9 +136,8 @@ public class PluginManager {
 				lib.close();
 				if (clazzName != null) {
 					logger.debug("Plugin class found: " + clazzName);
-					URLClassLoader child = new URLClassLoader(new URL[] { p.toFile().toURI().toURL() },
-							ClassLoader.getSystemClassLoader());
-					Class<?> classToLoad = Class.forName(clazzName, true, child);
+					DynamicURLClassLoader.CLASS_LOADER.addURL(p.toFile().toURI().toURL());
+					Class<?> classToLoad = Class.forName(clazzName, true, DynamicURLClassLoader.CLASS_LOADER);
 					Object o = classToLoad.newInstance();
 					logger.debug("Plugin loaded");
 					if (o instanceof Plugin)

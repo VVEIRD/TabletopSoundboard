@@ -22,6 +22,8 @@ import javax.swing.Box;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.awt.CardLayout;
 import net.miginfocom.swing.MigLayout;
@@ -36,6 +38,7 @@ import vv3ird.ESDSoundboardApp.ngui.pages.JSoundboardPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.Page;
 import vv3ird.ESDSoundboardApp.ngui.pages.PageViewer;
 import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
+import vv3ird.ESDSoundboardApp.ngui.util.DynamicURLClassLoader;
 
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -61,6 +64,12 @@ public class JSoundboardFrame extends JFrame {
 
 	/**
 	 * Launch the application.
+	 * @throws ClassNotFoundException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
+	 * @throws IllegalAccessException 
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
 	 */
 	public static void main(String[] args) {
 		try {
@@ -76,16 +85,16 @@ public class JSoundboardFrame extends JFrame {
 			// handle exception
 		}
 		AudioApp.main(args);
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					JSoundboardFrame frame = new JSoundboardFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							JSoundboardFrame frame = new JSoundboardFrame();
+							frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
 	}
 
 	/**
