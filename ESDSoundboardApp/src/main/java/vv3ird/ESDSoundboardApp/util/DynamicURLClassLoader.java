@@ -1,4 +1,4 @@
-package vv3ird.ESDSoundboardApp.ngui.util;
+package vv3ird.ESDSoundboardApp.util;
 
 import java.net.URL;
 import java.net.URLClassLoader;

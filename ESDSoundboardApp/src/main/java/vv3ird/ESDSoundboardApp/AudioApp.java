@@ -51,6 +51,7 @@ import vv3ird.ESDSoundboardApp.config.Sound.Type;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.player.AudioPlayer;
 import vv3ird.ESDSoundboardApp.plugins.PluginManager;
+import vv3ird.ESDSoundboardApp.plugins.data.SoundPluginMetadata;
 import vv3ird.ESDSoundboardApp.plugins.listener.PlaybackListener;
 import vv3ird.ESDSoundboardApp.streamdeck.items.SoundBoardItem;
 import vv3ird.ESDSoundboardApp.streamdeck.items.StatusAmbienceItem;
@@ -696,7 +697,7 @@ public class AudioApp {
 		}
 	}
 
-	public static Sound saveNewSound(String name, BufferedImage icon, String audioFile, Sound.Type type, String[] tags)
+	public static Sound saveNewSound(String name, BufferedImage icon, String audioFile, Sound.Type type, String[] tags, Map<String, List<SoundPluginMetadata>> metadata)
 			throws IOException {
 		Path soundSource = Paths.get(audioFile);
 		String extension = audioFile.substring(audioFile.lastIndexOf("."));
@@ -709,6 +710,7 @@ public class AudioApp {
 		Files.copy(soundSource, soundFile);
 		ImageIO.write(icon, "PNG", soundIcon.toFile());
 		Sound s = new Sound(name, soundFile.toString(), soundIcon.toString(), type, tags);
+		metadata.keySet().stream().forEach(c -> s.addMetadataFor(c, metadata.get(c)));
 		Sound.save(s, soundJson);
 		soundLibrary.add(s);
 		return s;
@@ -797,7 +799,7 @@ public class AudioApp {
 		return localSoundList;
 	}
 
-	private static List<Sound> getSpotifyPlaylistSounds(Type type) {
+	public static List<Sound> getSpotifyPlaylistSounds(Type type) {
 		if(isSpotifyEnabled()) {
 			SpotifyFrontend sf = getSpotifyFrontend();
 			List<Sound> s = sf.getListOfCurrentUsersPlaylists().stream().map(p -> new Sound(p.getName(), p.getOwner().getId(), p.getId(), p.getType().type, type)).collect(Collectors.toList());
@@ -895,5 +897,9 @@ public class AudioApp {
 		playbackListeners.remove(listener);
 		if (player != null)
 			player.removePlaybackListener(listener);
+	}
+	
+	public static void storeMetadata(String key, Map<String, List<SoundPluginMetadata>> metadata) {
+		
 	}
 }

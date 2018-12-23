@@ -26,12 +26,12 @@ import org.apache.logging.log4j.Logger;
 
 import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.ngui.plugins.JPluginConfigurationPanel;
-import vv3ird.ESDSoundboardApp.ngui.util.DynamicURLClassLoader;
+import vv3ird.ESDSoundboardApp.plugins.data.Plugin;
 import vv3ird.ESDSoundboardApp.plugins.data.SoundPluginMetadata;
 import vv3ird.ESDSoundboardApp.plugins.data.SoundPluginMetadataTemplate;
 import vv3ird.ESDSoundboardApp.plugins.listener.PlaybackListener;
-import vv3ird.ESDSoundboardApp.plugins.listener.Plugin;
 import vv3ird.ESDSoundboardApp.plugins.listener.PluginListener;
+import vv3ird.ESDSoundboardApp.util.DynamicURLClassLoader;
 
 public class PluginManager {
 	
@@ -88,16 +88,23 @@ public class PluginManager {
 	private static void disablePlugin(Plugin plugin) {
 		if(plugin.isConfigured()) {
 			if(plugin.isPlaybackListener() && plugin instanceof PlaybackListener)
-				AudioApp.addPlaybackListener((PlaybackListener)plugin);
+				AudioApp.removePlaybackListener((PlaybackListener)plugin);
 		}
 	}
 	
-	public static List<SoundPluginMetadataTemplate> getSoundPluginMetadataTemplate() {
-		List<SoundPluginMetadataTemplate> templates = new LinkedList<>();
+	public static Map<String, List<SoundPluginMetadataTemplate>> getSoundPluginMetadataTemplates() {
+		Map<String, List<SoundPluginMetadataTemplate>> templates = new HashMap<>();
 		for (String key : plugins.keySet()) {
 			Plugin p = plugins.get(key);
 			if(p.isEnabled() && p.isConfigured()) {
-				templates.addAll(p.getSoundPluginMetadataTemplates());
+				if(p.isMultiInstance()) {
+					List<Plugin> instances = p.getInstances();
+					for (Plugin instance : instances) {
+						templates.put(instance.getDisplayName(), instance.getSoundPluginMetadataTemplates());
+					}
+				}
+				else
+					templates.put(p.getDisplayName(), p.getSoundPluginMetadataTemplates());
 			}
 		}
 		return templates;
@@ -115,7 +122,7 @@ public class PluginManager {
 	public static List<String> getListForMetadata(SoundPluginMetadata metadata) {
 		Plugin p = plugins.get(metadata.pluginClass);
 		if (p != null) {
-			return p.getListForMetadata(metadata.key);
+			return p.getListForMetadata(metadata);
 		}
 		return null;
 	}

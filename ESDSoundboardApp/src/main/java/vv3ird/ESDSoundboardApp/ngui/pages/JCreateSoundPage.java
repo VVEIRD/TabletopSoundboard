@@ -15,8 +15,14 @@ import vv3ird.ESDSoundboardApp.config.AppConfiguration;
 import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.Sound.Type;
 import vv3ird.ESDSoundboardApp.ngui.components.IconSelectorPanel;
+import vv3ird.ESDSoundboardApp.ngui.components.JSoundMetadataTemplatePanel;
 import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 import vv3ird.ESDSoundboardApp.player.AudioPlayer;
+import vv3ird.ESDSoundboardApp.plugins.PluginManager;
+import vv3ird.ESDSoundboardApp.plugins.data.SoundPluginMetadata;
+import vv3ird.ESDSoundboardApp.plugins.data.SoundPluginMetadataTemplate;
+import vv3ird.ESDSoundboardApp.plugins.data.exceptions.ValueNotInMetadataListException;
+import vv3ird.ESDSoundboardApp.plugins.data.exceptions.WrongSoundPluginMetadataTypeException;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -40,6 +46,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -48,6 +58,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
+import javax.swing.JComboBox;
+import java.awt.Color;
+import javax.swing.JSpinner;
 
 public class JCreateSoundPage extends Page {
 	
@@ -80,14 +93,27 @@ public class JCreateSoundPage extends Page {
 	private JRadioButton rdbtnAmbience;
 	private JPanel pnStatus;
 	private JTextField tfTags;
+	private JComboBox cbPlugins;
+	private JButton btnAddPluginMetadata;
+
+	private Map<String, List<SoundPluginMetadataTemplate>> availableTemplates = null;
+	
+	private Map<String, List<SoundPluginMetadataTemplate>> configuredTemplates = null;
+	
+	private Map<String, JPanel> configuredTemplatePanels = null;
+	private JPanel panel;
 
 	/**
 	 * Create the panel.
 	 */
 	public JCreateSoundPage() {
 		setLayout(new BorderLayout(0, 0));
-		setSize(new Dimension(480, 290));
+		setSize(new Dimension(656, 435));
 		setOpaque(false);
+
+		configuredTemplates = new HashMap<>();
+		
+		configuredTemplatePanels = new HashMap<>();
 
 		dlm = new DefaultListModel<>();
 		
@@ -102,7 +128,7 @@ public class JCreateSoundPage extends Page {
 		pnStatus.add(btnFinish, BorderLayout.EAST);
 		pnStatus.setOpaque(false);
 		
-		JPanel panel = new JPanel();
+		panel = new JPanel();
 		panel.setLayout(null);
 		panel.setOpaque(false);
 		add(panel, BorderLayout.CENTER);
@@ -237,6 +263,59 @@ public class JCreateSoundPage extends Page {
 		lblTags.setBounds(394, 171, 46, 11);
 		panel.add(lblTags);
 		
+		JLabel lblPlugins = new JLabel("Plugin Metadata");
+		lblPlugins.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblPlugins.setBounds(10, 220, 206, 11);
+		panel.add(lblPlugins);
+		availableTemplates = PluginManager.getSoundPluginMetadataTemplates();
+		cbPlugins = new JComboBox(availableTemplates.keySet().toArray(new Object[0]));
+		cbPlugins.setBounds(10, 234, 376, 22);
+		panel.add(cbPlugins);
+		
+		btnAddPluginMetadata = new JButton("Add");
+		btnAddPluginMetadata.addActionListener(new ActionListener() { 
+			public void actionPerformed(ActionEvent e) {
+				addPluginMetadata((String)cbPlugins.getSelectedItem(), availableTemplates.get(cbPlugins.getSelectedItem()));
+			}
+		});
+		btnAddPluginMetadata.setOpaque(false);
+		btnAddPluginMetadata.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		btnAddPluginMetadata.setBounds(394, 234, 46, 23);
+		panel.add(btnAddPluginMetadata);
+		
+	}
+	
+	
+	private void addPluginMetadata(String plugin, List<SoundPluginMetadataTemplate> templates) {
+		logger.debug("Adding Metadata for " + plugin);
+		int panelStartY = 270;
+		int templateStartY = 30;
+		int templateIncrease = 35;
+		if(configuredTemplates.containsKey(plugin))
+			return;
+		configuredTemplates.put(plugin, templates);
+		JPanel pnPlugin = new JPanel();
+		pnPlugin.setLayout(null);
+		pnPlugin.setOpaque(false);
+		
+
+		JLabel lblPluginName = new JLabel(plugin);
+		lblPluginName.setBounds(10, 11, 410, 14);
+		lblPluginName.setFont(lblPluginName.getFont().deriveFont(Font.BOLD));
+		pnPlugin.add(lblPluginName);
+		
+		int tIndex = 0;
+		for (SoundPluginMetadataTemplate template : templates) {
+			JSoundMetadataTemplatePanel pn = new JSoundMetadataTemplatePanel(template);
+			pn.setBounds(10, templateStartY + (templateIncrease*tIndex++), 430, 30);
+			pn.setOpaque(false);
+			pnPlugin.add(pn);
+		}
+		pnPlugin.setBounds(10, (configuredTemplates.size()*panelStartY) + ((configuredTemplates.size()-1)*10), 430, templateStartY + (templates.size() * templateIncrease));
+		panel.add(pnPlugin);
+		panel.revalidate();
+		panel.repaint();
+		configuredTemplatePanels.put(plugin, pnPlugin);
 	}
 
 	private void openSound() {
@@ -298,12 +377,31 @@ public class JCreateSoundPage extends Page {
 			String audio = tfAudio.getText();
 			String[] tags =  tfTags.getText().split(" ");
 			Sound.Type type = rdbtnAmbience.isSelected() ? Type.AMBIENCE : Type.EFFECT;
-			AudioApp.saveNewSound(name, icon, audio,  type, tags);
+			Map<String, List<SoundPluginMetadata>> metadata = new HashMap<>();
+			for (String meta : configuredTemplates.keySet()) {
+				List<SoundPluginMetadata> data = new LinkedList<>();
+				JPanel p = configuredTemplatePanels.get(meta);
+				for(int i=0;i<p.getComponentCount();i++) {
+					if (p.getComponent(i) instanceof JSoundMetadataTemplatePanel) {
+						JSoundMetadataTemplatePanel tp = (JSoundMetadataTemplatePanel) p.getComponent(i);
+						SoundPluginMetadata md = tp.createMetadata();
+						data.add(md);
+					}
+				}
+				if(data.size() > 0)
+					metadata.put(data.get(0).pluginClass, data);
+			}
+			AudioApp.saveNewSound(name, icon, audio,  type, tags, metadata);
 			pageViewer.back();
 		} catch (IOException e1) {
 			logger.error(e1);
 			JOptionPane.showMessageDialog(null, "Could not save Soundboard: " + e1.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
+		} catch (ValueNotInMetadataListException | WrongSoundPluginMetadataTypeException e) {
+			logger.error(e);
+			JOptionPane.showMessageDialog(null, "Metadata are not correct: " + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
 		}
 	}
 	

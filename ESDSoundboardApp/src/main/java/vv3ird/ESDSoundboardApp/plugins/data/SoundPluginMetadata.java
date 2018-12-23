@@ -14,6 +14,11 @@ public class SoundPluginMetadata {
 	
 	public String pluginClass = null;
 	
+	/**
+	 * Optional identifier if the plugin supports multiple instances.
+	 */
+	public String instanceId = null;
+	
 	public String key = null;
 	
 	public String valueString = null;
@@ -23,13 +28,18 @@ public class SoundPluginMetadata {
 	public TYPE type = TYPE.STRING;
 
 	public SoundPluginMetadata(String pluginClass, String key, String valueString, int valueInt, TYPE type) {
+		this(pluginClass, null, key, valueString, valueInt, type);
+	}
+	public SoundPluginMetadata(String pluginClass, String instanceId, String key, String valueString, int valueInt, TYPE type) {
 		super();
 		this.pluginClass = pluginClass;
+		this.instanceId = instanceId;
 		this.key = key;
 		this.valueString = valueString;
 		this.valueInt = valueInt;
 		this.type = type;
 	}
+	
 	public static void main(String[] args) {
 		SoundPluginMetadata effect = new SoundPluginMetadata("vv3ird.ESDSoundboardApp.plugins.NanoleafLightPanel.NanoleafLightPanelPlugin", "Effect", "Arlarm on Board", -1, TYPE.LIST);
 		SoundPluginMetadata brightness = new SoundPluginMetadata("vv3ird.ESDSoundboardApp.plugins.NanoleafLightPanel.NanoleafLightPanelPlugin", "Brightness", null, 70, TYPE.INT);

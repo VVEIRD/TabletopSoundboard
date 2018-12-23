@@ -38,7 +38,7 @@ import vv3ird.ESDSoundboardApp.ngui.pages.JSoundboardPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.Page;
 import vv3ird.ESDSoundboardApp.ngui.pages.PageViewer;
 import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
-import vv3ird.ESDSoundboardApp.ngui.util.DynamicURLClassLoader;
+import vv3ird.ESDSoundboardApp.util.DynamicURLClassLoader;
 
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;

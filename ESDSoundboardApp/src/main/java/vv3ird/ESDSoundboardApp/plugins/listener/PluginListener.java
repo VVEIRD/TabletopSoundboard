@@ -1,6 +1,6 @@
 package vv3ird.ESDSoundboardApp.plugins.listener;
 
-import vv3ird.ESDSoundboardApp.plugins.listener.Plugin;
+import vv3ird.ESDSoundboardApp.plugins.data.Plugin;
 
 public interface PluginListener {
 	

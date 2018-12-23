@@ -3,7 +3,7 @@ package vv3ird.ESDSoundboardApp;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import vv3ird.ESDSoundboardApp.ngui.util.DynamicURLClassLoader;
+import vv3ird.ESDSoundboardApp.util.DynamicURLClassLoader;
 
 public class MainGui {
 	public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException,
