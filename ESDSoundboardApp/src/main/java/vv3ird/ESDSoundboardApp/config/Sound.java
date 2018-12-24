@@ -216,4 +216,15 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	public Map<String, List<SoundPluginMetadata>> getMetadata() {
 		return pluginMetadata;
 	}
+
+	public boolean isAmbience() {
+		// TODO Auto-generated method stub
+		return this.type == Type.AMBIENCE;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Sound && this.name.equals(((Sound) obj).name)
+				|| this.isSpotifySound == ((Sound) obj).isSpotifySound && this.spotifyId == ((Sound) obj).spotifyId;
+	}
 }

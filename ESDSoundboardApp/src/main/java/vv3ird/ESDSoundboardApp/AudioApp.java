@@ -715,8 +715,39 @@ public class AudioApp {
 		Sound sls = soundLibrary.stream().filter(l -> s.getName().equals(l.getName())).findFirst().orElse(null);
 		soundLibrary.remove(sls);
 		soundLibrary.add(s);
+		if(sls != null)
+			updateSoundBoards(s);
 		Collections.sort(soundLibrary);
 		return s;
+	}
+
+	private static void updateSoundBoards(Sound s) {
+		for (String soundboard : soundboardLibrary.keySet()) {
+			SoundBoard sb = soundboardLibrary.get(soundboard);
+			List<String> categoriesToUpdate = new LinkedList<>();
+			for (String category : sb.getCategories()) {
+				for (Sound sound : sb.getAmbienceSounds(category)) {
+					if(sound.getName().equals(s.getName()))
+						categoriesToUpdate.add(category);
+				}
+			}
+			if(categoriesToUpdate.size() > 0) {
+				for (String category : categoriesToUpdate) {
+					if (s.isAmbience()) {
+						sb.addAmbienceSound(category, s);
+					}
+					else {
+						sb.addEffectSound(category, s);
+					}
+				}
+				try {
+					saveSoundBoard(sb);
+				} catch (IOException e) {
+					logger.error("Could not update soundboard " + sb.name);
+					logger.error(e);
+				}
+			}
+		}
 	}
 
 	public static Sound saveNewSoundplaylist(String name, BufferedImage icon, String[] audioFiles, Sound.Type type,
