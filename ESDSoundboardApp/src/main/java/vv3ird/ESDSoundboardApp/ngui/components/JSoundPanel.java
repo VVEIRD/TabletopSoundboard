@@ -25,7 +25,11 @@ public class JSoundPanel extends ImagePanel {
 	Sound s = null;
 	
 	private JLabel btnX;
+	private JLabel lblE;
 	
+	/**
+	 * @wbp.parser.constructor
+	 */
 	public JSoundPanel(Sound s, Color background) {
 		this.s = s;
 		Color oldC = IconHelper.FRAME_COLOR;
@@ -68,10 +72,23 @@ public class JSoundPanel extends ImagePanel {
 		btnX.setBounds(59, 0, 23, 23);
 		btnX.setOpaque(false);
 		add(btnX);
+		
+		lblE = new JLabel("E");
+		lblE.setOpaque(false);
+		lblE.setVisible(false);
+		lblE.setForeground(Color.WHITE);
+		lblE.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+		lblE.setBounds(5, 49, 23, 23);
+		add(lblE);
 	}
 	
 	public synchronized void addMouseListenerForDelete(MouseListener l) {
 		btnX.addMouseListener(l);
 	}
 	
+	public synchronized void addMouseListenerForEdit(MouseListener l) {
+		lblE.addMouseListener(l);
+		lblE.setVisible(true);
+		lblE.revalidate();
+	}
 }

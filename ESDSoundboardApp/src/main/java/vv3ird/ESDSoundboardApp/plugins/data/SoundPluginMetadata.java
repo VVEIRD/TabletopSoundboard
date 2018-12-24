@@ -8,6 +8,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import vv3ird.ESDSoundboardApp.plugins.PluginManager;
 import vv3ird.ESDSoundboardApp.plugins.data.SoundPluginMetadataTemplate.TYPE;
 
 public class SoundPluginMetadata {
@@ -19,6 +20,8 @@ public class SoundPluginMetadata {
 	 */
 	public String instanceId = null;
 	
+	public String pluginName = null;
+	
 	public String key = null;
 	
 	public String valueString = null;
@@ -27,10 +30,14 @@ public class SoundPluginMetadata {
 	
 	public TYPE type = TYPE.STRING;
 
-	public SoundPluginMetadata(String pluginClass, String key, String valueString, int valueInt, TYPE type) {
-		this(pluginClass, null, key, valueString, valueInt, type);
+	public final int lowerBounds;
+	
+	public final int upperBounds;
+
+	public SoundPluginMetadata(String pluginClass, String pluginName, String key, String valueString, int valueInt, TYPE type) {
+		this(pluginClass, null, pluginName, key, valueString, valueInt, type, 0, 0);
 	}
-	public SoundPluginMetadata(String pluginClass, String instanceId, String key, String valueString, int valueInt, TYPE type) {
+	public SoundPluginMetadata(String pluginClass, String instanceId, String pluginName, String key, String valueString, int valueInt, TYPE type, int lowerBounds, int upperBounds) {
 		super();
 		this.pluginClass = pluginClass;
 		this.instanceId = instanceId;
@@ -38,20 +45,12 @@ public class SoundPluginMetadata {
 		this.valueString = valueString;
 		this.valueInt = valueInt;
 		this.type = type;
+		this.lowerBounds = lowerBounds;
+		this.upperBounds = upperBounds;
 	}
 	
-	public static void main(String[] args) {
-		SoundPluginMetadata effect = new SoundPluginMetadata("vv3ird.ESDSoundboardApp.plugins.NanoleafLightPanel.NanoleafLightPanelPlugin", "Effect", "Arlarm on Board", -1, TYPE.LIST);
-		SoundPluginMetadata brightness = new SoundPluginMetadata("vv3ird.ESDSoundboardApp.plugins.NanoleafLightPanel.NanoleafLightPanelPlugin", "Brightness", null, 70, TYPE.INT);
-		SoundPluginMetadata switchOnOf = new SoundPluginMetadata("vv3ird.ESDSoundboardApp.plugins.NanoleafLightPanel.NanoleafLightPanelPlugin", "Switch On/Off", null, 1, TYPE.INT);
-		List<SoundPluginMetadata> metadata = new LinkedList<>();
-		metadata.add(effect);
-		metadata.add(brightness);
-		metadata.add(switchOnOf);
-		Map<String, List<SoundPluginMetadata>> pluginMetadata = new HashMap<>();
-		pluginMetadata.put(effect.pluginClass, metadata);
-		Gson json = new GsonBuilder().setPrettyPrinting().create();
-		System.out.println(json.toJson(pluginMetadata));
+	public SoundPluginMetadataTemplate createTemplate() {
+		return new SoundPluginMetadataTemplate(pluginClass, instanceId, pluginName, type, key, PluginManager.getListForMetadata(this), lowerBounds, upperBounds, valueString, valueInt);
 	}
 	
 }

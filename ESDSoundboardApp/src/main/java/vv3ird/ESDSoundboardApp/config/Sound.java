@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -212,5 +211,9 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 		if (pluginMetadata == null)
 			pluginMetadata = new HashMap<>();
 		pluginMetadata.remove(pluginClass);
+	}
+
+	public Map<String, List<SoundPluginMetadata>> getMetadata() {
+		return pluginMetadata;
 	}
 }

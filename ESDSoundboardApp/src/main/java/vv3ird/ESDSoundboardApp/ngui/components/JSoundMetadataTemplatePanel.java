@@ -42,6 +42,7 @@ public class JSoundMetadataTemplatePanel extends JPanel
 		if (this.template.type == TYPE.LIST) {
 			cbValue = new JComboBox(template.list.toArray(new Object[0]));
 			cbValue.setBounds(160, 4, 260, 22);
+			cbValue.setSelectedItem(template.defaultValueString);
 			add(cbValue);
 		}
 		else if (this.template.type == TYPE.STRING) {

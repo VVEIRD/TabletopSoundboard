@@ -26,9 +26,9 @@ public class SoundPluginMetadataTemplate {
 	
 	public final int upperBounds;
 	
-	public final int defaultValueInt;
+	public int defaultValueInt;
 	
-	public final String defaultValueString;
+	public String defaultValueString = null;
 
 	public SoundPluginMetadataTemplate(String pluginClass, String pluginName, TYPE type, String key, List<String> list) {
 		 this(pluginClass, null, pluginName, type, key, list, -999999, 999999, "", 0);
@@ -54,7 +54,7 @@ public class SoundPluginMetadataTemplate {
 			throw new WrongSoundPluginMetadataTypeException(pluginClass + ":" + key + " is of type int");
 		if(type == TYPE.LIST && !list.contains(value))
 			throw new ValueNotInMetadataListException(pluginClass + ":" + key + " is of type int");
-		return new SoundPluginMetadata(pluginClass, instanceId, key, value, -1, type);
+		return new SoundPluginMetadata(pluginClass, instanceId, pluginName, key, value, -1, type, lowerBounds, upperBounds);
 	}
 	
 	public SoundPluginMetadata createMetadata(int value) throws WrongSoundPluginMetadataTypeException {
@@ -62,7 +62,7 @@ public class SoundPluginMetadataTemplate {
 			throw new WrongSoundPluginMetadataTypeException(pluginClass + ":" + key + " is not integer metadata");
 		if(this.lowerBounds > value || this.upperBounds < value)
 			throw new WrongSoundPluginMetadataTypeException(pluginClass + ":" + key + " value \"" + value + " \" is not in the allow range");
-		return new SoundPluginMetadata(pluginClass, instanceId, key, null, value, type);
+		return new SoundPluginMetadata(pluginClass, instanceId, pluginName, key, null, value, type, lowerBounds, upperBounds);
 	}
 
 	/**

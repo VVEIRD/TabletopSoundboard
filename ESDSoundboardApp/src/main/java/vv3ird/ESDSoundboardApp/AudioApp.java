@@ -697,7 +697,7 @@ public class AudioApp {
 		}
 	}
 
-	public static Sound saveNewSound(String name, BufferedImage icon, String audioFile, Sound.Type type, String[] tags, Map<String, List<SoundPluginMetadata>> metadata)
+	public static Sound saveSound(String name, BufferedImage icon, String audioFile, Sound.Type type, String[] tags, Map<String, List<SoundPluginMetadata>> metadata)
 			throws IOException {
 		Path soundSource = Paths.get(audioFile);
 		String extension = audioFile.substring(audioFile.lastIndexOf("."));
@@ -712,7 +712,10 @@ public class AudioApp {
 		Sound s = new Sound(name, soundFile.toString(), soundIcon.toString(), type, tags);
 		metadata.keySet().stream().forEach(c -> s.addMetadataFor(c, metadata.get(c)));
 		Sound.save(s, soundJson);
+		Sound sls = soundLibrary.stream().filter(l -> s.getName().equals(l.getName())).findFirst().orElse(null);
+		soundLibrary.remove(sls);
 		soundLibrary.add(s);
+		Collections.sort(soundLibrary);
 		return s;
 	}
 

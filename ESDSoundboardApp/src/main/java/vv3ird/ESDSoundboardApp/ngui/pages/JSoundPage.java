@@ -89,6 +89,26 @@ public class JSoundPage extends Page{
 				}
 			};
 			jsbp.addMouseListenerForDelete(mlDelete);
+			MouseListener mlEdit = new MouseListener() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					editSound();
+				}
+				@Override
+				public void mousePressed(MouseEvent e) {}
+				@Override
+				public void mouseExited(MouseEvent e) {}
+				@Override
+				public void mouseEntered(MouseEvent e) {}
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					editSound();
+				}
+				private void editSound() {
+					pageViewer.viewPage(new JEditSoundPage(sound));
+				}
+			};
+			jsbp.addMouseListenerForEdit(mlEdit);
 			toAdd.add(jsbp);
 		}
 		for (JPanel jPanel : toAdd) {
