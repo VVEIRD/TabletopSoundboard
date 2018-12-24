@@ -221,10 +221,4 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 		// TODO Auto-generated method stub
 		return this.type == Type.AMBIENCE;
 	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof Sound && this.name.equals(((Sound) obj).name)
-				|| this.isSpotifySound == ((Sound) obj).isSpotifySound && this.spotifyId == ((Sound) obj).spotifyId;
-	}
 }

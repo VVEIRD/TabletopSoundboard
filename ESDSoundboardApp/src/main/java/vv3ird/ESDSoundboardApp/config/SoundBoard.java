@@ -49,8 +49,8 @@ public class SoundBoard {
 	
 	public boolean addAmbienceSound(String category, Sound sound) {
 		if(this.ambience.containsKey(category)) {
-			if(this.ambience.get(category).contains(sound))
-				this.ambience.get(category).remove(sound);
+			Sound sRemove = this.ambience.get(category).stream().filter(s -> s.getName().equals(sound.getName())).findFirst().orElse(sound);
+			this.ambience.get(category).remove(sRemove);
 			return this.ambience.get(category).add(sound);
 		}
 		return false;
@@ -58,8 +58,8 @@ public class SoundBoard {
 	
 	public boolean addEffectSound(String category, Sound sound) {
 		if(this.effects.containsKey(category)) {
-			if(this.effects.get(category).contains(sound))
-				this.effects.get(category).remove(sound);
+			Sound sRemove = this.effects.get(category).stream().filter(s -> s.getName().equals(sound.getName())).findFirst().orElse(sound);
+			this.effects.get(category).remove(sRemove);
 			return this.effects.get(category).add(sound);
 		}
 		return false;
