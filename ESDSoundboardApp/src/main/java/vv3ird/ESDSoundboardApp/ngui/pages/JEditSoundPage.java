@@ -30,6 +30,7 @@ import java.awt.Dimension;
 
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.Insets;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
@@ -145,6 +146,7 @@ public class JEditSoundPage extends Page {
 		pnSound.setOpaque(false);
 		pnSound.setPreferredSize(new Dimension(640, 260));
 		pnContent.add(pnSound);
+		
 		JViewport viewport = new JViewport();
 		viewport.setOpaque(false);
 		viewport.setView(pnContent);
@@ -336,8 +338,9 @@ public class JEditSoundPage extends Page {
 						}
 				 }
 			}
+			int i = 0;
 			for (String disp : metadataFinal.keySet()) {
-				addPluginMetadata(disp, metadataFinal.get(disp));
+				addPluginMetadata(disp != null ? disp : String.valueOf(i++), metadataFinal.get(disp));
 			}
 		}
 	}
@@ -355,9 +358,24 @@ public class JEditSoundPage extends Page {
 		pnPlugin.setOpaque(false);
 
 		JLabel lblPluginName = new JLabel(plugin);
-		lblPluginName.setBounds(10, 11, 410, 14);
+		lblPluginName.setBounds(10, 11, 300, 14);
 		lblPluginName.setFont(lblPluginName.getFont().deriveFont(Font.BOLD));
 		pnPlugin.add(lblPluginName);
+
+		JButton btnRemovePlugin = new JButton("X");
+		btnRemovePlugin.setMargin(new Insets(1, 1, 1, 1));
+		btnRemovePlugin.setBounds(410, 9, 20, 20);
+		pnPlugin.add(btnRemovePlugin);
+		btnRemovePlugin.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JPanel p = configuredTemplatePanels.remove(plugin);
+				configuredTemplates.remove(plugin);
+				pnContent.remove(p);
+				pnContent.revalidate();
+				pnContent.repaint();
+			}
+		});
 
 		int tIndex = 0;
 		for (SoundPluginMetadataTemplate template : templates) {

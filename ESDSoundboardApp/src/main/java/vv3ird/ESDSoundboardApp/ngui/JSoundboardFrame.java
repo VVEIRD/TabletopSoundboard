@@ -71,7 +71,7 @@ public class JSoundboardFrame extends JFrame {
 	 * @throws SecurityException 
 	 * @throws NoSuchMethodException 
 	 */
-	public static void main(String[] args) {
+	public static void init(String[] args) {
 		try {
 			// Set system-platform Java L&F
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -84,17 +84,19 @@ public class JSoundboardFrame extends JFrame {
 		} catch (IllegalAccessException e) {
 			// handle exception
 		}
-		AudioApp.main(args);
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							JSoundboardFrame frame = new JSoundboardFrame();
-							frame.setVisible(true);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
+//		AudioApp.main(args);
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					JSoundboardFrame frame = new JSoundboardFrame();
+					frame.setVisible(true);
+					frame.setAlwaysOnTop(true);
+					frame.setAlwaysOnTop(false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	/**
@@ -121,7 +123,7 @@ public class JSoundboardFrame extends JFrame {
 		pnContent.add(pnSideBar, BorderLayout.WEST);
 		pnSideBar.setLayout(null);
 		
-		pnSoundBoards = new JSelectablePanel();
+		pnSoundBoards = new JSelectablePanel(false);
 		pnSoundBoards.setBounds(0, 0, 200, 40);
 		setSize(pnSoundBoards, 200, 40);
 		pnSideBar.add(pnSoundBoards);
@@ -134,7 +136,7 @@ public class JSoundboardFrame extends JFrame {
 		pnSoundBoards.add(lblSoundBoards);
 		pnSoundBoards.setBackground(ColorScheme.SIDE_BAR_BACKGROUND_COLOR);
 		
-		pnSounds = new JSelectablePanel();
+		pnSounds = new JSelectablePanel(false);
 		pnSounds.setLayout(null);
 		pnSounds.setBackground(new Color(0, 81, 108));
 		pnSounds.setBounds(0, 40, 200, 40);
@@ -146,7 +148,7 @@ public class JSoundboardFrame extends JFrame {
 		lblSounds.setBounds(10, 0, 180, 40);
 		pnSounds.add(lblSounds);
 		
-		pnOptions = new JSelectablePanel();
+		pnOptions = new JSelectablePanel(false);
 		pnOptions.setLayout(null);
 		pnOptions.setBackground(new Color(0, 81, 108));
 		pnOptions.setBounds(0, 80, 200, 40);
@@ -157,7 +159,7 @@ public class JSoundboardFrame extends JFrame {
 		pnSideBar.add(pnOptions);
 		
 		JSelectablePanel pnDecks = new JSelectablePanel();
-		pnDecks.setSelected(true);
+		pnDecks.setSelected(false);
 		pnDecks.addSelectionListener(new JSelectablePanel.SelectionListener() {
 			
 			@Override

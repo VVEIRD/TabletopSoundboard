@@ -22,9 +22,15 @@ public class JSelectablePanel extends JPanel {
 	MouseList ml = new MouseList();
 	
 	private List<JSelectablePanel> group = new LinkedList<>();
-	
+
 	boolean selected = false;
 	
+	boolean canDeselctSelf = true;
+
+	public JSelectablePanel(boolean canDeselctSelf) {
+		this.canDeselctSelf = canDeselctSelf;
+	}
+
 	public JSelectablePanel() {
 	}
 	
@@ -68,7 +74,10 @@ public class JSelectablePanel extends JPanel {
 		public void mousePressed(MouseEvent e) {}
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			setSelected(!selected);
+			if(canDeselctSelf && (!selected) == false || !selected)
+				setSelected(!selected);
+			else 
+				setSelected(selected);
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {}

@@ -41,6 +41,7 @@ public class SoundPluginMetadata {
 		super();
 		this.pluginClass = pluginClass;
 		this.instanceId = instanceId;
+		this.pluginName = pluginName;
 		this.key = key;
 		this.valueString = valueString;
 		this.valueInt = valueInt;

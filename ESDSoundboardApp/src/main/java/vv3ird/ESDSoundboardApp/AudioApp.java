@@ -1,5 +1,7 @@
 package vv3ird.ESDSoundboardApp;
 
+import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
@@ -33,6 +35,9 @@ import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,6 +53,7 @@ import vv3ird.ESDSoundboardApp.config.AppConfiguration;
 import vv3ird.ESDSoundboardApp.config.AudioDevices;
 import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.Sound.Type;
+import vv3ird.ESDSoundboardApp.ngui.pages.JCreateSoundPage;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.player.AudioPlayer;
 import vv3ird.ESDSoundboardApp.plugins.PluginManager;
@@ -83,6 +89,8 @@ public class AudioApp {
 	private static List<PlaybackListener> playbackListeners = new LinkedList<>();
 
 	private static IStreamDeck streamDeck = null;
+	
+	private static JFrame splashscreen = null;
 
 	static {
 		try (InputStream in = AudioApp.class.getResourceAsStream("/resources/log4j.xml")) {
@@ -91,22 +99,21 @@ public class AudioApp {
 			System.setProperty("log4j.configurationFile", tempConfig.toFile().getAbsolutePath());
 			logger = LogManager.getLogger(AudioApp.class);
 			logger.debug("Log4J config: " + tempConfig.toFile().getAbsolutePath());
-			loadConfiguration();
-			checkOldLibFormate();
-			loadSoundLibrary();
-			loadSoundBoards();
-			isSpotifyEnabled();
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-				public void run() {
-					if (streamDeck != null) {
-						streamDeck.setBrightness(5);
-						streamDeck.reset();
-					}
-					if (AudioApp.controller != null)
-						AudioApp.controller.stop(true, false);
-					AudioApp.stop();
-				}
-			});
+			if(!GraphicsEnvironment.isHeadless()) {
+				BufferedImage b = ImageIO.read(AudioApp.class.getResourceAsStream("/resources/splashscreen.png"));
+				splashscreen = new JFrame();
+				splashscreen.setSize(b.getWidth(), b.getHeight());
+				splashscreen.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width/2 - b.getWidth()/2,
+						Toolkit.getDefaultToolkit().getScreenSize().height/2 - b.getHeight()/2
+				);
+				splashscreen.setLayout(null);
+				JLabel l = new JLabel(new ImageIcon(b));
+				l.setBounds(0, 0, b.getWidth(), b.getHeight());
+				splashscreen.add(l);
+				splashscreen.setUndecorated(true);
+				splashscreen.setAlwaysOnTop(true);
+				splashscreen.setVisible(true);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -879,8 +886,25 @@ public class AudioApp {
 	}
 
 	public static void main(String[] args) {
+		loadConfiguration();
+		checkOldLibFormate();
+		loadSoundLibrary();
+		loadSoundBoards();
+		isSpotifyEnabled();
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+				if (streamDeck != null) {
+					streamDeck.setBrightness(5);
+					streamDeck.reset();
+				}
+				if (AudioApp.controller != null)
+					AudioApp.controller.stop(true, false);
+				AudioApp.stop();
+			}
+		});
 		int sbC = 0;
 		streamDeck = StreamDeckDevices.getStreamDeck();
+		SoftStreamDeck.hideDecks();
 		if (streamDeck == null)
 			streamDeck = new SoftStreamDeck("Sound Board App", null);
 		StreamItem[] sbItems = new StreamItem[soundboardLibrary.size()];
@@ -895,6 +919,10 @@ public class AudioApp {
 		AudioApp.controller = new StreamDeckController(streamDeck, root);
 		AudioApp.controller.setBrightness(75);
 		PluginManager.init();
+		if(splashscreen != null) {
+			splashscreen.setVisible(false);
+			splashscreen.dispose();
+		}
 	}
 
 	public static void addConfig(String key, String value) {

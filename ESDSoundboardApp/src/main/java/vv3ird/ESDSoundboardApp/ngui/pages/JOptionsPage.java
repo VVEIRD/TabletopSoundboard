@@ -223,10 +223,14 @@ public class JOptionsPage extends Page {
 			chckbxEnablePlugin.setForeground(ColorScheme.FOREGROUND_COLOR);
 			chckbxEnablePlugin.setFont(Helper.defaultUiFont);
 			chckbxEnablePlugin.setOpaque(false);
+			chckbxEnablePlugin.setSelected(plugin.isEnabled());
 			chckbxEnablePlugin.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					plugin.setVisible(chckbxEnablePlugin.isSelected());
-					plugin.enablePlugin();
+					if(chckbxEnablePlugin.isSelected())
+						plugin.enablePlugin();
+					else
+						plugin.disablePlugin();
 				}
 			});
 			chckbxEnablePlugin.setBounds(6, 7, 208, 23);

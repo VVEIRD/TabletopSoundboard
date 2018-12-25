@@ -16,6 +16,7 @@ import vv3ird.ESDSoundboardApp.config.Sound;
 import vv3ird.ESDSoundboardApp.config.Sound.Type;
 import vv3ird.ESDSoundboardApp.ngui.components.IconSelectorPanel;
 import vv3ird.ESDSoundboardApp.ngui.components.JSoundMetadataTemplatePanel;
+import vv3ird.ESDSoundboardApp.ngui.layout.UIColumnLayout;
 import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 import vv3ird.ESDSoundboardApp.player.AudioPlayer;
 import vv3ird.ESDSoundboardApp.plugins.PluginManager;
@@ -29,6 +30,7 @@ import java.awt.Dimension;
 
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.Insets;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
@@ -52,11 +54,13 @@ import java.util.List;
 import java.util.Map;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
+import javax.swing.JViewport;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.JComboBox;
 import java.awt.Color;
@@ -101,14 +105,15 @@ public class JCreateSoundPage extends Page {
 	private Map<String, List<SoundPluginMetadataTemplate>> configuredTemplates = null;
 	
 	private Map<String, JPanel> configuredTemplatePanels = null;
-	private JPanel panel;
+	private JPanel pnSound;
+	private JPanel pnContent;
 
 	/**
 	 * Create the panel.
 	 */
 	public JCreateSoundPage() {
 		setLayout(new BorderLayout(0, 0));
-		setSize(new Dimension(656, 435));
+		setSize(new Dimension(692, 435));
 		setOpaque(false);
 
 		configuredTemplates = new HashMap<>();
@@ -128,15 +133,34 @@ public class JCreateSoundPage extends Page {
 		pnStatus.add(btnFinish, BorderLayout.EAST);
 		pnStatus.setOpaque(false);
 		
-		panel = new JPanel();
-		panel.setLayout(null);
-		panel.setOpaque(false);
-		add(panel, BorderLayout.CENTER);
+		pnContent = new JPanel();
+		pnContent.setLayout(new UIColumnLayout());
+		pnContent.setOpaque(false);
+		
+		pnSound = new JPanel();
+		pnSound.setLayout(null);
+		pnSound.setOpaque(false);
+		pnSound.setPreferredSize(new Dimension(640, 260));
+		pnContent.add(pnSound);
+		
+		JViewport viewport = new JViewport();
+		viewport.setOpaque(false);
+		viewport.setView(pnContent);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setViewportBorder(null);
+		scrollPane.setViewport(viewport);
+		scrollPane.getViewport().setOpaque(false);
+		scrollPane.setOpaque(false);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setBounds(0, 0, 700, 460);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+		add(scrollPane, BorderLayout.CENTER);
 		
 		JLabel lblName = new JLabel("Name");
 		lblName.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblName.setBounds(10, 11, 46, 11);
-		panel.add(lblName);
+		pnSound.add(lblName);
 		
 		tfName = new JTextField();
 		tfName.setForeground(ColorScheme.FOREGROUND_COLOR);
@@ -161,16 +185,16 @@ public class JCreateSoundPage extends Page {
 			}
 		});
 		tfName.setBounds(10, 22, 400, 25);
-		panel.add(tfName);
+		pnSound.add(tfName);
 		tfName.setColumns(10);
 		
 		lblNameOk =  new JLabel(new ImageIcon(FALSE));
 		lblNameOk.setBounds(420, 22, 20, 20);
-		panel.add(lblNameOk);
+		pnSound.add(lblNameOk);
 		
 		iPanel = new IconSelectorPanel(DEFAULT);
 		iPanel.setBounds(10, 58, 160, 151);
-		panel.add(iPanel);
+		pnSound.add(iPanel);
 		
 		tfAudio = new JTextField();
 		tfAudio.setForeground(ColorScheme.FOREGROUND_COLOR);
@@ -179,14 +203,14 @@ public class JCreateSoundPage extends Page {
 		tfAudio.setBackground(ColorScheme.MAIN_BACKGROUND_COLOR.darker());
 		tfAudio.setEditable(false);
 		tfAudio.setBounds(180, 58, 260, 25);
-		panel.add(tfAudio);
+		pnSound.add(tfAudio);
 		tfAudio.setColumns(10);
 		
 		JButton btnSelectAudio = new JButton("Select Audio");
 		btnSelectAudio.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		btnSelectAudio.setOpaque(false);
 		btnSelectAudio.setBounds(180, 94, 260, 23);
-		panel.add(btnSelectAudio);
+		pnSound.add(btnSelectAudio);
 
 		btnSelectAudio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -232,18 +256,18 @@ public class JCreateSoundPage extends Page {
 			}
 		});
 		btnPlay.setBounds(180, 128, 91, 45);
-		panel.add(btnPlay);
+		pnSound.add(btnPlay);
 		
 		rdbtnAmbience = new JRadioButton("Ambience");
 		rdbtnAmbience.setOpaque(false);
 		rdbtnAmbience.setBounds(277, 124, 109, 23);
-		panel.add(rdbtnAmbience);
+		pnSound.add(rdbtnAmbience);
 		rdbtnAmbience.setSelected(true);
 		
 		JRadioButton rdbtnEffect = new JRadioButton("Effect");
 		rdbtnEffect.setOpaque(false);
 		rdbtnEffect.setBounds(277, 147, 109, 23);
-		panel.add(rdbtnEffect);
+		pnSound.add(rdbtnEffect);
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(rdbtnAmbience);
 		bg.add(rdbtnEffect);
@@ -254,23 +278,23 @@ public class JCreateSoundPage extends Page {
 		tfTags.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		tfTags.setBackground(ColorScheme.MAIN_BACKGROUND_COLOR.darker());
 		tfTags.setBounds(180, 184, 260, 25);
-		panel.add(tfTags);
+		pnSound.add(tfTags);
 		tfTags.setColumns(10);
 		
 		JLabel lblTags = new JLabel("Tags");
 		lblTags.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblTags.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblTags.setBounds(394, 171, 46, 11);
-		panel.add(lblTags);
+		pnSound.add(lblTags);
 		
 		JLabel lblPlugins = new JLabel("Plugin Metadata");
 		lblPlugins.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblPlugins.setBounds(10, 220, 206, 11);
-		panel.add(lblPlugins);
+		pnSound.add(lblPlugins);
 		availableTemplates = PluginManager.getSoundPluginMetadataTemplates();
 		cbPlugins = new JComboBox(availableTemplates.keySet().toArray(new Object[0]));
 		cbPlugins.setBounds(10, 234, 376, 22);
-		panel.add(cbPlugins);
+		pnSound.add(cbPlugins);
 		
 		btnAddPluginMetadata = new JButton("Add");
 		btnAddPluginMetadata.addActionListener(new ActionListener() { 
@@ -281,7 +305,7 @@ public class JCreateSoundPage extends Page {
 		btnAddPluginMetadata.setOpaque(false);
 		btnAddPluginMetadata.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		btnAddPluginMetadata.setBounds(394, 234, 46, 23);
-		panel.add(btnAddPluginMetadata);
+		pnSound.add(btnAddPluginMetadata);
 		
 	}
 	
@@ -291,30 +315,46 @@ public class JCreateSoundPage extends Page {
 		int panelStartY = 270;
 		int templateStartY = 30;
 		int templateIncrease = 35;
-		if(configuredTemplates.containsKey(plugin))
+		if (configuredTemplates.containsKey(plugin))
 			return;
 		configuredTemplates.put(plugin, templates);
 		JPanel pnPlugin = new JPanel();
 		pnPlugin.setLayout(null);
 		pnPlugin.setOpaque(false);
-		
 
 		JLabel lblPluginName = new JLabel(plugin);
 		lblPluginName.setBounds(10, 11, 410, 14);
 		lblPluginName.setFont(lblPluginName.getFont().deriveFont(Font.BOLD));
 		pnPlugin.add(lblPluginName);
-		
+
+		JButton btnRemovePlugin = new JButton("X");
+		btnRemovePlugin.setMargin(new Insets(1, 1, 1, 1));
+		btnRemovePlugin.setBounds(410, 9, 20, 20);
+		pnPlugin.add(btnRemovePlugin);
+		btnRemovePlugin.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JPanel p = configuredTemplatePanels.remove(plugin);
+				configuredTemplates.remove(plugin);
+				pnContent.remove(p);
+				pnContent.revalidate();
+				pnContent.repaint();
+			}
+		});
+
 		int tIndex = 0;
 		for (SoundPluginMetadataTemplate template : templates) {
 			JSoundMetadataTemplatePanel pn = new JSoundMetadataTemplatePanel(template);
-			pn.setBounds(10, templateStartY + (templateIncrease*tIndex++), 430, 30);
+			pn.setBounds(10, templateStartY + (templateIncrease * tIndex++), 430, 30);
 			pn.setOpaque(false);
 			pnPlugin.add(pn);
 		}
-		pnPlugin.setBounds(10, (configuredTemplates.size()*panelStartY) + ((configuredTemplates.size()-1)*10), 430, templateStartY + (templates.size() * templateIncrease));
-		panel.add(pnPlugin);
-		panel.revalidate();
-		panel.repaint();
+		pnPlugin.setBounds(10, (configuredTemplates.size() * panelStartY) + ((configuredTemplates.size() - 1) * 10),
+				430, templateStartY + (templates.size() * templateIncrease));
+		pnPlugin.setPreferredSize(new Dimension(430, templateStartY + (templates.size() * templateIncrease)));
+		pnContent.add(pnPlugin);
+		pnContent.revalidate();
+		pnContent.repaint();
 		configuredTemplatePanels.put(plugin, pnPlugin);
 	}
 
