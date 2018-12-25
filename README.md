@@ -44,3 +44,6 @@ To enable Spotify go to the Options Tab and enter your Client-Id and Client Secr
 To create a spotify app, goto "https://developer.spotify.com/dashboard" and create an App. Name your app and select "Desktop App" From the dashboard goto the App and copy the Client ID and Secret. Goto "Edit Settings" and add the URL http://localhost:5000/spotify-redirect from "Redirect URL" to the whitelisted Redirect URIs. Scroll down to save. Then click on Login. 
 
 For details on how to create the spotify app visit [Create a spotify App](https://github.com/WElRD/ESDSoundboardApp/blob/master/help/Create%20a%20Spotify%20App.md)
+
+## Enabling Nanoleaf Lights support
+For details on how enable the Nanoleaf Light Panel Plugin visit [Enable Nanoleaf Plugin](https://github.com/WElRD/ESDSoundboardApp/blob/master/help/EnableNanoleafLightsPlugin.md)
