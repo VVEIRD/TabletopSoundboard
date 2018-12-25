@@ -41,6 +41,7 @@ public class SoundPluginMetadataTemplate {
 		this.instanceId = instanceId;
 		this.pluginClass = pluginClass;
 		this.pluginName = pluginName;
+		System.out.println(pluginName);
 		this.key = key;
 		this.list = list;
 		this.lowerBounds = lowerBounds;

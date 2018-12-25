@@ -286,7 +286,7 @@ public class JEditSoundPage extends Page {
 		else
 			rdbtnEffect.setSelected(true);
 
-		tfTags = new JTextField(String.join(" ", s.getTags()));
+		tfTags = new JTextField(s.getTags() != null ? String.join(" ", s.getTags()) : "");
 		tfTags.setForeground(ColorScheme.FOREGROUND_COLOR);
 		tfTags.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		tfTags.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
