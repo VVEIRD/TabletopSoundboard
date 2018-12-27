@@ -10,6 +10,7 @@ Go to the [Release Page](https://github.com/WElRD/ESDSoundboardApp/releases) to 
 * Combine different audio files into multiple soundboards with multiple sub-categories.
 * Use your spotify playlists to expand your sound repertory.
 * Integrate the Nanoleaf Light Panels to change their scene with the press of a button, while also changing the music.
+* Use the software Soundboard if you dont own an ESD. Show the software Soundboard by clicking on "Show SoftSoundboard" 
 
 ## Managing sounds
 
