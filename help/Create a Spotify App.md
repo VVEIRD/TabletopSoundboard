@@ -15,13 +15,13 @@ For the non-commercial choice you'll have so accept the TOS of spotify before cr
 
 ![TOS](https://raw.githubusercontent.com/WElRD/Images/master/spotify/04-Accept-TOS.png)
 
-Enter your Id and Secret into your ESD Soundboard App:
-
-![Config](https://raw.githubusercontent.com/WElRD/Images/master/ESDSoundboardApp/Frontend-06-Spotify-Options.png)
-
 Once you accepted the TOS you will be rediercted to your newly created app. Click on "Show client secret" to display the client secret. You need both Client-Id and Client secret for the sound board app. Copy those to use with the ESD Soundboard App.
 
 ![Client Id and secret](https://raw.githubusercontent.com/WElRD/Images/master/spotify/05-Get-Client-Id-and-Secret.png)
+
+Enter your Id and Secret into your ESD Soundboard App:
+
+![Config](https://raw.githubusercontent.com/WElRD/Images/master/ESDSoundboardApp/Frontend-06-Spotify-Options.png)
 
 Once you copied your Id and secret click on the "Edit Settings" button and add "https://localhost:5000/spotify-redirect" to the Redirect URIs:
 
