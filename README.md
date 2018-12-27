@@ -7,7 +7,7 @@ Go to the [Release Page](https://github.com/WElRD/ESDSoundboardApp/releases) to 
 
 ## Features
 * Add audio files with custom covers, filterable tags; categorized into ambience and effect audio. (Ambience is looped, effect audio will only be played once).
-* Combine different audio into multiple soundboards with multiple sub-categories.
+* Combine different audio files into multiple soundboards with multiple sub-categories.
 * Use your spotify playlists to expand your sound repertory.
 * Integrate the Nanoleaf Light Panels to change their scene with the press of a button, while also changing the music.
 
