@@ -301,4 +301,8 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	public void setCover(BufferedImage cover) {
 		this.cover = cover;
 	}
+
+	public boolean containedInTags(String search) {
+		return tags != null && tags.stream().anyMatch(t -> t.toLowerCase().contains(search.toLowerCase()));
+	}
 }

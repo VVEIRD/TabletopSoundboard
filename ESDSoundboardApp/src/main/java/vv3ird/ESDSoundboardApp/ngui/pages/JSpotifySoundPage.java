@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -11,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -18,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JViewport;
 
 import vv3ird.ESDSoundboardApp.AudioApp;
@@ -31,6 +34,8 @@ import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 public class JSpotifySoundPage extends Page{
 	
 	JPanel pnContent = null;
+	
+	String filter = "";
 	
 	public JSpotifySoundPage() {
 		setSize(700, 460);
@@ -65,7 +70,8 @@ public class JSpotifySoundPage extends Page{
 
 	private void updateList() {
 		pnContent.removeAll();
-		List<Sound> sbs = AudioApp.getSpotifyPlaylistSounds(Type.AMBIENCE);
+		List<Sound> sbs = AudioApp.getSpotifyPlaylistSounds(Type.AMBIENCE).stream()
+				.filter(s -> filter.length() == 0 || s.getName().toLowerCase().contains(filter.toLowerCase())).collect(Collectors.toList());
 		if(sbs == null)
 			sbs = new LinkedList<>();
 		List<JPanel> toAdd = new ArrayList<>(sbs.size());
@@ -133,9 +139,30 @@ public class JSpotifySoundPage extends Page{
 	public JPanel getButtonBar() {
 		JPanel bb = new JPanel();
 		bb.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		JLabel filler = new JLabel("");
-		filler.setPreferredSize(new Dimension(23, 23));
-		bb.add(filler);
+		JTextField filter = new JTextField();
+		filter.setToolTipText("Press Enter to apply the filter");
+		filter.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JSpotifySoundPage.this.filter = filter.getText();
+				updateList();
+			}
+		});
+		filter.setPreferredSize(new Dimension(180, 23));
+//		JLabel lblFilter = new JLabel("Filter: ");
+		JButton btnFilter = new JButton("Filter");
+		btnFilter.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		btnFilter.setOpaque(false);
+		btnFilter.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JSpotifySoundPage.this.filter = filter.getText();
+				updateList();
+			}
+		});
+//		lblFilter.setForeground(ColorScheme.FOREGROUND_COLOR);
+		bb.add(filter);
+		bb.add(btnFilter);
 		return bb;
 	}
 	

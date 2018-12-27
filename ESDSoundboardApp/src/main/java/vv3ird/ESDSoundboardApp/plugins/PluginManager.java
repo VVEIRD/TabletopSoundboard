@@ -3,6 +3,7 @@ package vv3ird.ESDSoundboardApp.plugins;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -129,6 +130,11 @@ public class PluginManager {
 		return null;
 	}
 	
+	/**
+	 * 
+	 * @param p
+	 * @return
+	 */
 	private static Map.Entry<String, Plugin> load(Path p) {
 		logger.debug("Trying to load plugin " + p.getFileName().toString());
 		try {
@@ -163,7 +169,8 @@ public class PluginManager {
 				if (clazzName != null) {
 					DynamicURLClassLoader.CLASS_LOADER.addURL(p.toFile().toURI().toURL());
 					Class<?> classToLoad = Class.forName(clazzName, true, DynamicURLClassLoader.CLASS_LOADER);
-					Object o = classToLoad.newInstance();
+					
+					Object o = classToLoad.getConstructor().newInstance();
 					logger.debug("Plugin loaded");
 					if (o instanceof Plugin)
 						return new AbstractMap.SimpleEntry<String, Plugin>(clazzName, (Plugin) o);
@@ -172,7 +179,7 @@ public class PluginManager {
 					logger.debug("Found no plugin class");
 				}
 			}
-		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			logger.error("Error occured loading plugin " + p.getFileName().toString() + ":");
 			logger.error(e);
 		}

@@ -10,12 +10,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JViewport;
 
 import vv3ird.ESDSoundboardApp.AudioApp;
@@ -28,6 +31,8 @@ import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 public class JSoundPage extends Page{
 	
 	JPanel pnContent = null;
+	
+	String filter = "";
 	
 	public JSoundPage() {
 		setSize(700, 460);
@@ -62,7 +67,8 @@ public class JSoundPage extends Page{
 
 	private void updateList() {
 		pnContent.removeAll();
-		List<Sound> sbs = AudioApp.getSoundLibrary();
+		List<Sound> sbs = AudioApp.getSoundLibrary().stream()
+				.filter(s -> filter.length() == 0 || s.getName().toLowerCase().contains(filter.toLowerCase()) || s.containedInTags(filter)).collect(Collectors.toList());
 		List<JPanel> toAdd = new ArrayList<>(sbs.size());
 		for (Sound sound : sbs) {
 			JSoundPanel jsbp = new JSoundPanel(sound, ColorScheme.MAIN_BACKGROUND_COLOR);
@@ -128,6 +134,32 @@ public class JSoundPage extends Page{
 	public JPanel getButtonBar() {
 		JPanel bb = new JPanel();
 		bb.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		
+		JTextField filter = new JTextField();
+		filter.setToolTipText("Press Enter to apply the filter");
+		filter.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JSoundPage.this.filter = filter.getText();
+				updateList();
+			}
+		});
+		filter.setPreferredSize(new Dimension(180, 23));
+//		JLabel lblFilter = new JLabel("Filter: ");
+		JButton btnFilter = new JButton("Filter");
+		btnFilter.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		btnFilter.setOpaque(false);
+		btnFilter.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JSoundPage.this.filter = filter.getText();
+				updateList();
+			}
+		});
+//		lblFilter.setForeground(ColorScheme.FOREGROUND_COLOR);
+		bb.add(filter);
+		bb.add(btnFilter);
+		
 		JButton btnAddSoundboard = new JButton("+");
 		btnAddSoundboard.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -137,6 +169,12 @@ public class JSoundPage extends Page{
 		btnAddSoundboard.setBorderPainted(false);
 		btnAddSoundboard.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		btnAddSoundboard.setPreferredSize(new Dimension(23, 23));
+		
+		JLabel lblFiller = new JLabel();
+
+		lblFiller.setPreferredSize(new Dimension(23, 23));
+		bb.add(lblFiller);
+		
 		bb.add(btnAddSoundboard);
 		return bb;
 	}

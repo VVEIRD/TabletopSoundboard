@@ -743,6 +743,7 @@ public class AudioApp {
 					BufferedImage img = ImageIO.read(new URL(is[0].getUrl()));
 					ImageIO.write(img, "PNG", imagePath.toFile());
 				}
+				updateSoundBoards(s);
 			}
 			catch (IOException e) {
 				logger.error("Error saving cover to spotify cache", e);
