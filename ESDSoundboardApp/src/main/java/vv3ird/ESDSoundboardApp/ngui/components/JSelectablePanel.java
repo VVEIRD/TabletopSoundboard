@@ -1,5 +1,6 @@
 package vv3ird.ESDSoundboardApp.ngui.components;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -9,7 +10,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 
@@ -29,6 +32,18 @@ public class JSelectablePanel extends JPanel {
 
 	public JSelectablePanel(boolean canDeselctSelf) {
 		this.canDeselctSelf = canDeselctSelf;
+	}
+
+	public JSelectablePanel(String title, boolean canDeselctSelf) {
+		this.canDeselctSelf = canDeselctSelf;
+		this.setLayout(null);
+		this.setBackground(ColorScheme.SIDE_BAR_BACKGROUND_COLOR);
+		JLabel lblTitle = new JLabel(title);
+		lblTitle.setOpaque(false);
+		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitle.setForeground(Color.LIGHT_GRAY);
+		lblTitle.setBounds(10, 0, 180, 40);
+		this.add(lblTitle);
 	}
 
 	public JSelectablePanel() {

@@ -26,6 +26,8 @@ public class AppConfiguration {
 	
 	public String soundBoardLib = "soundboards"; 
 	
+	public String metadataStore = "metadata"; 
+	
 	public String audioInterface = null;
 	
 	public float masterGain = 1.0f;
@@ -52,6 +54,10 @@ public class AppConfiguration {
 	
 	public Path getSoundBoardLibPath() {
 		return Paths.get(this.soundBoardLib);
+	}
+	
+	public Path getMetadataStore() {
+		return Paths.get(this.metadataStore);
 	}
 	
 	public Mixer.Info getMixerInfo() {

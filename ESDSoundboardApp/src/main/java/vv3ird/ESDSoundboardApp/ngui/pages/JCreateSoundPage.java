@@ -411,8 +411,8 @@ public class JCreateSoundPage extends Page {
 	@Override
 	protected void okAction() {
 		try {
-			BufferedImage icon = iPanel.getImage();
-			icon = icon == null ? DEFAULT : icon;
+			BufferedImage cover = iPanel.getImage();
+			cover = cover == null ? DEFAULT : cover;
 			String name = tfName.getText().trim();
 			String audio = tfAudio.getText();
 			String[] tags =  tfTags.getText().split(" ");
@@ -433,7 +433,8 @@ public class JCreateSoundPage extends Page {
 				else if (data.size() > 0)
 					metadata.put(data.get(0).pluginClass, data);
 			}
-			AudioApp.saveSound(name, icon, audio,  type, tags, metadata);
+			Sound s = new Sound(name, new String[] {audio}, cover, type, tags, metadata);
+			AudioApp.saveSound(s);
 			pageViewer.back();
 		} catch (IOException e1) {
 			logger.error(e1);

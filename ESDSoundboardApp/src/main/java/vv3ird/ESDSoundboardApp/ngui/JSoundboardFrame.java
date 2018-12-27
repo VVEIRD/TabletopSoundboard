@@ -35,6 +35,7 @@ import vv3ird.ESDSoundboardApp.ngui.layout.UIColumnLayout;
 import vv3ird.ESDSoundboardApp.ngui.pages.JOptionsPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.JSoundPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.JSoundboardPage;
+import vv3ird.ESDSoundboardApp.ngui.pages.JSpotifySoundPage;
 import vv3ird.ESDSoundboardApp.ngui.pages.Page;
 import vv3ird.ESDSoundboardApp.ngui.pages.PageViewer;
 import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
@@ -61,6 +62,7 @@ public class JSoundboardFrame extends JFrame {
 	private PageViewer pnContent;
 	private JPanel pnStatus;
 	private JLabel lblShowSoftdecks;
+	private JSelectablePanel pnSpotifySounds;
 
 	/**
 	 * Launch the application.
@@ -121,10 +123,11 @@ public class JSoundboardFrame extends JFrame {
 		pnSideBar.setBackground(ColorScheme.SIDE_BAR_BACKGROUND_COLOR);
 		setSize(pnSideBar, 200, 450);
 		pnContent.add(pnSideBar, BorderLayout.WEST);
-		pnSideBar.setLayout(null);
+		pnSideBar.setLayout(new UIColumnLayout());
 		
 		pnSoundBoards = new JSelectablePanel(false);
 		pnSoundBoards.setBounds(0, 0, 200, 40);
+		pnSoundBoards.setPreferredSize(new Dimension(200, 40));
 		setSize(pnSoundBoards, 200, 40);
 		pnSideBar.add(pnSoundBoards);
 		pnSoundBoards.setLayout(null);
@@ -138,8 +141,9 @@ public class JSoundboardFrame extends JFrame {
 		
 		pnSounds = new JSelectablePanel(false);
 		pnSounds.setLayout(null);
-		pnSounds.setBackground(new Color(0, 81, 108));
+		pnSounds.setBackground(ColorScheme.SIDE_BAR_BACKGROUND_COLOR);
 		pnSounds.setBounds(0, 40, 200, 40);
+		pnSounds.setPreferredSize(new Dimension(200, 40));
 		pnSideBar.add(pnSounds);
 		
 		lblSounds = new JLabel("Sounds");
@@ -148,13 +152,21 @@ public class JSoundboardFrame extends JFrame {
 		lblSounds.setBounds(10, 0, 180, 40);
 		pnSounds.add(lblSounds);
 		
+
+		pnSpotifySounds = new JSelectablePanel("Spotify Playlists", false);
+		pnSpotifySounds.setBounds(0, 80, 200, 40);
+		pnSpotifySounds.setPreferredSize(new Dimension(200, 40));
+		pnSideBar.add(pnSpotifySounds);
+		
 		pnOptions = new JSelectablePanel(false);
 		pnOptions.setLayout(null);
 		pnOptions.setBackground(new Color(0, 81, 108));
-		pnOptions.setBounds(0, 80, 200, 40);
+		pnOptions.setPreferredSize(new Dimension(200, 40));
+		pnOptions.setBounds(0, 120, 200, 40);
 		JSelectablePanel.JSelectablePanelGroup pnGroup = new JSelectablePanel.JSelectablePanelGroup();
 		pnGroup.add(pnSoundBoards);
 		pnGroup.add(pnSounds);
+		pnGroup.add(pnSpotifySounds);
 		pnGroup.add(pnOptions);
 		pnSideBar.add(pnOptions);
 		
@@ -172,6 +184,11 @@ public class JSoundboardFrame extends JFrame {
 		});
 		pnDecks.setLayout(null);
 		pnDecks.setBounds(0, 410, 200, 40);
+		pnDecks.setPreferredSize(new Dimension(200, 40));
+		JPanel filler = new JPanel();
+		filler.setPreferredSize(new Dimension(40, 250));
+		filler.setOpaque(false);
+		pnSideBar.add(filler);
 		pnSideBar.add(pnDecks);
 		
 		lblShowSoftdecks = new JLabel("Show SoftDecks");
@@ -195,6 +212,7 @@ public class JSoundboardFrame extends JFrame {
 		};
 		pnOptions.add(lblOptions);
 		this.pnSounds.addSelectionListener(sl);
+		this.pnSpotifySounds.addSelectionListener(sl);
 		this.pnSoundBoards.addSelectionListener(sl);
 		this.pnOptions.addSelectionListener(sl);
 		JSoundboardFrame.this.pnSoundBoards.setSelected(true);
@@ -222,6 +240,9 @@ public class JSoundboardFrame extends JFrame {
 					pnContent.viewPage(p);
 				}else if (pnOptions.isSelected()) {
 					Page p = new JOptionsPage();
+					pnContent.viewPage(p);
+				}else if (pnSpotifySounds.isSelected()) {
+					Page p = new JSpotifySoundPage();
 					pnContent.viewPage(p);
 				}
 			}

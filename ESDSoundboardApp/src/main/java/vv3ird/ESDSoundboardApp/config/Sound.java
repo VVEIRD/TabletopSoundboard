@@ -1,5 +1,7 @@
 package vv3ird.ESDSoundboardApp.config;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,14 +10,38 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.gson.GsonBuilder;
 
+import de.rcblum.stream.deck.util.SDImage;
+import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.plugins.data.SoundPluginMetadata;
 
 public class Sound implements Comparable<Sound>, Iterator<String>{
+	
+	public static BufferedImage OK = null;
+	public static BufferedImage FALSE = null;
+	public static BufferedImage DEFAULT_COVER = null;
+
+	static {
+		try {
+			OK = ImageIO.read(Sound.class.getClassLoader().getResource("resources/icons/ok.png"));
+			FALSE = ImageIO.read(Sound.class.getClassLoader().getResource("resources/icons/false.png"));
+			DEFAULT_COVER = ImageIO.read(Sound.class.getClassLoader().getResource("resources/icons/audio.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static Logger logger = LogManager.getLogger(Sound.class);;
 
 	private String name;
 	
@@ -27,6 +53,8 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	private transient int currentFile = 0;
 	
 	private String coverPath;
+
+	private transient BufferedImage cover = null;
 	
 	private List<String> tags = null;
 	
@@ -47,12 +75,30 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	}
 
 	public Sound(String name, String[] filePaths, String coverPath, Type type, String[] tags) {
+		this(name, filePaths, coverPath, type, tags, null);
+	}
+
+	public Sound(String name, String[] filePaths, String coverPath, Type type, String[] tags,  Map<String, List<SoundPluginMetadata>> pluginMetadata) {
+		this(name, filePaths, type, tags, pluginMetadata);
+		this.coverPath = coverPath;
+	}
+
+	public Sound(String name, String[] filePaths, BufferedImage cover, Type type, String[] tags) {
+		this(name, filePaths, cover, type, tags, null);
+	}
+
+	public Sound(String name, String[] filePaths, BufferedImage cover, Type type, String[] tags,  Map<String, List<SoundPluginMetadata>> pluginMetadata) {
+		this(name, filePaths, type, tags, pluginMetadata);
+		this.cover = cover;
+	}
+
+	public Sound(String name, String[] filePaths, Type type, String[] tags, Map<String, List<SoundPluginMetadata>> pluginMetadata) {
 		super();
 		this.name = name;
 		this.filePaths = filePaths;
-		this.coverPath = coverPath;
 		this.type = type;
-		this.tags = tags != null ? Arrays.asList(tags) : null;
+		this.tags = tags != null ? Arrays.asList(tags) : new LinkedList<>();
+		this.pluginMetadata = pluginMetadata != null ? pluginMetadata : new HashMap<>();
 	}
 
 	public Sound(String name, String spotifyOwner, String spotifyId, String spotifyType, Type type) {
@@ -220,5 +266,39 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	public boolean isAmbience() {
 		// TODO Auto-generated method stub
 		return this.type == Type.AMBIENCE;
+	}
+
+	private void loadCover() {
+		if(isSpotifySound()) {
+			SDImage sCover = AudioApp.getSpotifyCover(this);
+			if(sCover != null)
+				this.cover = sCover.image;
+			else 
+				this.cover = DEFAULT_COVER;
+		}
+			
+		if (getCoverPath() != null) {
+			try {
+				this.cover = ImageIO.read(new File(getCoverPath()));
+			} catch (IOException e) {
+				logger.error("Error loading cover: " + getCoverPath());
+				logger.error(e);
+			}
+		}
+	}
+
+	public BufferedImage getCover() {
+		if(cover == null)
+			loadCover();
+		return cover;
+	}
+
+	public void setMetadata(Map<String, List<SoundPluginMetadata>> metadata) {
+		if(metadata != null)
+			this.pluginMetadata = metadata;
+	}
+
+	public void setCover(BufferedImage cover) {
+		this.cover = cover;
 	}
 }

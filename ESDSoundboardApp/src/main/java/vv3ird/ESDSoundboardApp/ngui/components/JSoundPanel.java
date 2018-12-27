@@ -7,6 +7,7 @@ import de.rcblum.stream.deck.util.IconHelper;
 import de.rcblum.stream.deck.util.SDImage;
 import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.Sound;
+import vv3ird.ESDSoundboardApp.ngui.pages.JEditSoundPage;
 import vv3ird.ESDSoundboardApp.ngui.util.ColorScheme;
 
 import java.awt.Color;
@@ -33,18 +34,22 @@ public class JSoundPanel extends ImagePanel {
 	public JSoundPanel(Sound s, Color background) {
 		this.s = s;
 		Color oldC = IconHelper.FRAME_COLOR;
-		SDImage bImg = null;
+		BufferedImage bImg = null;
 		try {
 			IconHelper.FRAME_COLOR = background;
-			if (this.s.isSpotifySound())
-				bImg = AudioApp.getSpotifyCover(this.s);
+			if(this.s.getCover() != null)
+				bImg = this.s.getCover();
 			else
-				bImg = IconHelper.loadImage(this.s.getCoverPath(), new FileInputStream(new File(this.s.getCoverPath())), true);
+				bImg = JEditSoundPage.DEFAULT;
+//			if (this.s.isSpotifySound())
+//				bImg = AudioApp.getSpotifyCover(this.s);
+//			else
+//				bImg = IconHelper.loadImage(this.s.getCoverPath(), new FileInputStream(new File(this.s.getCoverPath())), false);
 		}
 		catch (Exception e) {
 		}
 		IconHelper.FRAME_COLOR = oldC;
-		init(bImg.image, s.getName(), background);
+		init(bImg, s.getName(), background);
 	}
 	
 	public JSoundPanel(BufferedImage img, String text, Color background) {

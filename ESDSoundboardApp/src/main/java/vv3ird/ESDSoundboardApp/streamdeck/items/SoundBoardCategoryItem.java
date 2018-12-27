@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import de.rcblum.stream.deck.items.FolderItem;
 import de.rcblum.stream.deck.items.StreamItem;
 import de.rcblum.stream.deck.items.animation.AnimationStack;
+import de.rcblum.stream.deck.util.IconHelper;
 import vv3ird.ESDSoundboardApp.AudioApp;
 import vv3ird.ESDSoundboardApp.config.Sound;
 
@@ -30,7 +31,7 @@ public class SoundBoardCategoryItem extends FolderItem {
 			Collections.sort(files);
 //			String coverPath = Arrays.asList(children).stream().map(s -> s.getSound().getCoverPath()).findFirst().orElse("BLACK");
 			Sound.Type type = Arrays.asList(children).stream().map(s -> s.getSound().getType()).findFirst().orElse(Sound.Type.AMBIENCE);
-			Sound playAllSound = new Sound(folderName +  " - Play all", files.toArray(new String[0]), null, type, null);
+			Sound playAllSound = new Sound(folderName +  " - Play all", files.toArray(new String[0]), IconHelper.getImage("temp://BLACK_ICON").image, type, null);
 			SoundItem playAll = new SoundItem(playAllSound);
 			playAll.setText( "Play all");
 			playAll.setParent(this);

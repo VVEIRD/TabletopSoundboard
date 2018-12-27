@@ -48,6 +48,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,12 +75,11 @@ public class JEditSoundPage extends Page {
 
 	Logger logger = LogManager.getLogger(JEditSoundPage.class);
 
-	static BufferedImage OK = null;
-	static BufferedImage FALSE = null;
-	static BufferedImage DEFAULT = null;
+	public static BufferedImage OK = null;
+	public static BufferedImage FALSE = null;
+	public static BufferedImage DEFAULT = null;
 
 	static {
-
 		try {
 			OK = ImageIO.read(JEditSoundPage.class.getClassLoader().getResource("resources/icons/ok.png"));
 			FALSE = ImageIO.read(JEditSoundPage.class.getClassLoader().getResource("resources/icons/false.png"));
@@ -109,6 +110,7 @@ public class JEditSoundPage extends Page {
 	private JPanel pnSound;
 	private JPanel pnContent;
 	Sound s;
+	private JLabel lblSpotifyPlaylist;
 
 	/**
 	 * Create the panel.
@@ -118,7 +120,7 @@ public class JEditSoundPage extends Page {
 		setSize(new Dimension(656, 435));
 		setOpaque(false);
 
-		s = Objects.requireNonNull(s);
+		this.s = Objects.requireNonNull(s);
 
 		configuredTemplates = new HashMap<>();
 
@@ -167,6 +169,7 @@ public class JEditSoundPage extends Page {
 		pnSound.add(lblName);
 
 		tfName = new JTextField(s.getName());
+		tfName.setEditable(false);
 		tfName.setForeground(ColorScheme.FOREGROUND_COLOR);
 		tfName.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		tfName.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -198,14 +201,11 @@ public class JEditSoundPage extends Page {
 
 		iPanel = new IconSelectorPanel(DEFAULT);
 		iPanel.setBounds(10, 58, 160, 151);
-		try {
-			iPanel.setImage(ImageIO.read(new File(s.getCoverPath())));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		if(s.getCover() != null)
+			iPanel.setImage(s.getCover());
 		pnSound.add(iPanel);
 
-		tfAudio = new JTextField(s.getFilePaths()[0]);
+		tfAudio = new JTextField(!s.isSpotifySound() ? s.getFilePaths()[0] : "");
 		tfAudio.setForeground(ColorScheme.FOREGROUND_COLOR);
 		tfAudio.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		tfAudio.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -216,6 +216,7 @@ public class JEditSoundPage extends Page {
 		tfAudio.setColumns(10);
 
 		JButton btnSelectAudio = new JButton("Select Audio");
+		btnSelectAudio.setEnabled(!s.isSpotifySound());
 		btnSelectAudio.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		btnSelectAudio.setOpaque(false);
 		btnSelectAudio.setBounds(180, 94, 260, 23);
@@ -323,6 +324,13 @@ public class JEditSoundPage extends Page {
 		btnAddPluginMetadata.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		btnAddPluginMetadata.setBounds(394, 234, 46, 23);
 		pnSound.add(btnAddPluginMetadata);
+		
+		lblSpotifyPlaylist = new JLabel("Spotify Playlist");
+		lblSpotifyPlaylist.setVisible(s.isSpotifySound());
+		lblSpotifyPlaylist.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblSpotifyPlaylist.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblSpotifyPlaylist.setBounds(324, 9, 86, 11);
+		pnSound.add(lblSpotifyPlaylist);
 		Map<String, List<SoundPluginMetadata>> metadataAllIn = s.getMetadata();
 		Map<String, List<SoundPluginMetadataTemplate>> metadataFinal = new HashMap<>();
 		if(metadataAllIn != null) {
@@ -446,10 +454,10 @@ public class JEditSoundPage extends Page {
 	@Override
 	protected void okAction() {
 		try {
-			BufferedImage icon = iPanel.getImage();
-			icon = icon == null ? DEFAULT : icon;
+			BufferedImage cover = iPanel.getImage();
+			cover = cover == null ? DEFAULT : cover;
 			String name = tfName.getText().trim();
-			String audio = tfAudio.getText();
+			String audioFile = tfAudio.getText();
 			String[] tags = tfTags.getText().split(" ");
 			Sound.Type type = rdbtnAmbience.isSelected() ? Type.AMBIENCE : Type.EFFECT;
 			Map<String, List<SoundPluginMetadata>> metadata = new HashMap<>();
@@ -466,7 +474,13 @@ public class JEditSoundPage extends Page {
 				if (data.size() > 0)
 					metadata.put(data.get(0).pluginClass, data);
 			}
-			AudioApp.saveSound(name, icon, audio, type, tags, metadata);
+//			Sound s = new Sound(name, new String[] {audioFile}, cover, type, tags, metadata);
+			s.setFilePaths(new String[] {audioFile});
+			s.setCover(cover);
+			s.setTags(Arrays.asList(tags));
+			s.setType(type);
+			s.setMetadata(metadata);
+			AudioApp.saveSound(s);
 			pageViewer.back();
 		} catch (IOException e1) {
 			logger.error(e1);

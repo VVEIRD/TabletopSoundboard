@@ -57,6 +57,7 @@ import vv3ird.ESDSoundboardApp.ngui.pages.JCreateSoundPage;
 import vv3ird.ESDSoundboardApp.config.SoundBoard;
 import vv3ird.ESDSoundboardApp.player.AudioPlayer;
 import vv3ird.ESDSoundboardApp.plugins.PluginManager;
+import vv3ird.ESDSoundboardApp.plugins.data.MetadataStore;
 import vv3ird.ESDSoundboardApp.plugins.data.SoundPluginMetadata;
 import vv3ird.ESDSoundboardApp.plugins.listener.PlaybackListener;
 import vv3ird.ESDSoundboardApp.streamdeck.items.SoundBoardItem;
@@ -131,9 +132,7 @@ public class AudioApp {
 		try {
 			player.open();
 		} catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
-			logger.error("Error opening audio file: " + player.getAudioFile());
-			logger.error(e);
-			e.printStackTrace();
+			logger.error("Error opening audio file: " + player.getAudioFile(), e);
 		}
 		float gain = linearToDecibel(configuration.masterGain) + 2;
 		logger.debug("Setting gain for ambience player: " + gain);
@@ -171,8 +170,7 @@ public class AudioApp {
 			logger.debug("Setting gain for effects player: " + gain);
 			player.setGain(gain);
 		} catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
-			logger.error("Error opening audio file: " + player.getAudioFile());
-			logger.error(e);
+			logger.error("Error opening audio file: " + player.getAudioFile(), e);
 			e.printStackTrace();
 		}
 		player.loop(0);
@@ -254,8 +252,7 @@ public class AudioApp {
 			try {
 				AppConfiguration.save(configuration, Paths.get("config.json"));
 			} catch (IOException e1) {
-				logger.error("Cannot create config, using transient default configuration.");
-				e1.printStackTrace();
+				logger.error("Cannot create config, using transient default configuration.", e1);
 			}
 		}
 	}
@@ -428,16 +425,14 @@ public class AudioApp {
 					Sound sound = gson.fromJson(soundString, Sound.class);
 					soundLibrary.add(sound);
 				} catch (Exception e) {
-					logger.error("Failed to load sound: " + soundPath.toString());
-					e.printStackTrace();
+					logger.error("Failed to load sound: " + soundPath.toString(), e);
 				}
 			}
 		} else {
 			try {
 				Files.createDirectories(root);
 			} catch (IOException e) {
-				logger.error("Couldn't create folder \"" + root.toString() + "\"");
-				logger.error(e);
+				logger.error("Couldn't create folder \"" + root.toString() + "\"", e);
 			}
 		}
 		return soundLibrary;
@@ -611,13 +606,11 @@ public class AudioApp {
 					byte[] soundBytes = soundString.getBytes("UTF-8");
 					Files.write(soundPath, soundBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 				} catch (IOException e) {
-					logger.error("Failed to save sound: " + soundPath.toString());
-					logger.error(e);
+					logger.error("Failed to save sound: " + soundPath.toString(), e);
 				}
 			}
 		} catch (IOException e) {
-			logger.error("Cannot create directory: " + root.toString() + ", not saving any files");
-			logger.error(e);
+			logger.error("Cannot create directory: " + root.toString() + ", not saving any files", e);
 		}
 	}
 
@@ -696,37 +689,66 @@ public class AudioApp {
 						} catch (UnsupportedEncodingException e) {
 						}
 					} catch (IOException e) {
-						logger.error("Cannot copy sound file: " + soundFile.getPath());
-						e.printStackTrace();
+						logger.error("Cannot copy sound file: " + soundFile.getPath(), e);
 					}
 				}
 			}
 		}
 	}
 
-	public static Sound saveSound(String name, BufferedImage icon, String audioFile, Sound.Type type, String[] tags, Map<String, List<SoundPluginMetadata>> metadata)
+	public static Sound saveSound(Sound s)
 			throws IOException {
-		Path soundSource = Paths.get(audioFile);
-		String extension = audioFile.substring(audioFile.lastIndexOf("."));
-		Path soundLibPath = AudioApp.getConfiguration().getSoundLibPath();
-		Path soundFolder = soundLibPath.resolve(name);
-		Path soundJson = soundLibPath.resolve(name + ".json");
-		Path soundFile = soundFolder.resolve(name + extension);
-		Path soundIcon = soundFolder.resolve(name + ".png");
-		Files.createDirectories(soundFolder);
-		if(!soundSource.toAbsolutePath().equals(soundFile.toAbsolutePath()))
-			Files.copy(soundSource, soundFile);
-		ImageIO.write(icon, "PNG", soundIcon.toFile());
-		Sound s = new Sound(name, soundFile.toString(), soundIcon.toString(), type, tags);
-		metadata.keySet().stream().forEach(c -> s.addMetadataFor(c, metadata.get(c)));
-		Sound.save(s, soundJson);
-		Sound sls = soundLibrary.stream().filter(l -> s.getName().equals(l.getName())).findFirst().orElse(null);
-		soundLibrary.remove(sls);
-		soundLibrary.add(s);
-		if(sls != null)
-			updateSoundBoards(s);
-		Collections.sort(soundLibrary);
-		return s;
+		if(!s.isSpotifySound()) {
+			String audioFile = s.next();
+			String name = s.getName();
+			BufferedImage icon = s.getCover();
+			Map<String, List<SoundPluginMetadata>> metadata = s.getMetadata();
+			Path soundSource = Paths.get(audioFile);
+			String extension = audioFile.substring(audioFile.lastIndexOf("."));
+			Path soundLibPath = AudioApp.getConfiguration().getSoundLibPath();
+			Path soundFolder = soundLibPath.resolve(name);
+			Path soundJson = soundLibPath.resolve(name + ".json");
+			Path soundFile = soundFolder.resolve(name + extension);
+			Path soundIcon = soundFolder.resolve(name + ".png");
+			Files.createDirectories(soundFolder);
+			if(!soundSource.toAbsolutePath().equals(soundFile.toAbsolutePath()))
+				Files.copy(soundSource, soundFile);
+			ImageIO.write(icon, "PNG", soundIcon.toFile());
+//			Sound s = new Sound(name, soundFile.toString(), soundIcon.toString(), type, tags);
+			metadata.keySet().stream().forEach(c -> s.addMetadataFor(c, metadata.get(c)));
+			s.setCoverPath(soundIcon.toString());
+			s.setFilePaths(new String[] {soundFile.toString()});
+			Sound.save(s, soundJson);
+			Sound sls = soundLibrary.stream().filter(l -> s.getName().equals(l.getName())).findFirst().orElse(null);
+			soundLibrary.remove(sls);
+			soundLibrary.add(s);
+			if(sls != null)
+				updateSoundBoards(s);
+			Collections.sort(soundLibrary);
+			return s;
+		} 
+		else if (s.isSpotifySound()){
+			AudioApp.storeMetadata("SPOTIFY_" + s.getSpotifyId(), s.getMetadata());
+			Path cachFolder = Paths.get("cache", "spotify", s.getSpotifyOwner(), s.getSpotifyType());
+			// Save cover image to cache folder
+			try {
+				if (!Files.exists(cachFolder))
+					Files.createDirectories(cachFolder);
+				Path imagePath = cachFolder.resolve(s.getSpotifyId() + ".png");
+				// cache spotify cover
+				SpotifyFrontend sf = SpotifyFrontend.createInstance(configuration.spotifyClientId, configuration.spotifyClientSecret, configuration.spotifyResponseUrl, true);
+				Playlist pl = sf.getPlaylist(s.getSpotifyId());
+				Image[] is = pl.getImages();
+				if(is.length > 0) {
+					BufferedImage img = ImageIO.read(new URL(is[0].getUrl()));
+					ImageIO.write(img, "PNG", imagePath.toFile());
+				}
+			}
+			catch (IOException e) {
+				logger.error("Error saving cover to spotify cache", e);
+			}
+		}
+		return null;
 	}
 
 	private static void updateSoundBoards(Sound s) {
@@ -751,8 +773,7 @@ public class AudioApp {
 				try {
 					saveSoundBoard(sb);
 				} catch (IOException e) {
-					logger.error("Could not update soundboard " + sb.name);
-					logger.error(e);
+					logger.error("Could not update soundboard " + sb.name, e);
 				}
 			}
 		}
@@ -844,12 +865,18 @@ public class AudioApp {
 	public static List<Sound> getSpotifyPlaylistSounds(Type type) {
 		if(isSpotifyEnabled()) {
 			SpotifyFrontend sf = getSpotifyFrontend();
-			List<Sound> s = sf.getListOfCurrentUsersPlaylists().stream().map(p -> new Sound(p.getName(), p.getOwner().getId(), p.getId(), p.getType().type, type)).collect(Collectors.toList());
+			List<Sound> s = sf.getListOfCurrentUsersPlaylists().stream()
+					.map(p -> new Sound(p.getName(), p.getOwner().getId(), p.getId(), p.getType().type, type))
+					.collect(Collectors.toList());
 			Collections.sort(s);
 			List<Sound> finalSounds = new ArrayList<>(s.size());
 			Sound lSound = null;
 			for (Sound sound : s) {
 				if(lSound == null || sound.compareTo(lSound) != 0) {
+					MetadataStore ms = AudioApp.getMetadata("SPOTIFY_" + sound.getSpotifyId());
+					if(ms != null) {
+						sound.setMetadata(ms.getMetadata());
+					}
 					finalSounds.add(sound);
 				}
 				lSound = sound;
@@ -869,6 +896,7 @@ public class AudioApp {
 			if (!Files.exists(cachFolder))
 				Files.createDirectories(cachFolder);
 			Path imagePath = cachFolder.resolve(sound.getSpotifyId() + ".png");
+			// cache spotify cover
 			if(!Files.exists(imagePath)) {
 				SpotifyFrontend sf = SpotifyFrontend.createInstance(configuration.spotifyClientId, configuration.spotifyClientSecret, configuration.spotifyResponseUrl, true);
 				Playlist pl = sf.getPlaylist(sound.getSpotifyId());
@@ -877,13 +905,16 @@ public class AudioApp {
 					BufferedImage img = ImageIO.read(new URL(is[0].getUrl()));
 					ImageIO.write(img, "PNG", imagePath.toFile());
 				}
+				else if(Sound.DEFAULT_COVER != null)
+					ImageIO.write(Sound.DEFAULT_COVER, "PNG", imagePath.toFile());
 			}
-			BufferedImage img = ImageIO.read(imagePath.toFile());
-			return IconHelper.convertImage(img);
+//			BufferedImage img = ImageIO.read(imagePath.toFile());
+			return IconHelper.loadImage(imagePath);
+//			return IconHelper.convertImage(img);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error loading spotify cover for " + sound.getName(), e);
 		}
-		return null;
+		return Sound.DEFAULT_COVER != null ? IconHelper.convertImage( Sound.DEFAULT_COVER) : null;
 	}
 
 	public static void main(String[] args) {
@@ -962,7 +993,38 @@ public class AudioApp {
 			player.removePlaybackListener(listener);
 	}
 	
+	private static Map<String, MetadataStore> metadataStoreCache = new HashMap<>(); 
+
 	public static void storeMetadata(String key, Map<String, List<SoundPluginMetadata>> metadata) {
-		
+		metadata = Objects.requireNonNull(metadata);
+		key = Objects.requireNonNull(key);
+		MetadataStore ms = new MetadataStore(key, metadata);
+		Path metadataStore = AudioApp.getConfiguration().getMetadataStore();
+		try {
+			if (!Files.exists(metadataStore))
+				Files.createDirectories(metadataStore);
+			Path metadataFile = metadataStore.resolve(key + ".json");
+			MetadataStore.save(ms, metadataFile);
+			metadataStoreCache.put(key, ms);
+		} catch (IOException e) {
+			logger.error("Caonnot create folder to store additional metadata", e);
+		}
+	}
+	
+	public static MetadataStore getMetadata(String key) {
+		key = Objects.requireNonNull(key);
+		if(metadataStoreCache.containsKey(key))
+			return metadataStoreCache.get(key);
+		Path metadataStore = AudioApp.getConfiguration().getMetadataStore();
+		try {
+			if (!Files.exists(metadataStore))
+				Files.createDirectories(metadataStore);
+			Path metadataFile = metadataStore.resolve(key + ".json");
+			if (Files.exists(metadataFile))
+				return MetadataStore.load(metadataFile);
+		} catch (IOException e) {
+			logger.error("Caonnot create folder to store additional metadata", e);
+		}
+		return null;
 	}
 }
