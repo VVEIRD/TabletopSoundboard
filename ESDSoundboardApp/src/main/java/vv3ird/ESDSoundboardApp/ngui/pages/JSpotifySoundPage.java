@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -64,6 +65,8 @@ public class JSpotifySoundPage extends Page{
 	private void updateList() {
 		pnContent.removeAll();
 		List<Sound> sbs = AudioApp.getSpotifyPlaylistSounds(Type.AMBIENCE);
+		if(sbs == null)
+			sbs = new LinkedList<>();
 		List<JPanel> toAdd = new ArrayList<>(sbs.size());
 		for (Sound sound : sbs) {
 			JSoundPanel jsbp = new JSoundPanel(sound, ColorScheme.MAIN_BACKGROUND_COLOR);
@@ -129,16 +132,6 @@ public class JSpotifySoundPage extends Page{
 	public JPanel getButtonBar() {
 		JPanel bb = new JPanel();
 		bb.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		JButton btnAddSoundboard = new JButton("+");
-		btnAddSoundboard.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				pageViewer.viewPage(new JCreateSoundPage());
-			}
-		});
-		btnAddSoundboard.setBorderPainted(false);
-		btnAddSoundboard.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		btnAddSoundboard.setPreferredSize(new Dimension(23, 23));
-		bb.add(btnAddSoundboard);
 		return bb;
 	}
 	
