@@ -1,4 +1,4 @@
-# Enabling the Nanoleaf Light Panels
+# Enabling The Nanoleaf Light Panel Plugin
 1. To enable the light panels, make sure they are powered and within the same network as your pc.
 2. Go to the Options Tab and enable the Nanoleaf Plugin. scroll down:
 ![Enable](https://raw.githubusercontent.com/WElRD/Images/master/ESDSoundboardApp/nanoleaf-options/NanoleafPluginDisabled.png)
