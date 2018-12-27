@@ -46,6 +46,7 @@ public class AppConfiguration {
 	
 	public AppConfiguration() {
 		this.setAudioInterface(AudioDevices.getDefaultAudioDevice());
+		configStore.put("sbapp.preload_cache", "true");
 	}
 	
 	public Path getSoundLibPath() {

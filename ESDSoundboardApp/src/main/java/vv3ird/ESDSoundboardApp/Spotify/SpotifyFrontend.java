@@ -7,6 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -14,6 +15,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -41,8 +45,11 @@ import com.wrapper.spotify.requests.data.playlists.GetPlaylistRequest;
 import vv3ird.ESDSoundboardApp.AudioApp;
 
 public class SpotifyFrontend {
+	
+	private static Logger logger = LogManager.getLogger(SpotifyFrontend.class);
 
 	static class SpotifyResponseHandler implements HttpHandler {
+		
 
 		HttpServer server = null;
 		SpotifyFrontend sf = null;
@@ -82,6 +89,20 @@ public class SpotifyFrontend {
 				}
 			}
 			return result;
+		}
+	}
+	
+	private class PlayListUpdater implements Runnable {
+		@Override
+		public void run() {
+			if(AudioApp.isSpotifyEnabled())
+			currentUserPlaylists = getListOfCurrentUsersPlaylists_Sync(api);
+			try {
+				Thread.sleep(5_000);
+			} catch (Exception e) {
+				logger.error("Error reading Spotify Playlists", e);
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -354,9 +375,10 @@ public class SpotifyFrontend {
 	}
 	
 	
+	List<PlaylistSimplified> currentUserPlaylists = new LinkedList<PlaylistSimplified>();
 
 	public List<PlaylistSimplified> getListOfCurrentUsersPlaylists() {
-		return getListOfCurrentUsersPlaylists_Sync(api);
+		return currentUserPlaylists;//getListOfCurrentUsersPlaylists_Sync(api);
 	}
 
 	private void init() {
@@ -374,8 +396,15 @@ public class SpotifyFrontend {
 			}
 		}, 600_000, 600_000);
 		initActiveDevice();
+		initDaemon();
 	}
 
+
+	private void initDaemon() {
+		Thread updater = new Thread(new PlayListUpdater());
+		updater.setDaemon(true);
+		updater.start();
+	}
 
 	private void initActiveDevice() {
 		Device[] devices = getUsersAvailableDevices_Sync(api);

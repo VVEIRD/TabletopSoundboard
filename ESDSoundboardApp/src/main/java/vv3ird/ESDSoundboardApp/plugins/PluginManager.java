@@ -38,12 +38,11 @@ import vv3ird.ESDSoundboardApp.util.DynamicURLClassLoader;
 
 public class PluginManager {
 	
-	private static Logger logger;
+	private static Logger logger = LogManager.getLogger(PluginManager.class);
 	
 	private static Map<String, Plugin> plugins = new HashMap<>();
 	
 	public static void init() {
-		logger = LogManager.getLogger(PluginManager.class);
 		loadPlugins();
 		initPlugins();
 	}

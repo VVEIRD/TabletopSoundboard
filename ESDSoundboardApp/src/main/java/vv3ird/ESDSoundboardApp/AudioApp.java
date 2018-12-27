@@ -889,6 +889,31 @@ public class AudioApp {
 	public static IStreamDeck getStreamDeck() {
 		return streamDeck;
 	}
+	
+	public static void preloadCache() {
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Path cachFolder = Paths.get("cache", "spotify");
+				if (Files.exists(cachFolder)) {
+					try {
+						Files.walk(cachFolder).filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".png")).forEach(f -> {
+							try {
+								logger.debug("Preloading \"" + f.toString() + "\"");
+								IconHelper.loadImage(f);
+							} catch (IOException e) {
+								logger.error("Error preloading cover cache image", e);
+								e.printStackTrace();
+							}
+						});
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		t.start();
+	}
 
 	public static SDImage getSpotifyCover(Sound sound) {
 		Path cachFolder = Paths.get("cache", "spotify", sound.getSpotifyOwner(), sound.getSpotifyType());
@@ -922,7 +947,8 @@ public class AudioApp {
 		checkOldLibFormate();
 		loadSoundLibrary();
 		loadSoundBoards();
-		isSpotifyEnabled();
+		if(isSpotifyEnabled() && isConfigEnabled("sbapp.preload_cache"))
+			preloadCache();
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				if (streamDeck != null) {
@@ -969,6 +995,15 @@ public class AudioApp {
 
 	public static String getConfig(String key) {
 		return getConfiguration().getConfig(key);
+	}
+
+	/**
+	 * Returns if the value of "key" in the config is set to <code>true</code>
+	 * @param key Key in config to check
+	 * @return <code>true</code> if the value of key is "true", <code>false</code> otherwise.
+	 */
+	public static boolean isConfigEnabled(String key) {
+		return "true".equalsIgnoreCase(getConfiguration().getConfig(key));
 	}
 
 	public static String[] getConfigKeys(String key) {
