@@ -137,7 +137,6 @@ public class PluginManager {
 				ZipFile lib = new ZipFile(p.toFile());
 				ZipEntry pluginFile = enumerationAsStream(lib.entries()).filter(z -> z.getName().equals("plugin.txt"))
 						.findFirst().orElse(null);
-				enumerationAsStream(lib.entries()).forEach(z -> System.out.println(z.getName()));
 				List<ZipEntry> pluginLibs = enumerationAsStream(lib.entries()).filter(
 						z -> !z.isDirectory() && z.getName().startsWith("libs/") && z.getName().endsWith(".jar"))
 						.collect(Collectors.toList());
