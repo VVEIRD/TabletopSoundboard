@@ -714,7 +714,8 @@ public class AudioApp {
 		Path soundFile = soundFolder.resolve(name + extension);
 		Path soundIcon = soundFolder.resolve(name + ".png");
 		Files.createDirectories(soundFolder);
-		Files.copy(soundSource, soundFile);
+		if(!soundSource.toAbsolutePath().equals(soundFile.toAbsolutePath()))
+			Files.copy(soundSource, soundFile);
 		ImageIO.write(icon, "PNG", soundIcon.toFile());
 		Sound s = new Sound(name, soundFile.toString(), soundIcon.toString(), type, tags);
 		metadata.keySet().stream().forEach(c -> s.addMetadataFor(c, metadata.get(c)));
