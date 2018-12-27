@@ -1,5 +1,6 @@
 package vv3ird.ESDSoundboardApp.plugins;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -7,6 +8,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.AbstractMap;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
@@ -134,15 +137,32 @@ public class PluginManager {
 				ZipFile lib = new ZipFile(p.toFile());
 				ZipEntry pluginFile = enumerationAsStream(lib.entries()).filter(z -> z.getName().equals("plugin.txt"))
 						.findFirst().orElse(null);
+				enumerationAsStream(lib.entries()).forEach(z -> System.out.println(z.getName()));
+				List<ZipEntry> pluginLibs = enumerationAsStream(lib.entries()).filter(
+						z -> !z.isDirectory() && z.getName().startsWith("libs/") && z.getName().endsWith(".jar"))
+						.collect(Collectors.toList());
 				String clazzName = null;
 				if (pluginFile != null) {
 					InputStream stream = lib.getInputStream(pluginFile);
 					clazzName = new String(stream.readAllBytes());
 					stream.close();
 				}
-				lib.close();
 				if (clazzName != null) {
 					logger.debug("Plugin class found: " + clazzName);
+					logger.debug("Loading plugin libraries");
+					for (ZipEntry zipEntry : pluginLibs) {
+						InputStream stream = lib.getInputStream(zipEntry);
+						String jarName = zipEntry.getName().substring(zipEntry.getName().lastIndexOf("/")+1, zipEntry.getName().lastIndexOf("."));
+						File targetLib = File.createTempFile("LIB-SB-" + jarName + "-", ".jar");
+						targetLib.deleteOnExit();
+						Files.copy(stream, targetLib.toPath(), StandardCopyOption.REPLACE_EXISTING);
+						DynamicURLClassLoader.CLASS_LOADER.addURL(targetLib.toURI().toURL());
+						stream.close();
+						logger.debug("Created temporary lib: " + targetLib.toString());
+					}
+				}
+				lib.close();
+				if (clazzName != null) {
 					DynamicURLClassLoader.CLASS_LOADER.addURL(p.toFile().toURI().toURL());
 					Class<?> classToLoad = Class.forName(clazzName, true, DynamicURLClassLoader.CLASS_LOADER);
 					Object o = classToLoad.newInstance();

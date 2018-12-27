@@ -65,10 +65,10 @@
 			<artifactId>jorbis</artifactId>
 			<version>0.0.17</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>io.github.rowak</groupId>
 			<artifactId>nanoleaf-aurora</artifactId>
 			<version>1.2.1</version>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 </project>
