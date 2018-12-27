@@ -1,5 +1,15 @@
 # ESD Soundboard App
-Soundboard App for the Elgato Stream Deck (ESD from now on).
+This is a simple soundboard app which is designed to be used primary with the Elgato Stream Deck (ESD from now on). Allthough it also can be used without the ESD through the software implementation.
+It was created with the intention to make audio usage for RPGs easier by not using up as much space like a laptop.
+
+## Installation
+Go to the [Release Page](https://github.com/WElRD/ESDSoundboardApp/releases) to grab the latest version. If you have Java 10 or later installed, you can download the "*-no-jdk.zip". If you don't have a JRE or JDK 10 installed take the other zip file.
+
+## Features
+* Add audio files with custom covers, filterable tags, categorized into ambience and effect audio. (Ambience is looped, effetc audio will only be played once).
+* Combine different audio into multiple soundboards with multiple sub-categories.
+* Use your spotify playlists to expand your sound repertory.
+* Integrate the Nanoleaf Light Panels to change their scene with the press of a button, while also changing the music.
 
 ## Managing sounds
 
