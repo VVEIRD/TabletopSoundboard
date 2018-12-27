@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -132,6 +133,9 @@ public class JSpotifySoundPage extends Page{
 	public JPanel getButtonBar() {
 		JPanel bb = new JPanel();
 		bb.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		JLabel filler = new JLabel("");
+		filler.setPreferredSize(new Dimension(23, 23));
+		bb.add(filler);
 		return bb;
 	}
 	
