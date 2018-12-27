@@ -23,7 +23,7 @@ To add sounds, press the "+" button beneath the Field with the sounds.
 
 Here you can add a new sound to your soundboard library. After clicking on "Ok" the sound will be copied into a subfolder of this app. When choosing a mp3 file that contains a cover, the cover will be set as an icon. The icon can be changed by pressing "Open" beneath it.
 
-You can choose if its an ambience sound or an effect sound. Tags a separated by a space character. The name sound only contain the characters a-z, A-Z, _, -. Th icon besides the name indicates if the name is already taken or not.
+You can choose if its an ambience sound or an effect sound. Tags are separated by a space character. The name sound can only contain the characters a-z, A-Z, _, -. Th icon besides the name indicates if the name is already taken or not.
 
 ## Soundboards
 
