@@ -135,7 +135,7 @@ public class JSoundPage extends Page{
 		JPanel bb = new JPanel();
 		bb.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		
-		JTextField filter = new JTextField();
+		JTextField filter = new JTextField(JSoundPage.this.filter);
 		filter.setToolTipText("Press Enter to apply the filter");
 		filter.addActionListener(new ActionListener() {
 			@Override

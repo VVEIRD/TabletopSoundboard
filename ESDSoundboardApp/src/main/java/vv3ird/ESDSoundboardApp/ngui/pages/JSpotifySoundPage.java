@@ -139,7 +139,7 @@ public class JSpotifySoundPage extends Page{
 	public JPanel getButtonBar() {
 		JPanel bb = new JPanel();
 		bb.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		JTextField filter = new JTextField();
+		JTextField filter = new JTextField(JSpotifySoundPage.this.filter);
 		filter.setToolTipText("Press Enter to apply the filter");
 		filter.addActionListener(new ActionListener() {
 			@Override
