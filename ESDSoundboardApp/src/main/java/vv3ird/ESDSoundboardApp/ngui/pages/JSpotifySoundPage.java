@@ -70,10 +70,10 @@ public class JSpotifySoundPage extends Page{
 
 	private void updateList() {
 		pnContent.removeAll();
-		List<Sound> sbs = AudioApp.getSpotifyPlaylistSounds(Type.AMBIENCE).stream()
-				.filter(s -> filter.length() == 0 || s.getName().toLowerCase().contains(filter.toLowerCase())).collect(Collectors.toList());
+		List<Sound> sbs = AudioApp.getSpotifyPlaylistSounds(Type.AMBIENCE);
 		if(sbs == null)
 			sbs = new LinkedList<>();
+		sbs.stream().filter(s -> filter.length() == 0 || s.getName().toLowerCase().contains(filter.toLowerCase())).collect(Collectors.toList());
 		List<JPanel> toAdd = new ArrayList<>(sbs.size());
 		for (Sound sound : sbs) {
 			JSoundPanel jsbp = new JSoundPanel(sound, ColorScheme.MAIN_BACKGROUND_COLOR);
