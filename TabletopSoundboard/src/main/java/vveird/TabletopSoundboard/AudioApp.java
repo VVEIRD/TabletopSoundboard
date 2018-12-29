@@ -701,6 +701,7 @@ public class AudioApp {
 		if(!s.isSpotifySound()) {
 			String audioFile = s.next();
 			String name = s.getName();
+			name = name.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
 			BufferedImage icon = s.getCover();
 			Map<String, List<SoundPluginMetadata>> metadata = s.getMetadata();
 			Path soundSource = Paths.get(audioFile);
@@ -761,6 +762,10 @@ public class AudioApp {
 					if(sound.getName().equals(s.getName()))
 						categoriesToUpdate.add(category);
 				}
+				for (Sound sound : sb.getEffectSounds(category)) {
+					if(sound.getName().equals(s.getName()))
+						categoriesToUpdate.add(category);
+				}
 			}
 			if(categoriesToUpdate.size() > 0) {
 				for (String category : categoriesToUpdate) {
@@ -769,6 +774,38 @@ public class AudioApp {
 					}
 					else {
 						sb.addEffectSound(category, s);
+					}
+				}
+				try {
+					saveSoundBoard(sb);
+				} catch (IOException e) {
+					logger.error("Could not update soundboard " + sb.name, e);
+				}
+			}
+		}
+	}
+
+	private static void removeSoundFromSoundBoards(Sound s) {
+		for (String soundboard : soundboardLibrary.keySet()) {
+			SoundBoard sb = soundboardLibrary.get(soundboard);
+			List<String> categoriesToUpdate = new LinkedList<>();
+			for (String category : sb.getCategories()) {
+				for (Sound sound : sb.getAmbienceSounds(category)) {
+					if(sound.getName().equals(s.getName()))
+						categoriesToUpdate.add(category);
+				}
+				for (Sound sound : sb.getEffectSounds(category)) {
+					if(sound.getName().equals(s.getName()))
+						categoriesToUpdate.add(category);
+				}
+			}
+			if(categoriesToUpdate.size() > 0) {
+				for (String category : categoriesToUpdate) {
+					if (s.isAmbience()) {
+						sb.removeAmbienceSound(category, s);
+					}
+					else {
+						sb.removeEffectSound(category, s);
 					}
 				}
 				try {
@@ -1062,5 +1099,22 @@ public class AudioApp {
 			logger.error("Caonnot create folder to store additional metadata", e);
 		}
 		return null;
+	}
+
+	public static void deleteSound(Sound sound) {
+		Path root = configuration.getSoundLibPath();
+		String name = sound.getName();
+		name = name.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+		Path soundPath = Paths.get(root.toString(), sound.getName());
+		Path soundJsonPath = Paths.get(root.toString(), sound.getName() + ".json");
+		if (Files.exists(soundJsonPath)) {
+			deleteFolder(soundJsonPath.toFile());
+		}
+		if (Files.exists(soundPath)) {
+			deleteFolder(soundPath.toFile());
+		}
+		soundLibrary.remove(sound);
+		removeSoundFromSoundBoards(sound);
+		resetStreamDeckController();
 	}
 }

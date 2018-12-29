@@ -56,11 +56,27 @@ public class SoundBoard {
 		return false;
 	}
 	
+	public boolean removeAmbienceSound(String category, Sound sound) {
+		if(this.ambience.containsKey(category)) {
+			Sound sRemove = this.ambience.get(category).stream().filter(s -> s.getName().equals(sound.getName())).findFirst().orElse(sound);
+			return this.ambience.get(category).remove(sRemove);
+		}
+		return false;
+	}
+	
 	public boolean addEffectSound(String category, Sound sound) {
 		if(this.effects.containsKey(category)) {
 			Sound sRemove = this.effects.get(category).stream().filter(s -> s.getName().equals(sound.getName())).findFirst().orElse(sound);
 			this.effects.get(category).remove(sRemove);
 			return this.effects.get(category).add(sound);
+		}
+		return false;
+	}
+	
+	public boolean removeEffectSound(String category, Sound sound) {
+		if(this.effects.containsKey(category)) {
+			Sound sRemove = this.effects.get(category).stream().filter(s -> s.getName().equals(sound.getName())).findFirst().orElse(sound);
+			return this.effects.get(category).remove(sRemove);
 		}
 		return false;
 	}

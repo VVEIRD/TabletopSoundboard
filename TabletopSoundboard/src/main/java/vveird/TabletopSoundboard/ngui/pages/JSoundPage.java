@@ -90,6 +90,7 @@ public class JSoundPage extends Page{
 				private void removeSound() {
 					int dialogResult = JOptionPane.showConfirmDialog (null, "Delete Sound " + sound.getName(),"Warning", JOptionPane.YES_NO_OPTION);
 					if(dialogResult == JOptionPane.YES_OPTION){
+						AudioApp.deleteSound(sound);
 						updateList();
 					}
 				}
