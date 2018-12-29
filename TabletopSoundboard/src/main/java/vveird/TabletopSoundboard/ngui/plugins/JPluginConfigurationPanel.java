@@ -6,7 +6,7 @@ import javax.swing.JPanel;
  * Configuralion Panel for the plugin it comes with. All changes should only be
  * saved when the save function is called.
  * 
- * @author rcBlum
+ * @author Roland von Werden
  *
  */
 public abstract class JPluginConfigurationPanel extends JPanel {

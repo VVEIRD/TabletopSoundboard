@@ -68,7 +68,7 @@ public class SoundPluginMetadataTemplate {
 
 	/**
 	 * There are 3 types of  metadata: String, int and a list of strings.
-	 * @author rcBlum
+	 * @author Roland von Werden
 	 *
 	 */
 	public static enum TYPE {

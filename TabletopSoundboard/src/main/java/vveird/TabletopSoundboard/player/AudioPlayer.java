@@ -31,7 +31,7 @@ import vveird.TabletopSoundboard.plugins.listener.PlaybackListener;
 /**
  * AudioPlayer for a streamable Clip alternative
  * 
- * @author wkiv894
+ * @author Roland von Werden
  *
  */
 public class AudioPlayer implements Runnable {

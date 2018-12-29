@@ -10,7 +10,7 @@ import vveird.TabletopSoundboard.plugins.listener.PluginListener;
  * A) Providing additional audio sources. (Not implemented yet)<br>
  * B) if a new sound is played the plugin can recieve notification and the Sound Object<br>
  * C) if the playback of a sound is stopped, the plugin can recieve notification and the Sound Object<br>
- * @author rcBlum
+ * @author Roland von Werden
  *
  */
 public interface Plugin {
