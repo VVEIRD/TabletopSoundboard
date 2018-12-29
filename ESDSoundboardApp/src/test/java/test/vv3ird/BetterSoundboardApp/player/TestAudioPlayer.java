@@ -13,9 +13,9 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import vv3ird.ESDSoundboardApp.config.AppConfiguration;
-import vv3ird.ESDSoundboardApp.player.AudioPlayer;
-import vv3ird.ESDSoundboardApp.AudioApp;
+import vveird.TabletopSoundboard.AudioApp;
+import vveird.TabletopSoundboard.config.AppConfiguration;
+import vveird.TabletopSoundboard.player.AudioPlayer;
 
 public class TestAudioPlayer {
 	
