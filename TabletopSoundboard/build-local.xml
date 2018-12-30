@@ -13,7 +13,7 @@
 	<property name="dir.streamdeckcore.latest" value="C:/builds/java/StreamDeckCore/latest" />
 	<property name="dir.nanoleaflightsplugin.latest" value="C:/builds/java/NanoleafLightPanelPlugin/latest" />
 	<property environment="env" />
-    <property name="dir.buildfile" value="."/>
+	<property name="dir.buildfile" value="." />
 	<property name="NanoleafLightPanelPlugin.location" value="../../NanoleafLightPanelPlugin/NanoleafLightPanelPlugin" />
 	<property name="ECLIPSE_HOME" value="../../../../../Tools/eclipse/" />
 	<property name="purejavahidapi.location" value="../../purejavahidapi" />
@@ -142,6 +142,10 @@
 			<fileset dir="${dir.buildfile}/target/classes" />
 		</jar>
 		<delete dir="${dir.jarfile}/lib" />
+		<delete dir="${dir.jarfile.latest}/TabletopSoundboard.jar" />
+		<delete dir="${dir.jarfile.latest}/lib" />
+		<delete dir="${dir.jarfile.latest}/plugins" />
+		<mkdir dir="${dir.jarfile.latest}" />
 		<mkdir dir="${dir.jarfile}/lib" />
 		<mkdir dir="${dir.jarfile}/plugins" />
 		<copy file="../../../Google Drive/Java/java-libs/jl1.0.1.jar" todir="${dir.jarfile}/lib" />
@@ -167,8 +171,8 @@
 		<copy file="${dir.streamdeckcore.latest}/jna-4.0.0.jar" todir="${dir.jarfile}/lib" />
 		<copy file="${dir.streamdeckcore.latest}/StreamDeckCore.jar" todir="${dir.jarfile}/lib" />
 		<copy file="${dir.nanoleaflightsplugin.latest}/NanoleafLightPanelPlugin.jar" todir="${dir.jarfile}/plugins" />
-		<copy todir="${dir.jarfile.latest}" >  
-		    <fileset dir="${dir.jarfile}" includes="**"/>  
-		</copy> 
+		<copy todir="${dir.jarfile.latest}">
+			<fileset dir="${dir.jarfile}" includes="**" />
+		</copy>
 	</target>
 </project>
