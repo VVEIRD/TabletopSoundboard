@@ -1035,6 +1035,14 @@ public class AudioApp {
 		return getConfiguration().getConfig(key);
 	}
 
+	public static int getConfigAsInt(String key) throws NumberFormatException {
+		return Integer.valueOf(getConfiguration().getConfig(key));
+	}
+
+	public static boolean getConfigAsBoolean(String key) throws NumberFormatException {
+		return Boolean.valueOf(getConfiguration().getConfig(key));
+	}
+
 	/**
 	 * Returns if the value of "key" in the config is set to <code>true</code>
 	 * @param key Key in config to check

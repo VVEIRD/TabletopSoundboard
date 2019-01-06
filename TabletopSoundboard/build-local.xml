@@ -18,6 +18,7 @@
 	<property name="ECLIPSE_HOME" value="../../../../../Tools/eclipse/" />
 	<property name="purejavahidapi.location" value="../../purejavahidapi" />
 	<property name="StreamDeckCore.location" value="../../StreamDeckCore/StreamDeckCore" />
+	<property name="NanoleafLightPanelPlugin.location" value="../../NanoleafLightPanelPlugin/NanoleafLightPanelPlugin" />
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="10" />
 	<property name="source" value="10" />
@@ -81,6 +82,7 @@
 	<target depends="clean" name="cleanall">
 		<ant antfile="build-local.xml" dir="${purejavahidapi.location}" inheritAll="false" target="clean" />
 		<ant antfile="build-local.xml" dir="${StreamDeckCore.location}" inheritAll="false" target="clean" />
+		<ant antfile="build-local.xml" dir="${NanoleafLightPanelPlugin.location}" inheritAll="false" target="clean" />
 	</target>
 	<target depends="build-subprojects,build-project,build-refprojects,create_run_jar" name="build" />
 	<target name="build-subprojects">
@@ -90,6 +92,11 @@
 			</propertyset>
 		</ant>
 		<ant antfile="build-local.xml" dir="${StreamDeckCore.location}" inheritAll="false" target="build">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+		<ant antfile="build-local.xml" dir="${NanoleafLightPanelPlugin.location}" inheritAll="false" target="build">
 			<propertyset>
 				<propertyref name="build.compiler" />
 			</propertyset>

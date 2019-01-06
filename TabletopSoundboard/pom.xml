@@ -5,6 +5,8 @@
 	<groupId>io.github.vveird.TabletopSoundboard</groupId>
 	<artifactId>TabletopSoundboard</artifactId>
 	<version>0.5.5-SNAPSHOT</version>
+    <name>Tabletop Soundboard</name>
+    <url>https://vveird.github.io/TabletopSoundboard</url>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
