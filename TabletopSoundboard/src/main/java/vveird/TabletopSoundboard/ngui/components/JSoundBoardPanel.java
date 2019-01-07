@@ -85,13 +85,13 @@ public class JSoundBoardPanel extends JPanel {
 		for(int i=0; i<catNames.size(); i++) {
 			Color oldVal = IconHelper.FRAME_COLOR;
 			IconHelper.FRAME_COLOR = getBackground();
-			IconHelper.TEXT_BOX_ALPHA_VALUE = 170;
+			IconHelper.setTextBoxAlphaValue(170);
 			String catName = catNames.get(i);
 			FolderItem fi = new FolderItem(catName, null, new StreamItem[0]);
 			fi.setIcon(IconHelper.createFolderImage(lightBackGround ? getBackground().darker() : getBackground().brighter(), false));
 			JLabel jl = new JLabel(new ImageIcon(fi.getIcon().image));
 			IconHelper.FRAME_COLOR = oldVal;
-			IconHelper.TEXT_BOX_ALPHA_VALUE = 200;
+			IconHelper.setTextBoxAlphaValue(200);
 			jl.setSize(new Dimension(72, 72));
 			pnThemes.add(jl);
 		}

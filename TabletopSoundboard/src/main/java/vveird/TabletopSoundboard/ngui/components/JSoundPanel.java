@@ -58,13 +58,13 @@ public class JSoundPanel extends ImagePanel {
 
 	private void init(BufferedImage img, String text, Color background) {
 		setLayout(null);
-		int alpha = IconHelper.TEXT_BOX_ALPHA_VALUE;
+		int alpha = IconHelper.getTextBoxAlphaValue();
 		Color oldC = IconHelper.FRAME_COLOR;
 		IconHelper.FRAME_COLOR = background;
-		IconHelper.TEXT_BOX_ALPHA_VALUE = 150;
+		IconHelper.setTextBoxAlphaValue(150);
 		SDImage bImg = IconHelper.addText(img, text, IconHelper.TEXT_CENTER);
 		IconHelper.FRAME_COLOR = oldC;
-		IconHelper.TEXT_BOX_ALPHA_VALUE = alpha;
+		IconHelper.setTextBoxAlphaValue(alpha);
 		setSize(StreamDeck.ICON_SIZE, StreamDeck.ICON_SIZE);
 		setPreferredSize(new Dimension(StreamDeck.ICON_SIZE, StreamDeck.ICON_SIZE));
 		setMinimumSize(new Dimension(StreamDeck.ICON_SIZE, StreamDeck.ICON_SIZE));

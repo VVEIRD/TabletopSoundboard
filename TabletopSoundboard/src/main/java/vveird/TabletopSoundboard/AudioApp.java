@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -420,7 +421,7 @@ public class AudioApp {
 				try (FileInputStream fin = new FileInputStream(soundPath)) {
 					byte[] soundBytes = fin.readAllBytes();
 					fin.close();
-					soundString = new String(soundBytes, "UTF-8");
+					soundString = new String(soundBytes, StandardCharsets.UTF_8);
 					Gson gson = new Gson();
 					Sound sound = gson.fromJson(soundString, Sound.class);
 					soundLibrary.add(sound);
@@ -603,7 +604,7 @@ public class AudioApp {
 				try {
 					Gson gson = new GsonBuilder().setPrettyPrinting().create();
 					soundString = gson.toJson(sound);
-					byte[] soundBytes = soundString.getBytes("UTF-8");
+					byte[] soundBytes = soundString.getBytes(StandardCharsets.UTF_8);
 					Files.write(soundPath, soundBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 				} catch (IOException e) {
 					logger.error("Failed to save sound: " + soundPath.toString(), e);
@@ -681,7 +682,7 @@ public class AudioApp {
 						Sound sound = new Sound(name, destAudio.toString(), desticon.toString(), type, null);
 						String jsonString = new GsonBuilder().setPrettyPrinting().create().toJson(sound);
 						try {
-							byte[] utf8JsonString = jsonString.getBytes("UTF-8");
+							byte[] utf8JsonString = jsonString.getBytes(StandardCharsets.UTF_8);
 							Files.write(destSound, utf8JsonString, StandardOpenOption.CREATE,
 									StandardOpenOption.TRUNCATE_EXISTING);
 							Files.write(destSBSound, utf8JsonString, StandardOpenOption.CREATE,
