@@ -1022,11 +1022,13 @@ public class AudioApp {
 	}
 
 	public static void addConfig(String key, String value) {
+		logger.debug("Adding config-key: " + key);
 		getConfiguration().addConfig(key, value);
 		saveConfig();
 	}
 
 	public static void removeConfig(String key) {
+		logger.debug("Deleting config-key: " + key);
 		getConfiguration().removeConfig(key);
 		saveConfig();
 	}
