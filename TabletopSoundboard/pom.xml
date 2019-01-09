@@ -5,8 +5,8 @@
 	<groupId>io.github.vveird.TabletopSoundboard</groupId>
 	<artifactId>TabletopSoundboard</artifactId>
 	<version>0.5.5-SNAPSHOT</version>
-    <name>Tabletop Soundboard</name>
-    <url>https://vveird.github.io/TabletopSoundboard</url>
+	<name>Tabletop Soundboard</name>
+	<url>https://vveird.github.io/TabletopSoundboard</url>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
@@ -67,10 +67,10 @@
 			<artifactId>jorbis</artifactId>
 			<version>0.0.17</version>
 		</dependency>
-		<!--<dependency>
-			<groupId>io.github.rowak</groupId>
-			<artifactId>nanoleaf-aurora</artifactId>
-			<version>1.2.1</version>
-		</dependency>-->
+		<dependency>
+			<groupId>io.github.vveird</groupId>
+			<artifactId>StreamDeckCore</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 </project>
