@@ -151,10 +151,10 @@ public class JCreateSoundboardPage extends Page {
 	private void updateThemes() {
 		pnThemes.removeAll();
 		Set<String> categories = this.sb.getCategories();
-		Color c = IconHelper.FRAME_COLOR;
-		IconHelper.FRAME_COLOR = ColorScheme.MAIN_BACKGROUND_COLOR.brighter();
+		Color c = IconHelper.getFrameColor();
+		IconHelper.setFrameColor(ColorScheme.MAIN_BACKGROUND_COLOR.brighter());;
 		SDImage image = IconHelper.createFolderImage(ColorScheme.MAIN_BACKGROUND_COLOR, true);
-		IconHelper.FRAME_COLOR = c;
+		IconHelper.setFrameColor(c);
 		for (String cat : categories) {
 			final String category = cat;
 			JSoundPanel jsp = new JSoundPanel(image.image, cat, ColorScheme.MAIN_BACKGROUND_COLOR.brighter());

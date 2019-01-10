@@ -33,10 +33,10 @@ public class JSoundPanel extends ImagePanel {
 	 */
 	public JSoundPanel(Sound s, Color background) {
 		this.s = s;
-		Color oldC = IconHelper.FRAME_COLOR;
+		Color oldC = IconHelper.getFrameColor();
 		BufferedImage bImg = null;
 		try {
-			IconHelper.FRAME_COLOR = background;
+			IconHelper.setFrameColor(background);
 			if(this.s.getCover() != null)
 				bImg = this.s.getCover();
 			else
@@ -48,7 +48,7 @@ public class JSoundPanel extends ImagePanel {
 		}
 		catch (Exception e) {
 		}
-		IconHelper.FRAME_COLOR = oldC;
+		IconHelper.setFrameColor(oldC);
 		init(bImg, s.getName(), background);
 	}
 	
@@ -59,11 +59,11 @@ public class JSoundPanel extends ImagePanel {
 	private void init(BufferedImage img, String text, Color background) {
 		setLayout(null);
 		int alpha = IconHelper.getTextBoxAlphaValue();
-		Color oldC = IconHelper.FRAME_COLOR;
-		IconHelper.FRAME_COLOR = background;
+		Color oldC = IconHelper.getFrameColor();
+		IconHelper.setFrameColor(background);
 		IconHelper.setTextBoxAlphaValue(150);
 		SDImage bImg = IconHelper.addText(img, text, IconHelper.TEXT_CENTER);
-		IconHelper.FRAME_COLOR = oldC;
+		IconHelper.setFrameColor(oldC);
 		IconHelper.setTextBoxAlphaValue(alpha);
 		setSize(StreamDeck.ICON_SIZE, StreamDeck.ICON_SIZE);
 		setPreferredSize(new Dimension(StreamDeck.ICON_SIZE, StreamDeck.ICON_SIZE));
