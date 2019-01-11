@@ -331,11 +331,11 @@ public class JEditSoundPage extends Page {
 		lblSpotifyPlaylist.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblSpotifyPlaylist.setBounds(324, 9, 86, 11);
 		pnSound.add(lblSpotifyPlaylist);
-		Map<String, List<SoundPluginMetadata>> metadataAllIn = s.getMetadata();
+		Map<String, List<SoundPluginMetadata>> metadataSound = s.getMetadata();
 		Map<String, List<SoundPluginMetadataTemplate>> metadataFinal = new HashMap<>();
-		if(metadataAllIn != null) {
-			for (String classNameIn : metadataAllIn.keySet()) {
-				 List<SoundPluginMetadata> metadataIn = metadataAllIn.get(classNameIn);
+		if(metadataSound != null) {
+			for (String classNameMetadataSound : metadataSound.keySet()) {
+				 List<SoundPluginMetadata> metadataIn = metadataSound.get(classNameMetadataSound);
 				 for (SoundPluginMetadata soundPluginMetadata : metadataIn) {
 					 if (metadataFinal.containsKey(soundPluginMetadata.pluginName)) {
 							metadataFinal.get(soundPluginMetadata.pluginName).add(soundPluginMetadata.createTemplate());
