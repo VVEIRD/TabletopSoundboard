@@ -1,5 +1,6 @@
 package vveird.TabletopSoundboard.config;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,10 +22,17 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.GsonBuilder;
 
+import de.rcblum.stream.deck.util.IconHelper;
 import de.rcblum.stream.deck.util.SDImage;
 import vveird.TabletopSoundboard.AudioApp;
 import vveird.TabletopSoundboard.plugins.data.SoundPluginMetadata;
 
+/**
+ * Object that contains the information of a local sound or a spotify playlist.
+ * 
+ * @author rcBlum
+ *
+ */
 public class Sound implements Comparable<Sound>, Iterator<String>{
 	
 	public static BufferedImage OK = null;
@@ -275,15 +283,21 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 				this.cover = sCover.image;
 			else 
 				this.cover = DEFAULT_COVER;
+			this.cover = IconHelper.applyFrame(this.cover, Color.BLACK);
 		}
-			
-		if (getCoverPath() != null) {
+		else if (getCoverPath() != null) {
 			try {
 				this.cover = ImageIO.read(new File(getCoverPath()));
+				this.cover = IconHelper.applyFrame(this.cover, Color.BLACK);
 			} catch (IOException e) {
-				logger.error("Error loading cover: " + getCoverPath());
-				logger.error(e);
+				logger.error("Error loading cover: " + getCoverPath(), e);
+				this.cover = DEFAULT_COVER;
+				this.cover = IconHelper.applyFrame(this.cover, Color.BLACK);
 			}
+		}
+		else {
+			this.cover = DEFAULT_COVER;
+			this.cover = IconHelper.applyFrame(this.cover, Color.BLACK);
 		}
 	}
 

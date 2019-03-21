@@ -19,6 +19,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+/**
+ * JPanel to display the cover of an Sound object.
+ * 
+ * @author vveird
+ * 
+ * Changelog:
+ *   DATE       USER    CHANGE
+ *   ---------- ------- -------------------------------------------------
+ *   2019-03-21 vveird  The cover of the sound will now not be loaded in
+ *                      this class, only retrieved from the Sound object
+ *
+ */
 public class JSoundPanel extends ImagePanel {
 
 	private static final long serialVersionUID = 7112434291220556525L;
@@ -33,22 +45,15 @@ public class JSoundPanel extends ImagePanel {
 	 */
 	public JSoundPanel(Sound s, Color background) {
 		this.s = s;
-		Color oldC = IconHelper.getFrameColor();
 		BufferedImage bImg = null;
 		try {
-			IconHelper.setFrameColor(background);
 			if(this.s.getCover() != null)
 				bImg = this.s.getCover();
 			else
 				bImg = JEditSoundPage.DEFAULT;
-//			if (this.s.isSpotifySound())
-//				bImg = AudioApp.getSpotifyCover(this.s);
-//			else
-//				bImg = IconHelper.loadImage(this.s.getCoverPath(), new FileInputStream(new File(this.s.getCoverPath())), false);
 		}
 		catch (Exception e) {
 		}
-		IconHelper.setFrameColor(oldC);
 		init(bImg, s.getName(), background);
 	}
 	
@@ -59,11 +64,9 @@ public class JSoundPanel extends ImagePanel {
 	private void init(BufferedImage img, String text, Color background) {
 		setLayout(null);
 		int alpha = IconHelper.getTextBoxAlphaValue();
-		Color oldC = IconHelper.getFrameColor();
-		IconHelper.setFrameColor(background);
 		IconHelper.setTextBoxAlphaValue(150);
+		img = IconHelper.applyFrame(img, background);
 		SDImage bImg = IconHelper.addText(img, text, IconHelper.TEXT_CENTER);
-		IconHelper.setFrameColor(oldC);
 		IconHelper.setTextBoxAlphaValue(alpha);
 		setSize(StreamDeck.ICON_SIZE, StreamDeck.ICON_SIZE);
 		setPreferredSize(new Dimension(StreamDeck.ICON_SIZE, StreamDeck.ICON_SIZE));

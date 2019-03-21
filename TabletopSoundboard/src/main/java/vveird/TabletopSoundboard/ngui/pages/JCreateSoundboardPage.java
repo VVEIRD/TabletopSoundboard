@@ -33,12 +33,21 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.awt.event.ActionEvent;
 
+/**
+ * 
+ * @author vveird
+ * 
+ * CHANGELOG:
+ *  
+ * DATE       USER    CHANGE
+ * ---------- ------- -------------------------------------------------
+ * 2019-03-21 vveird  Updated usage of IconHelper to be compatible with
+ *                    StreamDeckCOre v 1.0.3
+ *
+ */
 public class JCreateSoundboardPage extends Page {
 	
 	private static final long serialVersionUID = -998637210110413189L;
@@ -151,10 +160,7 @@ public class JCreateSoundboardPage extends Page {
 	private void updateThemes() {
 		pnThemes.removeAll();
 		Set<String> categories = this.sb.getCategories();
-		Color c = IconHelper.getFrameColor();
-		IconHelper.setFrameColor(ColorScheme.MAIN_BACKGROUND_COLOR.brighter());;
-		SDImage image = IconHelper.createFolderImage(ColorScheme.MAIN_BACKGROUND_COLOR, true);
-		IconHelper.setFrameColor(c);
+		SDImage image = IconHelper.createFolderImage(ColorScheme.MAIN_BACKGROUND_COLOR,  true, ColorScheme.MAIN_BACKGROUND_COLOR.brighter());
 		for (String cat : categories) {
 			final String category = cat;
 			JSoundPanel jsp = new JSoundPanel(image.image, cat, ColorScheme.MAIN_BACKGROUND_COLOR.brighter());

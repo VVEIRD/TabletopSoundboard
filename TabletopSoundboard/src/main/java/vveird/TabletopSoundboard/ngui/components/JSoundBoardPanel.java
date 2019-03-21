@@ -39,6 +39,19 @@ import java.awt.event.MouseListener;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 
+/**
+ * JPanel to display the soundboards.
+ * 
+ * @author vveird
+ * 
+ * CHANGELOG:
+ *  
+ * DATE       USER    CHANGE
+ * ---------- ------- -------------------------------------------------
+ * 2019-03-21 vveird  Updated usage of IconHelper to be compatible with
+ *                    StreamDeckCOre v 1.0.3
+ *
+ */
 public class JSoundBoardPanel extends JPanel {
 	
 	private SoundBoard soundBoard = null;
@@ -56,7 +69,9 @@ public class JSoundBoardPanel extends JPanel {
 	public JSoundBoardPanel(SoundBoard soundBoard, boolean lightBackGround) {
 		this.soundBoard = Objects.requireNonNull(soundBoard);
 		this.setLayout(null);
-		setBackground(lightBackGround ? ColorScheme.MAIN_BACKGROUND_COLOR : ColorScheme.MAIN_BACKGROUND_COLOR.darker());
+		Color backgroundColor = lightBackGround ? ColorScheme.MAIN_BACKGROUND_COLOR : ColorScheme.MAIN_BACKGROUND_COLOR.darker() ;
+		Color iconColor = lightBackGround ? backgroundColor.darker() : backgroundColor.brighter(); 
+		setBackground(backgroundColor);
 		setLayout(null);
 
 		lblSoundboardname = new JLabel(soundBoard.name);
@@ -83,14 +98,11 @@ public class JSoundBoardPanel extends JPanel {
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		List<String> catNames = new ArrayList<>(this.soundBoard.getCategories());
 		for(int i=0; i<catNames.size(); i++) {
-			Color oldVal = IconHelper.getFrameColor();
-			IconHelper.setFrameColor(getBackground());
 			IconHelper.setTextBoxAlphaValue(170);
 			String catName = catNames.get(i);
 			FolderItem fi = new FolderItem(catName, null, new StreamItem[0]);
-			fi.setIcon(IconHelper.createFolderImage(lightBackGround ? getBackground().darker() : getBackground().brighter(), false));
+			fi.setIcon(IconHelper.createFolderImage(iconColor, true, backgroundColor));
 			JLabel jl = new JLabel(new ImageIcon(fi.getIcon().image));
-			IconHelper.setFrameColor(oldVal);
 			IconHelper.setTextBoxAlphaValue(200);
 			jl.setSize(new Dimension(72, 72));
 			pnThemes.add(jl);

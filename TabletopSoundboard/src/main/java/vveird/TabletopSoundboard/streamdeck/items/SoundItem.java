@@ -9,12 +9,20 @@ import vveird.TabletopSoundboard.AudioApp;
 import vveird.TabletopSoundboard.config.Sound;
 import vveird.TabletopSoundboard.config.Sound.Type;
 
+/**
+ * 
+ * Stream Deck Item to display a sound on the ESD.
+ * 
+ * @author vveird
+ * 
+ *
+ */
 public class SoundItem extends AbstractStreamItem {
 	
 	private Sound sound = null;
 
 	public SoundItem(Sound sound) {
-		super(!sound.isSpotifySound() ? IconHelper.loadImageSafe(sound.getCoverPath()) : AudioApp.getSpotifyCover(sound));
+		super(IconHelper.convertImage(sound.getCover()));
 		this.sound = sound;
 		this.setTextPosition(TEXT_POS_CENTER);
 		this.setText(sound.getName());
