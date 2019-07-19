@@ -11,7 +11,7 @@ public class ConfigItem extends FolderItem {
 
 	public ConfigItem(StreamItem parent) {
 		super(null, parent, new StreamItem[15]);
-		SDImage ic = IconHelper.loadImageFromResource("/resources/icons/gear.png");
+		SDImage ic = IconHelper.loadImageFromResource("/icons/gear.png");
 		if (ic == null)
 			ic = IconHelper.getImage("temp://BLACK_ICON");
 		this.setIcon(ic);

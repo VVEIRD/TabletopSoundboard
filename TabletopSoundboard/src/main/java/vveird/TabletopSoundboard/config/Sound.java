@@ -35,15 +35,15 @@ import vveird.TabletopSoundboard.plugins.data.SoundPluginMetadata;
  */
 public class Sound implements Comparable<Sound>, Iterator<String>{
 	
-	public static BufferedImage OK = null;
-	public static BufferedImage FALSE = null;
-	public static BufferedImage DEFAULT_COVER = null;
+	public transient static BufferedImage OK = null;
+	public transient static BufferedImage FALSE = null;
+	public transient static BufferedImage DEFAULT_COVER = null;
 
 	static {
 		try {
-			OK = ImageIO.read(Sound.class.getClassLoader().getResource("resources/icons/ok.png"));
-			FALSE = ImageIO.read(Sound.class.getClassLoader().getResource("resources/icons/false.png"));
-			DEFAULT_COVER = ImageIO.read(Sound.class.getClassLoader().getResource("resources/icons/audio.png"));
+			OK = ImageIO.read(AudioApp.class.getResourceAsStream("/icons/ok.png"));
+			FALSE = ImageIO.read(AudioApp.class.getResourceAsStream("/icons/false.png"));
+			DEFAULT_COVER = ImageIO.read(AudioApp.class.getResourceAsStream("/icons/audio.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -77,6 +77,9 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 	private String spotifyType = "playlist";
 	
 	private Map<String, List<SoundPluginMetadata>> pluginMetadata = new HashMap<>();
+	
+	public Sound() {
+	}
 
 	public Sound(String name, String filePath, String coverPath, Type type, String[] tags) {
 		this(name, new String[] {filePath}, coverPath, type, tags);
@@ -318,5 +321,69 @@ public class Sound implements Comparable<Sound>, Iterator<String>{
 
 	public boolean containedInTags(String search) {
 		return tags != null && tags.stream().anyMatch(t -> t.toLowerCase().contains(search.toLowerCase()));
+	}
+
+	public static BufferedImage getOK() {
+		return OK;
+	}
+
+	public static void setOK(BufferedImage oK) {
+		OK = oK;
+	}
+
+	public static BufferedImage getFALSE() {
+		return FALSE;
+	}
+
+	public static void setFALSE(BufferedImage fALSE) {
+		FALSE = fALSE;
+	}
+
+	public static BufferedImage getDEFAULT_COVER() {
+		return DEFAULT_COVER;
+	}
+
+	public static void setDEFAULT_COVER(BufferedImage dEFAULT_COVER) {
+		DEFAULT_COVER = dEFAULT_COVER;
+	}
+
+	public static Logger getLogger() {
+		return logger;
+	}
+
+	public static void setLogger(Logger logger) {
+		Sound.logger = logger;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public Map<String, List<SoundPluginMetadata>> getPluginMetadata() {
+		return pluginMetadata;
+	}
+
+	public void setPluginMetadata(Map<String, List<SoundPluginMetadata>> pluginMetadata) {
+		this.pluginMetadata = pluginMetadata;
+	}
+
+	public void setSpotifySound(boolean isSpotifySound) {
+		this.isSpotifySound = isSpotifySound;
+	}
+
+	public void setSpotifyOwner(String spotifyOwner) {
+		this.spotifyOwner = spotifyOwner;
+	}
+
+	public void setSpotifyId(String spotifyId) {
+		this.spotifyId = spotifyId;
+	}
+
+	public void setSpotifyType(String spotifyType) {
+		this.spotifyType = spotifyType;
 	}
 }

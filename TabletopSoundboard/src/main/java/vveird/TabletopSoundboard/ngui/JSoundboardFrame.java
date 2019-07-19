@@ -1,36 +1,25 @@
 package vveird.TabletopSoundboard.ngui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import de.rcblum.stream.deck.device.SoftStreamDeck;
-
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.EmptyBorder;
 
-import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import java.awt.GridLayout;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.awt.CardLayout;
-import net.miginfocom.swing.MigLayout;
+import de.rcblum.stream.deck.device.general.SoftStreamDeck;
 import vveird.TabletopSoundboard.AudioApp;
-import vveird.TabletopSoundboard.config.SoundBoard;
 import vveird.TabletopSoundboard.ngui.components.JSelectablePanel;
-import vveird.TabletopSoundboard.ngui.components.JSoundBoardPanel;
 import vveird.TabletopSoundboard.ngui.layout.UIColumnLayout;
 import vveird.TabletopSoundboard.ngui.pages.JOptionsPage;
 import vveird.TabletopSoundboard.ngui.pages.JSoundPage;
@@ -39,14 +28,6 @@ import vveird.TabletopSoundboard.ngui.pages.JSpotifySoundPage;
 import vveird.TabletopSoundboard.ngui.pages.Page;
 import vveird.TabletopSoundboard.ngui.pages.PageViewer;
 import vveird.TabletopSoundboard.ngui.util.ColorScheme;
-import vveird.TabletopSoundboard.util.DynamicURLClassLoader;
-
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-
-import java.awt.Color;
-import javax.swing.JScrollPane;
-import javax.swing.JViewport;
 
 public class JSoundboardFrame extends JFrame {
 

@@ -2,10 +2,9 @@ package vveird.TabletopSoundboard.ngui.components;
 
 import javax.swing.JLabel;
 
-import de.rcblum.stream.deck.device.StreamDeck;
+import de.rcblum.stream.deck.device.general.StreamDeck;
 import de.rcblum.stream.deck.util.IconHelper;
 import de.rcblum.stream.deck.util.SDImage;
-import vveird.TabletopSoundboard.AudioApp;
 import vveird.TabletopSoundboard.config.Sound;
 import vveird.TabletopSoundboard.ngui.pages.JEditSoundPage;
 import vveird.TabletopSoundboard.ngui.util.ColorScheme;
@@ -15,9 +14,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 /**
  * JPanel to display the cover of an Sound object.

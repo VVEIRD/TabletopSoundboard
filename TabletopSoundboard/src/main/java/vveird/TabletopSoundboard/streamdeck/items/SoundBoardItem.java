@@ -70,13 +70,13 @@ public class SoundBoardItem extends FolderItem {
 				effectsCategoryItem = new SoundBoardCategoryItem(category, this, null, effectsItems, AudioApp.getStreamDeck().getKeySize());
 				AudioApp.addStatusBarItems(effectsCategoryItem, effectsCategoryItem.getChildren(), false);
 				ProxyItem p1 = new ProxyItem(ambienceCategoryItem, null);
-				p1.setIcon(IconHelper.loadImageFromResourceSafe("/resources/icons/change.png"));
+				p1.setIcon(IconHelper.loadImageFromResourceSafe("/icons/change.png"));
 				p1.setTextLine1("Effects", 16);
 				p1.setTextLine2("Ambience", 12);
 				effectsCategoryItem.setGlobalItem(13, p1);
 				if(ambienceCategoryItem != null) {
 					ProxyItem p2 = new ProxyItem(effectsCategoryItem, null);
-					p2.setIcon(IconHelper.loadImageFromResourceSafe("/resources/icons/change.png"));
+					p2.setIcon(IconHelper.loadImageFromResourceSafe("/icons/change.png"));
 					p2.setTextLine1("Ambience", 16);
 					p2.setTextLine2("Effects", 12);
 					ambienceCategoryItem.setGlobalItem(13, p2);

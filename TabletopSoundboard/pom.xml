@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>io.github.vveird</groupId>
 			<artifactId>StreamDeckCore</artifactId>
-			<version>1.0.3</version>
+			<version>1.0.4-SNAPSHOT-HID4JAVA</version>
 		</dependency>
 	</dependencies>
 </project>

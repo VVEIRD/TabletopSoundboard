@@ -26,7 +26,7 @@ public class AudioDevicesItem extends FolderItem {
 
 	public AudioDevicesItem(StreamItem parent) {
 		super(null, parent, new StreamItem[15]);
-		SDImage ic = IconHelper.loadImageFromResource("/resources/icons/AudioDevice.png");
+		SDImage ic = IconHelper.loadImageFromResource("/icons/AudioDevice.png");
 		if (ic == null)
 			ic = IconHelper.getImage("temp://BLACK_ICON");
 		this.setIcon(ic);
@@ -81,7 +81,7 @@ public class AudioDevicesItem extends FolderItem {
 		private Info device = null;
 
 		public DeviceItem(Mixer.Info device, boolean selected) {
-			super(IconHelper.loadImageFromResource("/resources/icons/Speaker.png"), selected);
+			super(IconHelper.loadImageFromResource("/icons/Speaker.png"), selected);
 			setTextPosition(TEXT_POS_CENTER);
 			setText(device.getName());
 			this.device  = device;

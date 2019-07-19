@@ -50,9 +50,9 @@ import com.wrapper.spotify.model_objects.specification.Image;
 import com.wrapper.spotify.model_objects.specification.Playlist;
 
 import de.rcblum.stream.deck.StreamDeckController;
-import de.rcblum.stream.deck.device.IStreamDeck;
-import de.rcblum.stream.deck.device.SoftStreamDeck;
-import de.rcblum.stream.deck.device.StreamDeckDevices;
+import de.rcblum.stream.deck.device.general.IStreamDeck;
+import de.rcblum.stream.deck.device.general.SoftStreamDeck;
+import de.rcblum.stream.deck.device.hid4java.StreamDeckDevices;
 import de.rcblum.stream.deck.items.PagedFolderItem;
 import de.rcblum.stream.deck.items.StreamItem;
 import de.rcblum.stream.deck.util.IconHelper;
@@ -95,14 +95,14 @@ public class AudioApp {
 	private static JFrame splashscreen = null;
 
 	static {
-		try (InputStream in = AudioApp.class.getResourceAsStream("/resources/log4j.xml")) {
+		try (InputStream in = AudioApp.class.getResourceAsStream("/log4j.xml")) {
 			Path tempConfig = File.createTempFile("audioapp", ".xml").toPath();
 			Files.copy(in, tempConfig, StandardCopyOption.REPLACE_EXISTING);
 			System.setProperty("log4j.configurationFile", tempConfig.toFile().getAbsolutePath());
 			logger = LogManager.getLogger(AudioApp.class);
 			logger.debug("Log4J config: " + tempConfig.toFile().getAbsolutePath());
 			if(!GraphicsEnvironment.isHeadless()) {
-				BufferedImage b = ImageIO.read(AudioApp.class.getResourceAsStream("/resources/splashscreen.png"));
+				BufferedImage b = ImageIO.read(AudioApp.class.getResourceAsStream("/splashscreen.png"));
 				splashscreen = new JFrame();
 				splashscreen.setSize(b.getWidth(), b.getHeight());
 				splashscreen.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width/2 - b.getWidth()/2,
@@ -1003,7 +1003,7 @@ public class AudioApp {
 		streamDeck = StreamDeckDevices.getStreamDeck();
 		SoftStreamDeck.hideDecks();
 		if (streamDeck == null)
-			streamDeck = new SoftStreamDeck("Sound Board App", null);
+			streamDeck = new SoftStreamDeck("Sound Board App", null, true);
 		StreamItem[] sbItems = new StreamItem[soundboardLibrary.size()];
 		for (SoundBoard sb : soundboardLibrary.values()) {
 			sbItems[sbC++] = new SoundBoardItem(sb, null);

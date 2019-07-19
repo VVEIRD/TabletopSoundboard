@@ -50,7 +50,7 @@ public class MasterGainControl {
 	public class VolumeDownItem extends AbstractStreamItem {
 
 		public VolumeDownItem() {
-			super(IconHelper.loadImageFromResource("/resources/icons/vol_down.png"));
+			super(IconHelper.loadImageFromResource("/icons/vol_down.png"));
 		}
 
 		@Override
@@ -72,7 +72,7 @@ public class MasterGainControl {
 	public class VolumeUpItem extends AbstractStreamItem {
 
 		public VolumeUpItem() {
-			super(IconHelper.loadImageFromResource("/resources/icons/vol_up.png"));
+			super(IconHelper.loadImageFromResource("/icons/vol_up.png"));
 		}
 
 		@Override
