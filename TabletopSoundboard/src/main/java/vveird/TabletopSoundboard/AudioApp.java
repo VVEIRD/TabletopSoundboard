@@ -537,9 +537,9 @@ public class AudioApp {
 			Stream<Map.Entry<String,SoundBoard>> sorted =
 					soundboardLibrary.entrySet().stream()
 				       .sorted(Map.Entry.comparingByKey());
-			List<StreamItem> sbItems = new ArrayList<StreamItem>(soundboardLibrary.size());
+			ArrayList<SoundBoardItem> sbItems = new ArrayList<SoundBoardItem>(soundboardLibrary.size());
 			sorted.forEach(a -> sbItems.add(new SoundBoardItem(a.getValue(), null)));
-			PagedFolderItem root = new PagedFolderItem("root", null, null, (SoundBoardItem[]) sbItems.toArray(), streamDeck.getKeySize());
+			PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems.toArray(new SoundBoardItem[soundboardLibrary.size()]), streamDeck.getKeySize());
 			AudioApp.addStatusBarItems(root, root.getChildren());
 			controller.setRoot(root);
 			// controller = new StreamDeckController(streamDeck, root);
