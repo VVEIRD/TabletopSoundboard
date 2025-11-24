@@ -1,6 +1,7 @@
 package vveird.TabletopSoundboard.config;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,6 +46,28 @@ public class SoundBoard {
 			return true; 
 		}
 		return false;
+	}
+	
+	public void sort() {
+		System.out.println("Sorting Soundboard: " + this.name);
+		System.out.println("..Sorting Ambience");
+		for (String category : this.ambience.keySet()) {
+			Collections.sort(this.ambience.get(category));	
+			System.out.println("....Sorting Category: " + category);
+			for(Sound s : this.ambience.get(category)) {
+				System.out.println("......Sound: " + s.toString());
+				
+			}
+		}
+		System.out.println("..Sorting Effects");
+		for (String category : this.effects.keySet()) {
+			Collections.sort(this.effects.get(category));	
+			System.out.println("....Sorting Category: " + category);
+			for(Sound s : this.effects.get(category)) {
+				System.out.println("......Sound: " + s.toString());
+				
+			}
+		}
 	}
 	
 	public boolean addAmbienceSound(String category, Sound sound) {

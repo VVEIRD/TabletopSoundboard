@@ -10,6 +10,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -18,17 +19,16 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.LineEvent;
@@ -50,9 +50,12 @@ import com.wrapper.spotify.model_objects.specification.Image;
 import com.wrapper.spotify.model_objects.specification.Playlist;
 
 import de.rcblum.stream.deck.StreamDeckController;
+import de.rcblum.stream.deck.device.StreamDeckDevices;
 import de.rcblum.stream.deck.device.general.IStreamDeck;
 import de.rcblum.stream.deck.device.general.SoftStreamDeck;
-import de.rcblum.stream.deck.device.hid4java.StreamDeckDevices;
+//import de.rcblum.stream.deck.device.general.IStreamDeck;
+//import de.rcblum.stream.deck.device.general.SoftStreamDeck;
+//import de.rcblum.stream.deck.device.hid4java.StreamDeckDevices;
 import de.rcblum.stream.deck.items.PagedFolderItem;
 import de.rcblum.stream.deck.items.StreamItem;
 import de.rcblum.stream.deck.util.IconHelper;
@@ -61,9 +64,8 @@ import vveird.TabletopSoundboard.Spotify.SpotifyFrontend;
 import vveird.TabletopSoundboard.config.AppConfiguration;
 import vveird.TabletopSoundboard.config.AudioDevices;
 import vveird.TabletopSoundboard.config.Sound;
-import vveird.TabletopSoundboard.config.SoundBoard;
 import vveird.TabletopSoundboard.config.Sound.Type;
-import vveird.TabletopSoundboard.ngui.pages.JCreateSoundPage;
+import vveird.TabletopSoundboard.config.SoundBoard;
 import vveird.TabletopSoundboard.player.AudioPlayer;
 import vveird.TabletopSoundboard.plugins.PluginManager;
 import vveird.TabletopSoundboard.plugins.data.MetadataStore;
@@ -364,6 +366,7 @@ public class AudioApp {
 					}
 				}
 				SoundBoard soundBoard = new SoundBoard(name, ambience, effects);
+				soundBoard.sort();
 				soundboardLibrary.put(soundBoard.name, soundBoard);
 			}
 		}
@@ -457,6 +460,7 @@ public class AudioApp {
 		if (!Files.exists(root)) {
 			Files.createDirectories(root);
 		}
+		sb.sort();
 		Path soundBoardPath = Paths.get(root.toString(), sb.name);
 		Path soundBoardPathBackup = Paths.get(root.toString(), "_" + sb.name);
 		Path ambiencePath = Paths.get(soundBoardPath.toString(), "ambience");
@@ -530,13 +534,12 @@ public class AudioApp {
 		logger.debug("Resetting controller");
 		if (controller != null) {
 			// controller.stop(true, false);
-
-			StreamItem[] sbItems = new StreamItem[soundboardLibrary.size()];
-			int sbC = 0;
-			for (SoundBoard sb : soundboardLibrary.values()) {
-				sbItems[sbC++] = new SoundBoardItem(sb, null);
-			}
-			PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems, streamDeck.getKeySize());
+			Stream<Map.Entry<String,SoundBoard>> sorted =
+					soundboardLibrary.entrySet().stream()
+				       .sorted(Map.Entry.comparingByKey());
+			List<StreamItem> sbItems = new ArrayList<StreamItem>(soundboardLibrary.size());
+			sorted.forEach(a -> sbItems.add(new SoundBoardItem(a.getValue(), null)));
+			PagedFolderItem root = new PagedFolderItem("root", null, null, (SoundBoardItem[]) sbItems.toArray(), streamDeck.getKeySize());
 			AudioApp.addStatusBarItems(root, root.getChildren());
 			controller.setRoot(root);
 			// controller = new StreamDeckController(streamDeck, root);

@@ -25,6 +25,7 @@ import vveird.TabletopSoundboard.AudioApp;
 import vveird.TabletopSoundboard.config.Sound;
 import vveird.TabletopSoundboard.config.SoundBoard;
 import vveird.TabletopSoundboard.ngui.components.JSoundPanel;
+import vveird.TabletopSoundboard.ngui.components.JWideSoundPanel;
 import vveird.TabletopSoundboard.ngui.layout.WrapLayout;
 import vveird.TabletopSoundboard.ngui.util.ColorScheme;
 
@@ -71,7 +72,8 @@ public class JSoundPage extends Page{
 				.filter(s -> filter.length() == 0 || s.getName().toLowerCase().contains(filter.toLowerCase()) || s.containedInTags(filter)).collect(Collectors.toList());
 		List<JPanel> toAdd = new ArrayList<>(sbs.size());
 		for (Sound sound : sbs) {
-			JSoundPanel jsbp = new JSoundPanel(sound, ColorScheme.MAIN_BACKGROUND_COLOR);
+			//JSoundPanel jsbp = new JSoundPanel(sound, ColorScheme.MAIN_BACKGROUND_COLOR);
+			JWideSoundPanel jsbp = new JWideSoundPanel(sound, ColorScheme.MAIN_BACKGROUND_COLOR);
 			MouseListener mlDelete = new MouseListener() {
 				@Override
 				public void mouseReleased(MouseEvent e) {

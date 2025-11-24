@@ -71,12 +71,11 @@ public class JCreateSoundPage extends Page {
 	static BufferedImage DEFAULT = null;
 	
 	static {
-		
 		try {
-			OK = ImageIO.read(AudioApp.class.getClassLoader().getResourceAsStream("/icons/ok.png"));
-			FALSE = ImageIO.read(AudioApp.class.getClassLoader().getResourceAsStream("/icons/false.png"));
-			DEFAULT = ImageIO.read(AudioApp.class.getClassLoader().getResourceAsStream("/icons/audio.png"));
-		} catch (IOException e) {
+			OK = ImageIO.read(AudioApp.class.getResourceAsStream("/icons/ok.png"));
+			FALSE = ImageIO.read(AudioApp.class.getResourceAsStream("/icons/false.png"));
+			DEFAULT = ImageIO.read(AudioApp.class.getResourceAsStream("/icons/audio.png"));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -377,6 +376,14 @@ public class JCreateSoundPage extends Page {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
+					     if (id3v2tag.getTitle() != null)
+						     tfName.setText(id3v2tag.getTitle());
+					     if (id3v2tag.getAlbum() != null)
+					    	 tfTags.setText(tfTags.getText() + " " + id3v2tag.getAlbum().replaceAll(" ", "_"));
+					     if (id3v2tag.getAlbumArtist() != null)
+					    	 tfTags.setText(tfTags.getText() + " " + id3v2tag.getAlbumArtist().replaceAll(" ", "_"));
+					     if (id3v2tag.getGenreDescription() != null)
+					    	 tfTags.setText(tfTags.getText() + " " + id3v2tag.getGenreDescription().replaceAll(" ", "_"));
 					}
 				} catch (UnsupportedTagException e1) {
 					e1.printStackTrace();
