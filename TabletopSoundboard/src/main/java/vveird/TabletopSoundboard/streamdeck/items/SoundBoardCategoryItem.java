@@ -2,6 +2,7 @@ package vveird.TabletopSoundboard.streamdeck.items;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,12 +19,15 @@ public class SoundBoardCategoryItem extends FolderItem {
 
 	private static Logger logger = LogManager.getLogger(SoundBoardCategoryItem.class);
 
-	public SoundBoardCategoryItem(String folderName, StreamItem parent, SoundBoardCategoryItem previous, SoundItem[] children, int buttonCount) {
+	public SoundBoardCategoryItem(String folderName, StreamItem parent, SoundBoardCategoryItem previous, SoundItem[] children, int buttonCount, int rowCount) {
 		super(folderName, parent, new StreamItem[buttonCount]);
+		this.setButtonCount(buttonCount);
+		this.setRowCount(rowCount);
 		children = children != null ? children : new SoundItem[buttonCount];
-		int maxItems = buttonCount - 6;
-		// Create Sub-folder for more then 9/buttonCount-5 children (with parent/without parent)
-		int countTotal = previous == null ? 1 : 0;
+		int maxItems = buttonCount - (this.getColumnCount()+1);
+		// Create Sub-folder for more then 9/buttonCount-this.getColumnCount() children (with parent/without parent)
+		int countTotal = previous == null ? 0 : 0;
+		// Generate play all sounds button
 		if(previous == null) {
 			List<String> files = new LinkedList<>();
 			Arrays.asList(children).stream().filter(s -> !s.getSound().isSpotifySound()).map(s -> Arrays.asList(s.getSound().getFilePaths())).forEach(files::addAll);
@@ -38,54 +42,71 @@ public class SoundBoardCategoryItem extends FolderItem {
 			playAllSound.resetCurrentFile();
 		}
 		else {
+			// Take playAllSound from previous page
 			this.getChildren()[buttonCount-3] = previous.getChild(buttonCount-3);
 		}
+		// Count all child sound items
 		for (SoundItem streamItem : children) {
 			if (streamItem != null)
 				countTotal++;
 		}
 		
 		// Fill current page
-		int childIndex = 0;
-		int countSI = 0;
-		for(;childIndex<children.length&&countSI<maxItems;childIndex++) {
-			if(children[childIndex] != null) {
-				this.getChildren()[countSI<4? countSI : countSI+1] = children[childIndex];
-				children[childIndex].setParent(this);
-				countSI++;
+//		int insertIndex = 0;
+		int sourceIndex = 0;
+		int countSoundItemAdded = 0;
+//		for (SoundItem soundItem : children) {
+//			sourceIndex++;
+//			if (countSoundItemAdded >= maxItems)
+//				break;
+//			else if (soundItem == null) {
+//				continue;
+//			}
+//			else if (insertIndex == this.getColumnCount()-1) {
+//				insertIndex++;
+//				continue;
+//			}
+//			this.getChildren()[insertIndex++] = soundItem;
+//			soundItem.setParent(this);
+//			countSoundItemAdded++;
+//		}
+		for(;sourceIndex<children.length&&countSoundItemAdded<maxItems;sourceIndex++) {
+			if(children[sourceIndex] != null) {
+				this.getChildren()[countSoundItemAdded<this.getColumnCount()-1? countSoundItemAdded : countSoundItemAdded+1] = children[sourceIndex];
+				children[sourceIndex].setParent(this);
+				countSoundItemAdded++;
 			}
 		}
-		// Create status bar
-//		 AudioApp.addStatusBarItems(this, this.getChildren());
 		if (previous != null) {
-			this.getChildren()[11] = new PreviousItem(previous);
+			this.getChildren()[this.getButtonCount() - (this.getColumnCount()-1)] = new PreviousItem(previous);
 		}
-		if (countTotal > maxItems && children.length-childIndex > 0) {
+		if (countTotal > maxItems && children.length-sourceIndex > 0) {
 			logger.debug("Create next page for " + this.getText());
 			// Create children for next page
-			SoundItem[] nextPageChildren = Arrays.copyOfRange(children, childIndex, children.length);
+			SoundItem[] nextPageChildren = Arrays.copyOfRange(children, sourceIndex, children.length);
 			// Create next page
-			SoundBoardCategoryItem next = new SoundBoardCategoryItem(folderName, parent, this, nextPageChildren, buttonCount);
+			SoundBoardCategoryItem next = new SoundBoardCategoryItem(folderName, parent, this, nextPageChildren, buttonCount, rowCount);
 			next.setTextPosition(TEXT_POS_CENTER);
 			next.setText("Next");
-			this.getChildren()[buttonCount-5] = new NextItem(next);
+			this.getChildren()[this.getButtonCount() - this.getColumnCount()] = new NextItem(next);
 		}
 	}
 	
 	public void setGlobalItem(int index, StreamItem item) {
-		if(index < 0 || index >= 15)
+		if(index < 0 || index >= this.getButtonCount())
 			throw new IndexOutOfBoundsException("Index must be between 0 and 14 inclusive");
 		this.getChildren()[index] = item;
-		if (this.getChildren()[buttonCount-5] != null && this.getChildren()[buttonCount-5] instanceof NextItem) {
-			((NextItem)this.getChildren()[buttonCount-5]).setGlobalItem(index, item);
+		// Set global item for all other pages
+		if (this.getChildren()[this.getButtonCount() - this.getColumnCount()] != null && this.getChildren()[this.getButtonCount() - this.getColumnCount()] instanceof NextItem) {
+			((NextItem)this.getChildren()[this.getButtonCount() - this.getColumnCount()]).setGlobalItem(index, item);
 		}
 	}
 	
 	@Override
 	public void setParent(StreamItem parent) {
 		super.setParent(parent);
-		if (this.getChild(buttonCount-5) != null)
-			this.getChild(buttonCount-5).setParent(parent);
+		if (this.getChild(buttonCount-this.getColumnCount()) != null)
+			this.getChild(buttonCount-this.getColumnCount()).setParent(parent);
 	}
 	
 	public static class NextItem extends FolderItem{
@@ -93,7 +114,7 @@ public class SoundBoardCategoryItem extends FolderItem {
 		SoundBoardCategoryItem next = null;
 		
 		public NextItem(SoundBoardCategoryItem next) {
-			super("Next", null, new StreamItem[15]);
+			super("Next", null, new StreamItem[next.getButtonCount()]);
 			this.next = next;
 			this.setTextPosition(TEXT_POS_CENTER);
 			this.setText("Next");
@@ -135,7 +156,7 @@ public class SoundBoardCategoryItem extends FolderItem {
 		}
 		
 		public void setGlobalItem(int index, StreamItem item) {
-			if(index < 0 || index >= 15)
+			if(index < 0 || index >= this.getButtonCount())
 				throw new IndexOutOfBoundsException("Index must be between 0 and 14 inclusive");
 			next.getChildren()[index] = item;
 		}
@@ -146,7 +167,7 @@ public class SoundBoardCategoryItem extends FolderItem {
 		SoundBoardCategoryItem next = null;
 		
 		public PreviousItem(SoundBoardCategoryItem next) {
-			super("Previous", null, new StreamItem[15]);
+			super("Previous", null, new StreamItem[next.getButtonCount()]);
 			this.next = next;
 			this.setTextPosition(TEXT_POS_CENTER);
 			this.setText("Previous");

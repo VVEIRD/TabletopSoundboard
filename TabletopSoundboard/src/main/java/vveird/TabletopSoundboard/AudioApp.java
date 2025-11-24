@@ -538,8 +538,9 @@ public class AudioApp {
 					soundboardLibrary.entrySet().stream()
 				       .sorted(Map.Entry.comparingByKey());
 			ArrayList<SoundBoardItem> sbItems = new ArrayList<SoundBoardItem>(soundboardLibrary.size());
-			sorted.forEach(a -> sbItems.add(new SoundBoardItem(a.getValue(), null)));
-			PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems.toArray(new SoundBoardItem[soundboardLibrary.size()]), streamDeck.getKeySize());
+			
+			sorted.forEach(a -> sbItems.add(new SoundBoardItem(a.getValue(), null, streamDeck.getKeySize(), streamDeck.getRowSize())));
+			PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems.toArray(new SoundBoardItem[soundboardLibrary.size()]), streamDeck.getKeySize(), streamDeck.getRowSize());
 			AudioApp.addStatusBarItems(root, root.getChildren());
 			controller.setRoot(root);
 			// controller = new StreamDeckController(streamDeck, root);
@@ -627,10 +628,10 @@ public class AudioApp {
 		if (items.length < 15)
 			throw new IndexOutOfBoundsException("Cannot add status bar to array, array must be >= 15");
 
-		items[14] = AudioApp.STOP_ITEM;
+		items[items.length-1] = AudioApp.STOP_ITEM;
 //		items[13] = AudioApp.AMBIENCE_STATUS_ITEM; 
 		if (withConfig)
-			items[12] = new ConfigItem(parent);
+			items[items.length-3] = new ConfigItem(parent);
 	}
 
 	/**
@@ -1009,9 +1010,9 @@ public class AudioApp {
 			streamDeck = new SoftStreamDeck("Sound Board App", null, true);
 		StreamItem[] sbItems = new StreamItem[soundboardLibrary.size()];
 		for (SoundBoard sb : soundboardLibrary.values()) {
-			sbItems[sbC++] = new SoundBoardItem(sb, null);
+			sbItems[sbC++] = new SoundBoardItem(sb, null, streamDeck.getKeySize(), streamDeck.getRowSize());
 		}
-		PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems, streamDeck.getKeySize());
+		PagedFolderItem root = new PagedFolderItem("root", null, null, sbItems, streamDeck.getKeySize(), streamDeck.getRowSize());
 		AudioApp.addStatusBarItems(root, root.getChildren());
 		streamDeck.reset();
 		streamDeck.addKeyListener(new DelayedReduceBrightness(streamDeck));

@@ -1,9 +1,13 @@
 package vveird.TabletopSoundboard.streamdeck.items;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import de.rcblum.stream.deck.device.general.StreamDeck;
 import de.rcblum.stream.deck.items.FolderItem;
 import de.rcblum.stream.deck.items.PagedFolderItem;
 import de.rcblum.stream.deck.items.ProxyItem;
@@ -12,16 +16,27 @@ import de.rcblum.stream.deck.util.IconHelper;
 import vveird.TabletopSoundboard.AudioApp;
 import vveird.TabletopSoundboard.config.Sound;
 import vveird.TabletopSoundboard.config.SoundBoard;
+import vveird.TabletopSoundboard.streamdeck.items.SoundBoardCategoryItem.NextItem;
 
 public class SoundBoardItem extends FolderItem {
 
+	public SoundBoardItem(SoundBoard soundBoard) {
+		this(soundBoard, null, StreamDeck.BUTTON_COUNT, StreamDeck.ROW_COUNT);
+	}
+
 	public SoundBoardItem(SoundBoard soundBoard, StreamItem parent) {
-		super(soundBoard.name, parent, new StreamItem[15]);
+		this(soundBoard, null, parent.getButtonCount(), parent.getRowCount());
+	}
+
+	public SoundBoardItem(SoundBoard soundBoard, StreamItem parent, int buttonCount, int rowCount) {
+		super(soundBoard.name, parent, new StreamItem[buttonCount]);
+		this.setButtonCount(buttonCount);
+		this.setRowCount(rowCount);
 		// Create Categories
 		StreamItem[] categories = createCategoryItems(soundBoard.ambience, soundBoard.effects);
 		int i_d = 0;
 		for (int i = 0; i < categories.length; i++) {
-			if(i_d == 4) i_d++;
+			if(i_d == this.getColumnCount()-1) i_d++;
 			this.getChildren()[i_d++] = categories[i];
 		}
 		AudioApp.addStatusBarItems(this, this.getChildren());
@@ -40,7 +55,7 @@ public class SoundBoardItem extends FolderItem {
 
 	private StreamItem[] createCategoryItems(Map<String, List<Sound>> ambience, Map<String, List<Sound>> effects) {
 		StreamItem[] result = null;
-		Set<String> categories = ambience.keySet();
+		Set<String> categories = ambience.keySet().stream().sorted().collect(Collectors.toSet());
 		result = new StreamItem[categories.size()];
 		int catCount = 0;
 		for (String category : categories) {
@@ -63,12 +78,20 @@ public class SoundBoardItem extends FolderItem {
 			SoundBoardCategoryItem effectsCategoryItem = null;
 			SoundBoardCategoryItem ambienceCategoryItem = null;
 			if (ambienceItems != null) {
-				ambienceCategoryItem = new SoundBoardCategoryItem(category, this, null, ambienceItems, AudioApp.getStreamDeck().getKeySize());
-				AudioApp.addStatusBarItems(ambienceCategoryItem, ambienceCategoryItem.getChildren(), false);
+				ambienceCategoryItem = new SoundBoardCategoryItem(category, this, null, ambienceItems, this.getButtonCount(), this.getRowCount());
+				StreamItem page = ambienceCategoryItem;
+				while (page != null && page instanceof FolderItem) {
+					AudioApp.addStatusBarItems(page, page.getChildren(), false);
+					page = page.getChildren()[page.getButtonCount() - page.getColumnCount()];
+				}
 			}
 			if (effectsItems != null) {
-				effectsCategoryItem = new SoundBoardCategoryItem(category, this, null, effectsItems, AudioApp.getStreamDeck().getKeySize());
-				AudioApp.addStatusBarItems(effectsCategoryItem, effectsCategoryItem.getChildren(), false);
+				effectsCategoryItem = new SoundBoardCategoryItem(category, this, null, effectsItems, this.getButtonCount(), this.getRowCount());
+				StreamItem page = effectsCategoryItem;
+				while (page != null && page instanceof FolderItem) {
+					AudioApp.addStatusBarItems(page, page.getChildren(), false);
+					page = page.getChildren()[page.getButtonCount() - page.getColumnCount()];
+				}
 				ProxyItem p1 = new ProxyItem(ambienceCategoryItem, null);
 				p1.setIcon(IconHelper.loadImageFromResourceSafe("/icons/change.png"));
 				p1.setTextLine1("Effects", 16);

@@ -25,7 +25,9 @@ public class AudioDevicesItem extends FolderItem {
 	private DeviceItem selectedItem = null;
 
 	public AudioDevicesItem(StreamItem parent) {
-		super(null, parent, new StreamItem[15]);
+		super(null, parent, new StreamItem[parent.getButtonCount()]);
+		this.setButtonCount(parent.getButtonCount());
+		this.setRowCount(parent.getRowCount());
 		SDImage ic = IconHelper.loadImageFromResource("/icons/AudioDevice.png");
 		if (ic == null)
 			ic = IconHelper.getImage("temp://BLACK_ICON");
@@ -48,9 +50,9 @@ public class AudioDevicesItem extends FolderItem {
 			if (di.isSelected())
 				this.selectedItem = di;
 			this.getChildren()[c++] = di;
-			if (c == 4) c++;
-			// No more than 9 Speakers supported for now
-			if (c > 9) {
+			if (c == this.getColumnCount()-1) c++;
+			// No more than X Speakers supported for now
+			if (c > ((this.rowCount-1)*this.getColumnCount())-1) {
 				if (selectedItem == null) {
 					DeviceItem sdi = new DeviceItem(selectedDevice, true);
 					this.getChildren()[0] = sdi;
