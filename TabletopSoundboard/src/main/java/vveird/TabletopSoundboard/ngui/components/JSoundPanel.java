@@ -2,7 +2,8 @@ package vveird.TabletopSoundboard.ngui.components;
 
 import javax.swing.JLabel;
 
-import de.rcblum.stream.deck.device.general.StreamDeck;
+import de.rcblum.stream.deck.device.StreamDeck;
+import de.rcblum.stream.deck.device.StreamDeckConstants;
 import de.rcblum.stream.deck.util.IconHelper;
 import de.rcblum.stream.deck.util.SDImage;
 import vveird.TabletopSoundboard.config.Sound;
@@ -64,11 +65,11 @@ public class JSoundPanel extends ImagePanel {
 		img = IconHelper.applyFrame(img, background);
 		SDImage bImg = IconHelper.addText(img, text, IconHelper.TEXT_CENTER);
 		IconHelper.setTextBoxAlphaValue(alpha);
-		setSize(StreamDeck.ICON_SIZE, StreamDeck.ICON_SIZE);
-		setPreferredSize(new Dimension(StreamDeck.ICON_SIZE, StreamDeck.ICON_SIZE));
-		setMinimumSize(new Dimension(StreamDeck.ICON_SIZE, StreamDeck.ICON_SIZE));
-		setMaximumSize(new Dimension(StreamDeck.ICON_SIZE, StreamDeck.ICON_SIZE));
-		setSize(new Dimension(StreamDeck.ICON_SIZE, StreamDeck.ICON_SIZE));
+		setSize(StreamDeckConstants.ICON_SIZE);
+		setPreferredSize(StreamDeckConstants.ICON_SIZE);
+		setMinimumSize(StreamDeckConstants.ICON_SIZE);
+		setMaximumSize(StreamDeckConstants.ICON_SIZE);
+		setSize(StreamDeckConstants.ICON_SIZE);
 		setImage(bImg.image);
 		btnX = new JLabel("X");
 		btnX.setFont(new Font("Segoe UI", Font.PLAIN, 12));

@@ -7,7 +7,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/jl1.0.1.jar"/>
-	<classpathentry kind="lib" path="libs/miglayout15-swing.jar"/>
 	<classpathentry kind="lib" path="libs/mp3plugin.jar"/>
 	<classpathentry kind="lib" path="libs/mp3spi1.9.5.jar"/>
 	<classpathentry kind="lib" path="libs/tritonus_mp3-0.3.6.jar"/>
@@ -32,7 +31,6 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/owl/git/builds/latest/jna-4.0.0.jar"/>
 	<classpathentry kind="lib" path="/home/owl/git/builds/latest/purejavahid_VVEIRD.jar"/>
 	<classpathentry kind="lib" path="/home/owl/git/builds/latest/StreamDeckCore.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-10">
@@ -40,5 +38,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="com.miglayout.swing_11.4.2.jar"/>
+	<classpathentry kind="lib" path="com.miglayout.core_11.4.2.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

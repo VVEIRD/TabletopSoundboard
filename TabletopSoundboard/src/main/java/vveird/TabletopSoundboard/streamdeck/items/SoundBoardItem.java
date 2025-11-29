@@ -7,7 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import de.rcblum.stream.deck.device.general.StreamDeck;
+import de.rcblum.stream.deck.device.StreamDeck;
+import de.rcblum.stream.deck.device.StreamDeckConstants;
 import de.rcblum.stream.deck.items.FolderItem;
 import de.rcblum.stream.deck.items.PagedFolderItem;
 import de.rcblum.stream.deck.items.ProxyItem;
@@ -21,7 +22,7 @@ import vveird.TabletopSoundboard.streamdeck.items.SoundBoardCategoryItem.NextIte
 public class SoundBoardItem extends FolderItem {
 
 	public SoundBoardItem(SoundBoard soundBoard) {
-		this(soundBoard, null, StreamDeck.BUTTON_COUNT, StreamDeck.ROW_COUNT);
+		this(soundBoard, null, StreamDeckConstants.BUTTON_COUNT, StreamDeckConstants.ROW_COUNT);
 	}
 
 	public SoundBoardItem(SoundBoard soundBoard, StreamItem parent) {

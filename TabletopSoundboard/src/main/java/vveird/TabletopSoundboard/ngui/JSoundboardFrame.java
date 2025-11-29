@@ -133,11 +133,13 @@ public class JSoundboardFrame extends JFrame {
 		lblSounds.setBounds(10, 0, 180, 40);
 		pnSounds.add(lblSounds);
 		
-
+		
 		pnSpotifySounds = new JSelectablePanel("Spotify Playlists", false);
-		pnSpotifySounds.setBounds(0, 80, 200, 40);
-		pnSpotifySounds.setPreferredSize(new Dimension(200, 40));
-		pnSideBar.add(pnSpotifySounds);
+		if (AudioApp.isSpotifyEnabled()) {
+			pnSpotifySounds.setBounds(0, 80, 200, 40);
+			pnSpotifySounds.setPreferredSize(new Dimension(200, 40));
+			pnSideBar.add(pnSpotifySounds);
+		}
 		
 		pnOptions = new JSelectablePanel(false);
 		pnOptions.setLayout(null);
@@ -201,7 +203,7 @@ public class JSoundboardFrame extends JFrame {
 		lblSounds.setForeground(ColorScheme.SIDE_BAR_FOREGROUND_COLOR);
 		lblOptions.setForeground(ColorScheme.SIDE_BAR_FOREGROUND_COLOR);
 		
-		setResizable(false);
+		//setResizable(false);
 		switchContent();
 	}
 
@@ -235,6 +237,6 @@ public class JSoundboardFrame extends JFrame {
 		comp.setPreferredSize(new Dimension(width, height));
 		comp.setSize(new Dimension(width, height));
 		comp.setMinimumSize(new Dimension(width, height));
-		comp.setMaximumSize(new Dimension(width, height));
+		//comp.setMaximumSize(new Dimension(width, height));
 	}
 }

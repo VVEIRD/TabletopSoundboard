@@ -9,7 +9,7 @@
 		<format property="TODAY_MY" pattern="yyyyMMdd-HHmm" locale="de,DE" />
 	</tstamp>
 	<property name="dir.jarfile" value="../../builds/java/TabletopSoundboard/${TODAY_MY}" />
-	<property name="dir.jarfile.latest" value="/../../builds/latest" />
+	<property name="dir.jarfile.latest" value="../../builds/latest" />
 	<property name="dir.streamdeckcore.latest" value="../../builds/latest" />
 	<property name="dir.nanoleaflightsplugin.latest" value="../../builds/latest" />
 	<property name="dir.mvn.repo" value="../../../.m2" />
@@ -151,7 +151,7 @@
 		<jar destfile="${dir.jarfile}/TabletopSoundboard.jar">
 			<manifest>
 				<attribute name="Main-Class" value="vveird.TabletopSoundboard.MainGui" />
-				<attribute name="Class-Path" value=". lib/jl1.0.1.jar lib/purejavahid_VVEIRD.jar lib/jna-4.5.2.jar lib/StreamDeckCore.jar lib/mp3plugin.jar lib/mp3spi1.9.5.jar lib/tritonus_mp3-0.3.6.jar lib/tritonus_share-0.3.6.jar lib/miglayout15-swing.jar lib/log4j-core-2.17.1.jar lib/log4j-api-2.17.1.jar lib/mp3agic-0.8.1.jar lib/spotify-web-api-java-2.1.0.jar lib/nv-i18n-1.23.jar lib/httpclient-cache-4.5.5.jar lib/httpclient-4.5.5.jar lib/httpcore-4.4.9.jar lib/commons-codec-1.10.jar lib/commons-logging-1.2.jar lib/gson-2.8.9.jar lib/jorbis-0.0.17.jar" />
+				<attribute name="Class-Path" value=". lib/jl1.0.1.jar lib/purejavahid_VVEIRD.jar lib/jna-5.0.0.jar lib/StreamDeckCore.jar lib/mp3plugin.jar lib/mp3spi1.9.5.jar lib/tritonus_mp3-0.3.6.jar lib/tritonus_share-0.3.6.jar lib/miglayout15-swing.jar lib/log4j-core-2.17.1.jar lib/log4j-api-2.17.1.jar lib/mp3agic-0.8.1.jar lib/spotify-web-api-java-2.1.0.jar lib/nv-i18n-1.23.jar lib/httpclient-cache-4.5.5.jar lib/httpclient-4.5.5.jar lib/httpcore-4.4.9.jar lib/commons-codec-1.10.jar lib/commons-logging-1.2.jar lib/gson-2.8.9.jar lib/jorbis-0.0.17.jar" />
 			</manifest>
 			<fileset dir="${dir.buildfile}/target/classes" />
 		</jar>
@@ -182,7 +182,7 @@
 		<copy file="${dir.mvn.repo}/repository/org/jcraft/jorbis/0.0.17/jorbis-0.0.17.jar" todir="${dir.jarfile}/lib" />
 		<copy file="${dir.mvn.repo}/repository/org/apache/logging/log4j/log4j-core/2.17.1/log4j-core-2.17.1.jar" todir="${dir.jarfile}/lib" />
 		<copy file="${dir.streamdeckcore.latest}/purejavahid_VVEIRD.jar" todir="${dir.jarfile}/lib" />
-		<copy file="${dir.streamdeckcore.latest}/jna-4.5.2.jar" todir="${dir.jarfile}/lib" />
+		<copy file="${dir.streamdeckcore.latest}/jna-5.0.0.jar" todir="${dir.jarfile}/lib" />
 		<copy file="${dir.streamdeckcore.latest}/StreamDeckCore.jar" todir="${dir.jarfile}/lib" />
 		<copy file="${dir.nanoleaflightsplugin.latest}/NanoleafLightPanelPlugin.jar" todir="${dir.jarfile}/plugins" />
 		<copy todir="${dir.jarfile.latest}">
